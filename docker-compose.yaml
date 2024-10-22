@@ -1,0 +1,23 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - '8080:8080'
+    depends_on:
+      - master_postgres
+#      - master_redis
+
+  master_postgres:
+    image: postgres:13.3
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pswd
+      - POSTGRES_DB=note_db
+    ports:
+      - '5432:5432'
+
+#  master_redis:
+#    image: redis/redis-stack:latest
+#    ports:
+#      - '6379:6379'

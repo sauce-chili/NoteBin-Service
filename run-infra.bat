@@ -1,0 +1,1 @@
+docker-compose -p infra-notebin up master_postgres
