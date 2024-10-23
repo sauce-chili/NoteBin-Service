@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 @Setter
 @Entity
 @Table(name = "note")
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "note_id_gen")
