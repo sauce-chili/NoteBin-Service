@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changeset/V000_init.sql
+  - include:
+      file: db/changelog/changeset/V001_add_new_column_in_note_table.sql
