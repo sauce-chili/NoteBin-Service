@@ -1,5 +1,4 @@
 package vstu.isd.notebin.entities;
-import java.util.UUID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,7 +35,7 @@ public class Note {
 
     @NotNull
     @Column(name = "url", nullable = false, length = 16)
-    private String url = UUID.randomUUID().toString();
+    private String url;
 
     @Column(name = "expiration_type")
     @Enumerated(EnumType.STRING)
