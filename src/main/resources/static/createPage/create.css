@@ -1,0 +1,74 @@
+/* Контейнер для заголовка */
+.title-container {
+    display: flex;
+    width: 100%;
+    margin-top: 40px;
+    justify-content: left;
+}
+
+/* текст заголовка */
+.title-container textarea {
+    width: 25%;
+    margin-left: 25%;
+    padding: 0 0 0 0;
+    font-size: 24px;
+    resize: none;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    min-width: 100px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* контейнер с заметкой и кнопками */
+.main-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+/* контейнер кнопок */
+.button-container {
+    width: 25%;
+    align-content: start;
+    horiz-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+/* стиль кнопок */
+.button-container button {
+    border: none;
+    color: gray;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    font-family: Comfortaa, sans-serif;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 150px;
+    height: 50px;
+}
+
+/* Контейнер текста заметки */
+.note-container {
+    width: 75%;
+    margin-top: 10px;
+    flex-direction: row;
+}
+
+/* Текс заметки */
+.note-container textarea {
+    width: 70%;
+    padding: 10px;
+    font-size: 14px;
+    resize: none;
+    overflow: hidden;
+    display: flex;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    min-height: 500px;
+    outline: none;
+}
