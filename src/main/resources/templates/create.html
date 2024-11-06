@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Создание заметки</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+<!--    <link type="text/css" rel="stylesheet" as="style" href="/create.css">-->
+    <link type="text/css" rel="stylesheet" as="style" href="../static/create.css">
+</head>
+<body>
+<form method="post">
+    <div class="title-container">
+        <textarea maxlength="140" rows="1" id="titleTextarea" name="titleTextarea" placeholder="Title..."></textarea>
+    </div>
+    <div class="main-container">
+        <div class="inf-container">
+            <div class="button-container">
+                <div class="button-container-create">
+                    <button type="submit" onclick="submitText()">Create</button>
+                </div>
+                <div class="image-button">
+                    <button class="image-button"></button>
+                </div>
+            </div>
+            <div class="settings-form" id="settingsForm" style="display: none;">
+                <label><input type="radio" name="option" value="default" checked onclick="toggleTimeInput(false)"> Default</label><br>
+                <label><input type="radio" name="option" value="afterFirst" onclick="toggleTimeInput(false)"> One time look</label><br>
+                <label><input type="radio" name="option" value="afterTime" onclick="toggleTimeInput(true)"> After time</label><br>
+                <div id="timeInputContainer" style="display: none; margin-top: 5px;">
+                    <label>Enter time: <input type="datetime-local" id="timeInput" min=""></label>
+                </div>
+            </div>
+        </div>
+        <div class="note-container">
+            <textarea maxlength="10000" id="noteTextarea" name="noteTextarea" placeholder="Note text..."></textarea>
+        </div>
+    </div>
+</form>
+<script>
+    function autoResizeTextareaWidth(textarea, noteTextarea) {
+        const maxSymbols = 35;
+        textarea.style.width = 'auto';
+
+        if (textarea.value.length <= maxSymbols) {
+            textarea.style.width = textarea.scrollWidth + 'px';
+        } else {
+            textarea.style.width = `${noteTextarea.clientWidth}px`; // Исправлено
+        }
+    }
+
+    function autoResizeTextareaHigh(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    const titleTextarea = document.getElementById('titleTextarea');
+    const noteTextarea = document.getElementById('noteTextarea');
+
+    titleTextarea.addEventListener('input', function() {
+        autoResizeTextareaWidth(titleTextarea, noteTextarea);
+    });
+
+    noteTextarea.addEventListener('input', function() {
+        autoResizeTextareaHigh(noteTextarea);
+    });
+
+    autoResizeTextareaWidth(titleTextarea, noteTextarea);
+    autoResizeTextareaHigh(noteTextarea);
+
+    titleTextarea.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            titleTextarea.setSelectionRange(0,0);
+            titleTextarea.focus();
+        }
+    });
+
+    function submitText() {
+        const el = document.getElementById('titleTextarea');
+        alert(`Заметка "${el.value}" создана`);
+    }
+
+    document.querySelector('.image-button button').addEventListener('click', function(event) {
+        event.preventDefault();
+        const settingsForm = document.getElementById('settingsForm');
+        settingsForm.style.display = settingsForm.style.display === 'none' ? 'block' : 'none';
+    });
+
+    function toggleTimeInput(show) {
+        const timeInputContainer = document.getElementById('timeInputContainer');
+        timeInputContainer.style.display = show ? 'block' : 'none';
+
+        if (show) {
+            const now = new Date();
+            const minDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, -8);
+            document.getElementById('timeInput').min = minDate;
+        }
+    }
+</script>
+
+</body>
+</html>

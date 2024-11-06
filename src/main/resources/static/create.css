@@ -1,0 +1,112 @@
+/* Контейнер для заголовка */
+.title-container {
+    display: flex;
+    width: 100%;
+    margin-top: 40px;
+    justify-content: left;
+}
+
+/* текст заголовка */
+.title-container textarea {
+    width: 25%;
+    margin-left: 25%;
+    padding: 0 0 0 0;
+    font-size: 24px;
+    resize: none;
+    border: none;
+    overflow: hidden;
+    outline: none;
+    min-width: 100px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.image-button button {
+    background-color: white;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-image: url('settings_icon.png');
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    resize: horizontal;
+    margin-top: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* контейнер с заметкой и кнопками */
+.main-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.inf-container {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: center;
+}
+
+/* контейнер кнопок */
+.button-container {
+    align-content: start;
+    horiz-align: center;
+    display: inline-flex;
+    justify-content: center;
+    margin: 4px 2px;
+    resize: horizontal;
+    position: relative;
+}
+
+/* стиль кнопок */
+.button-container-create button {
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    font-family: Comfortaa, sans-serif;
+    cursor: pointer;
+    width: 150px;
+    height: 50px;
+}
+
+/* Контейнер текста заметки */
+.note-container {
+    width: 75%;
+    margin-top: 10px;
+    flex-direction: row;
+}
+
+/* Текс заметки */
+.note-container textarea {
+    width: 70%;
+    padding: 10px;
+    font-size: 14px;
+    resize: none;
+    overflow: hidden;
+    display: flex;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    min-height: 500px;
+    outline: none;
+}
+
+.settings-form {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    width: 180px;
+
+
+
+    font-size: 14px;
+    font-family: Comfortaa, sans-serif;
+    display: inline-flex;
+}
