@@ -1,4 +1,5 @@
 package vstu.isd.notebin.repository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import vstu.isd.notebin.entities.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long>{
+
     Optional<Note> findByUrl(String url);
     void deleteByUrl(String url);
+
+    Note createNote(Note note);
 }

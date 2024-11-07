@@ -5,29 +5,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
     <link type="text/css" rel="stylesheet" as="style" href="/create.css">
-<!--    <link type="text/css" rel="stylesheet" as="style" href="../static/create.css">-->
+    <!--    <link type="text/css" rel="stylesheet" as="style" href="../static/create.css">-->
 </head>
 <body>
-<form method="post">
-
+<form action="/create" method="post">
     <header th:insert="blocks/header :: header"></header>
 
     <div class="title-container">
         <textarea maxlength="140" rows="1" id="titleTextarea" name="titleTextarea" placeholder="Title..."></textarea>
     </div>
-
-
     <div class="main-container">
         <div class="inf-container">
-            <div class="button-container">
-                <div class="button-container-create">
-                    <button type="submit">Create</button>
-                </div>
-                <div class="image-button">
-                    <button class="image-button"></button>
-                </div>
-            </div>
 
+            <div th:insert="blocks/editButtons :: editButtons"></div>
             <div th:insert="blocks/deleteType :: deleteType"></div>
 
         </div>
@@ -37,6 +27,13 @@
     </div>
 </form>
 <script>
+
+    function toggleEditMode() {
+        document.getElementById('editdelete').style.display = 'none';
+        document.getElementById('savecancel').style.display = 'block';
+        document.getElementById('settingsForm').style.display = 'block';
+    }
+
     function autoResizeTextareaWidth(textarea, noteTextarea) {
         const maxSymbols = 35;
         textarea.style.width = 'auto';
@@ -73,12 +70,6 @@
             titleTextarea.setSelectionRange(0,0);
             titleTextarea.focus();
         }
-    });
-
-    document.querySelector('.image-button button').addEventListener('click', function(event) {
-        event.preventDefault();
-        const settingsForm = document.getElementById('settingsForm');
-        settingsForm.style.display = settingsForm.style.display === 'none' ? 'block' : 'none';
     });
 
     function toggleTimeInput(show) {

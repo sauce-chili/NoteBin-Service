@@ -110,3 +110,32 @@
     font-family: Comfortaa, sans-serif;
     display: inline-flex;
 }
+
+
+
+.button-logo button{
+    border: none;
+    color: black;
+    background-color: white;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 48px;
+    font-family: Comfortaa, sans-serif;
+    cursor: pointer;
+    width: 150px;
+    height: 50px;
+}
+
+/* -----------------------------Заголовок----------------------------------------------*/
+
+.button-logo a {
+    font-size: 46px; /* размер текста */
+    color: black; /* черный цвет текста */
+    text-decoration: none; /* убрать подчеркивание */
+    font-family: Comfortaa, sans-serif; /* используемый шрифт */
+}
+
+.button-logo a:hover {
+    cursor: pointer; /* изменение курсора при наведении */
+}
