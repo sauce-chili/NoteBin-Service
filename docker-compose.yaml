@@ -6,7 +6,7 @@ services:
       - '8080:8080'
     depends_on:
       - master_postgres
-#      - master_redis
+      - master_redis
 
   master_postgres:
     image: postgres:13.3
@@ -17,7 +17,7 @@ services:
     ports:
       - '5432:5432'
 
-#  master_redis:
-#    image: redis/redis-stack:latest
-#    ports:
-#      - '6379:6379'
+  master_redis:
+    image: redis/redis-stack:latest
+    ports:
+      - '6379:6379'
