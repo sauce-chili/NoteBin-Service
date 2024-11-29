@@ -1,9 +1,9 @@
-package vstu.isd.notebin.util;
+package vstu.isd.notebin.generator;
 
 
 import org.springframework.stereotype.Component;
 
 @Component
 public interface UrlGenerator {
-    public String generateUrl();
+    String generateUrl();
 }
