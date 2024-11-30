@@ -151,4 +151,38 @@ public class NoteService {
         Note updated = noteRepository.updateWithLock(url, repositoryModifier);
         return noteMapper.toCacheable(updated);
     }
+
+    @Retryable(
+            retryFor = {OptimisticLockException.class}
+    )
+    public NoteDto updateNote(String url, UpdateNoteRequestDto updateNoteRequest) {
+
+        LocalDateTime expirationFrom = LocalDateTime.now();
+
+        try {
+            noteCache.update(url, cached -> {
+                cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest);
+                if (updateNoteRequest.getExpirationType() != null) {
+                    cached.setExpirationFrom(expirationFrom);
+                }
+                return cached;
+            });
+        } catch (NoSuchElementException ignored) {
+        }
+
+        try {
+            Note updated = noteRepository.updateWithLock(url, persisted -> {
+                persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest);
+                if (updateNoteRequest.getExpirationType() != null) {
+                    persisted.setExpirationFrom(expirationFrom);
+                }
+                return persisted;
+            });
+
+            return noteMapper.toDto(updated);
+        } catch (NoSuchElementException e) {
+            throw new NoteNonExistsException(url);
+        }
+    }
+
 }
