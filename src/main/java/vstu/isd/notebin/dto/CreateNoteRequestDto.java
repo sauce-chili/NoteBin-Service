@@ -15,7 +15,6 @@ import java.time.Duration;
 public class CreateNoteRequestDto {
     private String title;
     private String content;
-    private Boolean isAvailable;
     private ExpirationType expirationType;
     private Duration expirationPeriod;
 }
