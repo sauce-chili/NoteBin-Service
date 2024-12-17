@@ -2,6 +2,7 @@ package vstu.isd.notebin.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "note")
 public class Note {
     @Id
@@ -45,9 +47,10 @@ public class Note {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
-    public Note(String title, String noteText, ExpirationType expirationType) {
+    public Note(String title, String noteText, ExpirationType expirationType, String url) {
         this.title = title;
         this.noteText = noteText;
         this.expirationType = expirationType;
+        this.url = url;
     }
 }
