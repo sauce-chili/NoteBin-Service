@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Testcontainers
 @ContextConfiguration(initializers = HashGeneratorTest.Initializer.class)
 public class HashGeneratorTest {
-    // TODO in futerre use common test contatiners
+    // TODO in future use common test containers
     @Container
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(
             "postgres:15.2"
