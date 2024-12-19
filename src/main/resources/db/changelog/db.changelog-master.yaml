@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/changeset/V004.sql
   - include:
       file: db/changelog/changeset/V005.sql
+  - include:
+        file: db/changelog/changeset/V006_hashes.sql
