@@ -53,7 +53,7 @@ public class NoteServiceTest {
      *
      * Aspects of testing:
      * - getting note with different expiration statuses: not expired, already expired, expired at the moment of getting (+)
-     * - location of note storage at time of request: cache and repository, repository, nowhere(exception) (+-)
+     * - location of note storage at time of request: cache and repository, repository, nowhere(exception) (+)
      * - note expiration during concurrent getting a note: BURN_AFTER_READ, BURN_BY_PERIOD expiration types (+)
      * */
     @Test

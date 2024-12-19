@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;

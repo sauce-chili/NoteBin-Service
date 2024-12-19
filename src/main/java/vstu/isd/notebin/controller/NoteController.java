@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteResponseDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.service.NoteService;
 
