@@ -8,6 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
+import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
@@ -16,6 +17,7 @@ import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
+import vstu.isd.notebin.exception.ValidationGroupException;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 
@@ -185,4 +187,14 @@ public class NoteService {
         }
     }
 
+    @Transactional
+    public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
+
+        Optional<ValidationGroupException> validationError = NoteServiceValidator.validateCreateNoteRequest();
+        if (validationError.isPresent()) {
+            throw validationError.get();
+        }
+
+
+    }
 }
