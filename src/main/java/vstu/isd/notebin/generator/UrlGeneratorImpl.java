@@ -1,14 +1,20 @@
 package vstu.isd.notebin.generator;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 import java.util.stream.Stream;
 
-public class UrlGeneratorImpl {
+@Component
+@RequiredArgsConstructor
+public class UrlGeneratorImpl implements UrlGenerator {
 
     private String URL_PREFIX = "https://urlShortenerProject/";
 
     Base62HashGenerator hashGenerator;
 
-    public Stream<String> generateUrl(int amount) {
+    @Override
+    public Stream<String> generateUrls(int amount) {
 
         Stream<String> hashes = hashGenerator.generateHashes(amount);
 
@@ -16,8 +22,10 @@ public class UrlGeneratorImpl {
                 map(hash -> URL_PREFIX + hash);
     }
 
+    @Override
     public String generateUrl() {
 
-        return generateUrl(1).findFirst().get();
+        int AMOUNT = 1;
+        return generateUrls(AMOUNT).findFirst().get();
     }
 }
