@@ -4,6 +4,7 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
+import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteResponseDto;
 import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 @Mapper(
         componentModel = "spring",
         injectionStrategy = InjectionStrategy.FIELD,
-        unmappedSourcePolicy = ReportingPolicy.IGNORE
+        unmappedSourcePolicy = ReportingPolicy.IGNORE,
+        imports = {java.time.LocalDateTime.class}
 )
 public interface NoteMapper {
 
@@ -56,8 +58,16 @@ public interface NoteMapper {
         return persisted;
     }
 
-
     @Mapping(source = "available", target = "isAvailable")
     GetNoteResponseDto toGetNoteResponseDto(NoteDto note);
-}
 
+    @Mapping(target = "id", expression = "java(null)")
+    @Mapping(target = "url", expression = "java(url)")
+    @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "isAvailable", constant = "true")
+    @Mapping(target = "expirationFrom", expression = "java(LocalDateTime.now())")
+    NoteDto toNoteDto(CreateNoteRequestDto createNoteRequestDto, String url);
+
+    @Mapping(source = "available", target = "isAvailable")
+    Note toNote(NoteDto noteDto);
+}
