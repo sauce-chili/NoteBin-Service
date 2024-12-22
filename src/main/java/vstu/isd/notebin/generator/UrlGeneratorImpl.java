@@ -1,19 +1,23 @@
 package vstu.isd.notebin.generator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import vstu.isd.notebin.cache.HashCache;
-import vstu.isd.notebin.entity.Hash;
 
-import java.util.UUID;
+import java.util.stream.Stream;
 
-@Component
-@RequiredArgsConstructor
-public class UrlGeneratorImpl implements UrlGenerator {
+public class UrlGeneratorImpl {
 
-    private final HashCache hashCache;
+    private String URL_PREFIX = "https://urlShortenerProject/";
 
-    @Override
+    Base62HashGenerator hashGenerator;
+
+    public Stream<String> generateUrl(int amount) {
+
+        Stream<String> hashes = hashGenerator.generateHashes(amount);
+
+        return hashes.
+                map(hash -> URL_PREFIX + hash);
+    }
+
     public String generateUrl() {
-        return hashCache.getHash();
+
+        return generateUrl(1).findFirst().get();
     }
 }
