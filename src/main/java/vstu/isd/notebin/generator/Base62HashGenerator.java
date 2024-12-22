@@ -29,6 +29,11 @@ public class Base62HashGenerator implements HashGenerator {
                 .map(this::convertToBase62);
     }
 
+    @Override
+    public String generateHash(){
+        return generateHashes(1).findFirst().get();
+    }
+
     public String convertToBase62(long number) {
         StringBuilder base62 = new StringBuilder();
         while (number > 0) {
