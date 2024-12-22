@@ -1,9 +1,10 @@
 package vstu.isd.notebin.generator;
 
+import java.util.stream.Stream;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public interface UrlGenerator {
-    String generateUrl();
+
+    Stream<String> generateUrls(int amount);
+
+    String generateUrls();
 }
