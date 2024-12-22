@@ -6,5 +6,5 @@ public interface UrlGenerator {
 
     Stream<String> generateUrls(int amount);
 
-    String generateUrls();
+    String generateUrl();
 }
