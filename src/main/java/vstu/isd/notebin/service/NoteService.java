@@ -18,6 +18,7 @@ import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
 import vstu.isd.notebin.exception.ValidationGroupException;
+import vstu.isd.notebin.generator.UrlGenerator;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 
@@ -34,6 +35,7 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final NoteCache noteCache;
     private final NoteMapper noteMapper;
+    private final UrlGenerator urlGenerator;
 
     // currently under refactoring
     @Transactional
@@ -195,6 +197,11 @@ public class NoteService {
             throw validationError.get();
         }
 
+        String url = urlGenerator.generateUrl();
+        NoteDto noteDto = noteMapper.toNoteDto(createNoteRequest, url);
+        noteRepository.save(noteMapper.toNote(noteDto));
+        noteCache.save(noteMapper.toCacheable(noteDto));
 
+        return noteDto;
     }
 }
