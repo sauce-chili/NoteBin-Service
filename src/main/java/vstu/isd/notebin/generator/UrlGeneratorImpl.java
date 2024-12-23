@@ -11,15 +11,14 @@ public class UrlGeneratorImpl implements UrlGenerator {
 
     private String URL_PREFIX = "https://urlShortenerProject/";
 
-    Base62HashGenerator hashGenerator;
+    private final Base62HashGenerator hashGenerator;
 
     @Override
     public Stream<String> generateUrls(int amount) {
 
         Stream<String> hashes = hashGenerator.generateHashes(amount);
 
-        return hashes.
-                map(hash -> URL_PREFIX + hash);
+        return hashes;
     }
 
     @Override
