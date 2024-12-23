@@ -8,6 +8,7 @@ import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.service.NoteService;
 
 @RestController
+@RequestMapping("/note")
 @RequiredArgsConstructor
 public class NoteController {
 
@@ -21,7 +22,7 @@ public class NoteController {
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
-    @PostMapping("/note")
+    @PostMapping
     public GetNoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
         NoteDto noteDto = noteService.createNote(requestDto);
 
