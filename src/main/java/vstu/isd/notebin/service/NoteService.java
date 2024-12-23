@@ -199,7 +199,8 @@ public class NoteService {
 
         String url = urlGenerator.generateUrl();
         NoteDto noteDto = noteMapper.toNoteDto(createNoteRequest, url);
-        noteRepository.save(noteMapper.toNote(noteDto));
+        Note note = noteMapper.toNote(noteDto);
+        noteRepository.save(note);
         noteCache.save(noteMapper.toCacheable(noteDto));
 
         return noteDto;
