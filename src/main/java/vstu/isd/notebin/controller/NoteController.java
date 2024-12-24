@@ -23,7 +23,7 @@ public class NoteController {
     }
 
     @PostMapping
-    public GetNoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
+    public @ResponseBody GetNoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
         NoteDto noteDto = noteService.createNote(requestDto);
 
         return noteMapper.toGetNoteResponseDto(noteDto);
