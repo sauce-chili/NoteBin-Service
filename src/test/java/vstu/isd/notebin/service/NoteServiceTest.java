@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.config.TestContainersConfig;
@@ -34,8 +35,9 @@ import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEquals;
 import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEqualsWithTimeError;
 
 @SpringBootTest
-@ContextConfiguration(initializers = TestContainersConfig.Initializer.class)
+@ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteServiceTest {
 
     @SpyBean
