@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.config.TestContainersConfig;
+import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.entity.ExpirationType;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEquals;
+import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEqualsWithTimeError;
 
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.Initializer.class)
@@ -450,5 +452,46 @@ public class NoteServiceTest {
         // only first time
         verify(noteRepository, times(1)).findByUrl(REQUESTED_NOTE_URL);
         verify(noteCache, times(2)).getAndExpire(REQUESTED_NOTE_URL);
+    }
+
+
+    /*
+     * Tests for NoteService.createNote(...)
+     *
+     * Aspects of testing:
+     * - creating note with different expiration type: NEVER, BURN_BY_PERIOD, BURN_AFTER_READ
+     * - validation errors
+     * - creating few same notes, few different notes
+     * - concurrency while creating
+     * */
+    @Test
+    public void createNote() {
+
+        LocalDateTime createAt = LocalDateTime.now();
+        Duration expirationPeriod = Duration.ofMinutes(15);
+
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+        NoteDto expectedCreatedNoteDto = NoteDto.builder()
+                .id(1L)
+                .url("WH") // TODO ?????
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(createAt)
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(createAt)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        assertNoteDtoEqualsWithTimeError(expectedCreatedNoteDto, actualCreatedNoteDto);
     }
 }
