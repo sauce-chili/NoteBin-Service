@@ -2,7 +2,10 @@ package vstu.isd.notebin.generator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import vstu.isd.notebin.cache.HashCache;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -11,20 +14,20 @@ public class UrlGeneratorImpl implements UrlGenerator {
 
     private String URL_PREFIX = "https://urlShortenerProject/";
 
-    private final Base62HashGenerator hashGenerator;
+    private final HashCache hashCache;
 
     @Override
-    public Stream<String> generateUrls(int amount) {
+    public List<String> generateUrls(int amount) {
 
-        Stream<String> hashes = hashGenerator.generateHashes(amount);
-
-        return hashes;
+        return Stream.generate(hashCache::getHash)
+                .limit(amount)
+                .collect(Collectors.toList());
     }
 
     @Override
     public String generateUrl() {
 
         int AMOUNT = 1;
-        return generateUrls(AMOUNT).findFirst().get();
+        return hashCache.getHash();
     }
 }
