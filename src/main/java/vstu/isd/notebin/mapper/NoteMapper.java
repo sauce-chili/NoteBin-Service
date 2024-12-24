@@ -66,15 +66,5 @@ public interface NoteMapper {
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
     @Mapping(target = "isAvailable", constant = "true")
     @Mapping(target = "expirationFrom", expression = "java(LocalDateTime.now())")
-    NoteDto toNoteDto(CreateNoteRequestDto createNoteRequestDto, String url);
-
-    @Mapping(source = "available", target = "isAvailable")
-    Note toNote(NoteDto noteDto);
-
-    @Mapping(target = "id", expression = "java(null)")
-    @Mapping(target = "url", expression = "java(url)")
-    @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "isAvailable", constant = "true")
-    @Mapping(target = "expirationFrom", expression = "java(LocalDateTime.now())")
     Note toNote(CreateNoteRequestDto createNoteRequestDto, String url);
 }
