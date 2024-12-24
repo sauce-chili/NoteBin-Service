@@ -467,9 +467,8 @@ public class NoteServiceTest {
     @Test
     public void createNote() {
 
-        LocalDateTime createAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         Duration expirationPeriod = Duration.ofMinutes(15);
-
         String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -480,18 +479,18 @@ public class NoteServiceTest {
                 .build();
 
         NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
         NoteDto expectedCreatedNoteDto = NoteDto.builder()
                 .id(1L)
-                .url("WH") // TODO ?????
+                .url("1") // TODO ?????
                 .isAvailable(true)
                 .title(title)
                 .content(content)
-                .createdAt(createAt)
+                .createdAt(now)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(createAt)
+                .expirationFrom(now)
                 .expirationPeriod(expirationPeriod)
                 .build();
-
         assertNoteDtoEqualsWithTimeError(expectedCreatedNoteDto, actualCreatedNoteDto);
     }
 }
