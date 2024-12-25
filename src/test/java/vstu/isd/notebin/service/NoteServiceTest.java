@@ -31,8 +31,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEquals;
-import static vstu.isd.notebin.testutils.TestAsserts.assertNoteDtoEqualsWithTimeError;
+import static vstu.isd.notebin.testutils.TestAsserts.*;
 
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
@@ -484,7 +483,7 @@ public class NoteServiceTest {
 
         NoteDto expectedCreatedNoteDto = NoteDto.builder()
                 .id(1L)
-                .url("1") // TODO ?????
+                .url("1")
                 .isAvailable(true)
                 .title(title)
                 .content(content)
@@ -494,5 +493,162 @@ public class NoteServiceTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEqualsWithTimeError(expectedCreatedNoteDto, actualCreatedNoteDto);
+        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+    }
+
+    @Test
+    public void createTwoSameNotes() {
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+
+        NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDto);
+        NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDto);
+
+        String expUrlOfFirstNote = "1";
+        NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
+                .id(1L)
+                .url(expUrlOfFirstNote)
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(now)
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(now)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        assertNoteDtoEqualsWithTimeError(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
+        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+
+        String expUrlOfSecondNote = "2";
+        NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
+                .id(2L)
+                .url(expUrlOfSecondNote)
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(now)
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(now)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        assertNoteDtoEqualsWithTimeError(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
+        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+    }
+
+    @Test
+    public void createTwoDifferentNotes() {
+
+        LocalDateTime now = LocalDateTime.now();
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDtoFirst = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDtoFirst);
+
+        LocalDateTime nowSecond = LocalDateTime.now();
+        Duration expirationPeriodSecond = Duration.ofMinutes(15);
+        String titleSecond = "New note";
+        String contentSecond = "My content";
+        CreateNoteRequestDto createNoteRequestDtoSecond = CreateNoteRequestDto.builder()
+                .title(titleSecond)
+                .content(contentSecond)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriodSecond)
+                .build();
+        NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDtoSecond);
+
+        String expUrlOfFirstNote = "1";
+        NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
+                .id(1L)
+                .url(expUrlOfFirstNote)
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(now)
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(now)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        assertNoteDtoEqualsWithTimeError(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
+        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+
+        String expUrlOfSecondNote = "2";
+        NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
+                .id(2L)
+                .url(expUrlOfSecondNote)
+                .isAvailable(true)
+                .title(titleSecond)
+                .content(contentSecond)
+                .createdAt(nowSecond)
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(nowSecond)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        assertNoteDtoEqualsWithTimeError(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
+        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+    }
+
+    @Test
+    public void createTwoConcurrentNotes() {
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDtoFirst = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        Duration expirationPeriodSecond = Duration.ofMinutes(15);
+        String titleSecond = "New note 2";
+        String contentSecond = "My content 2";
+        CreateNoteRequestDto createNoteRequestDtoSecond = CreateNoteRequestDto.builder()
+                .title(titleSecond)
+                .content(contentSecond)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriodSecond)
+                .build();
+
+
+        CompletableFuture<NoteDto> futureNoteFirst = CompletableFuture.supplyAsync(
+                () -> noteService.createNote(createNoteRequestDtoFirst), executors);
+
+        CompletableFuture<NoteDto> futureNoteSecond = CompletableFuture.supplyAsync(
+                () -> noteService.createNote(createNoteRequestDtoSecond), executors);
+
+        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(futureNoteFirst, futureNoteSecond);
+        combinedFuture.join();
+
+        NoteDto actualCreatedFirstNoteDto = futureNoteFirst.join();
+        NoteDto actualCreatedSecondNoteDto = futureNoteSecond.join();
+
+
+        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+
+        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
     }
 }
