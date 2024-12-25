@@ -3,6 +3,7 @@ package vstu.isd.notebin.cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,23 +40,30 @@ public class NoteCacheHeater {
     public List<NoteCacheable> getMostUsedNotes(int amount) {
         List<Note> mostUsedNotes = new LinkedList<>();
 
-        int loaded = 0;
-        int pageIndex = 0;
-        boolean repositoryContainsNotes = true;
-        while (loaded < amount && repositoryContainsNotes) {
-            Page<Note> notePage = noteRepository.findAll(PageRequest.of(pageIndex, PAGE_SIZE));
+        final int INDEX_OF_FIRST_PAGE = 0;
+        int totalPages = noteRepository.findAll(PageRequest.of(INDEX_OF_FIRST_PAGE, PAGE_SIZE)).getTotalPages();
 
-            if (notePage.hasContent()){
-                mostUsedNotes.addAll(notePage.stream().toList());
-                loaded += notePage.getTotalElements();
-                pageIndex++;
-            } else {
-                repositoryContainsNotes = false;
-            }
+        int loaded = 0;
+        int currentPageIndex = 0;
+        while (nextPageExists(currentPageIndex, totalPages) && notEnoughLoaded(loaded, amount)) {
+
+            Page<Note> notePage = noteRepository.findAll(PageRequest.of(currentPageIndex, PAGE_SIZE));
+
+            mostUsedNotes.addAll(notePage.stream().toList());
+            loaded += notePage.getTotalElements();
+            currentPageIndex++;
         }
 
         return mostUsedNotes.stream()
                 .map(noteMapper::toCacheable)
                 .collect(Collectors.toList());
+    }
+
+    private boolean nextPageExists(int currentPageIndex, int totalPages){
+        return currentPageIndex + 1 <= totalPages;
+    }
+
+    private boolean notEnoughLoaded(int loaded, int required) {
+        return loaded < required;
     }
 }
