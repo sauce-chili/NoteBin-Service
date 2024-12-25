@@ -1,5 +1,6 @@
 package vstu.isd.notebin.cache;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisOperations;
@@ -9,6 +10,7 @@ import vstu.isd.notebin.cache.util.CASUpdate;
 import vstu.isd.notebin.entity.NoteCacheable;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -44,10 +46,13 @@ public class NoteCache {
         DEFAULT_TTL = defaultTTL;
     }
 
-//    @PostConstruct
-//    public void init() {
-//        // TODO Add cache filling to the required size
-//    }
+    @PostConstruct
+    public void init() {
+
+        List<NoteCacheable> necessaryCaches = cacheHeater.getMostUsedNotes(CAPACITY);
+
+        necessaryCaches.forEach(note -> redisTemplate.opsForValue().set(note.getUrl(), note));
+    }
 
     /**
      * Retrieves a note from the cache by its URL.
