@@ -21,11 +21,11 @@ public class NoteCacheHeater {
     private final NoteMapper noteMapper;
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
+        List<Note> mostUsedNotes = new ArrayList<>();
+        int PAGE_SIZE = 20;
+
         int loaded = 0;
         int pageIndex = 0;
-        int PAGE_SIZE = 20;
-        List<Note> mostUsedNotes = new ArrayList<>();
-
         boolean repositoryContainsNotes = true;
         while (loaded < amount && repositoryContainsNotes) {
             Page<Note> notePage = noteRepository.findAll(PageRequest.of(pageIndex, PAGE_SIZE));
