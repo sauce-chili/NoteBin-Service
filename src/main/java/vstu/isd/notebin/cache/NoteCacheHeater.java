@@ -1,10 +1,11 @@
 package vstu.isd.notebin.cache;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import vstu.isd.notebin.config.NoteConfig;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.mapper.NoteMapper;
@@ -16,19 +17,21 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@EnableConfigurationProperties(NoteConfig.class)
 public class NoteCacheHeater {
+
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
+    private final NoteConfig noteConfig;
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
         List<Note> mostUsedNotes = new ArrayList<>();
-        int PAGE_SIZE = 20;
 
         int loaded = 0;
         int pageIndex = 0;
         boolean repositoryContainsNotes = true;
         while (loaded < amount && repositoryContainsNotes) {
-            Page<Note> notePage = noteRepository.findAll(PageRequest.of(pageIndex, PAGE_SIZE));
+            Page<Note> notePage = noteRepository.findAll(PageRequest.of(pageIndex, noteConfig.pageSize()));
 
             if (notePage.hasContent()){
                 mostUsedNotes.addAll(notePage.stream().toList());
