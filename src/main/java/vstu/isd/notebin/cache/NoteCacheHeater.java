@@ -15,6 +15,7 @@ import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class NoteCacheHeater {
     }
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
-        List<Note> mostUsedNotes = new ArrayList<>();
+        List<Note> mostUsedNotes = new LinkedList<>();
 
         int loaded = 0;
         int pageIndex = 0;
