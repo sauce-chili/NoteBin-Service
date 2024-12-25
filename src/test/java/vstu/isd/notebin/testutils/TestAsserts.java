@@ -1,9 +1,14 @@
 package vstu.isd.notebin.testutils;
 
+import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.NoteDto;
+import vstu.isd.notebin.entity.Note;
+import vstu.isd.notebin.entity.NoteCacheable;
+import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,4 +63,13 @@ public class TestAsserts {
         }
     }
 
+    public static void assertNoteExistsInRepository(NoteDto noteDto, NoteRepository noteRepository) {
+        Optional<Note> noteInRepository = noteRepository.findByUrl(noteDto.getUrl());
+        assertTrue(noteInRepository.isPresent());
+    }
+
+    public static void assertNoteExistsInCache(NoteDto noteDto, NoteCache noteCache) {
+        Optional<NoteCacheable> noteInCache = noteCache.get(noteDto.getUrl());
+        assertTrue(noteInCache.isPresent());
+    }
 }
