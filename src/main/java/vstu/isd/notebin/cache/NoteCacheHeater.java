@@ -1,11 +1,15 @@
 package vstu.isd.notebin.cache;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.repository.NoteRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -14,6 +18,24 @@ public class NoteCacheHeater {
     private final NoteRepository noteRepository;
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
-        return List.of(); // TODO implement
+        int loaded = 0;
+        int pageIndex = 0;
+        int PAGE_SIZE = 20;
+        List<Note> mostUsedNotes = new ArrayList<>();
+
+        boolean repositoryContainsNotes = true;
+        while (loaded < amount && repositoryContainsNotes) {
+            Page<Note> notePage = noteRepository.findAll(PageRequest.of(pageIndex, PAGE_SIZE));
+
+            if (notePage.hasContent()){
+                mostUsedNotes.addAll(notePage.stream().toList());
+                loaded += notePage.getTotalElements();
+                pageIndex++;
+            } else {
+                repositoryContainsNotes = false;
+            }
+        }
+
+        return List.of();
     }
 }
