@@ -12,6 +12,8 @@ public class NoteConfig {
     private int cacheCapacity;
     @Value("${spring.note.default-ttl}")
     private Duration defaultTTL;
+    @Value("${spring.note.pageSize}")
+    private int pageSize;
 
     @Bean
     public int cacheNoteCapacity() {
@@ -21,5 +23,10 @@ public class NoteConfig {
     @Bean
     public Duration defaultTTL() {
         return defaultTTL;
+    }
+
+    @Bean
+    public int pageSize() {
+        return pageSize;
     }
 }
