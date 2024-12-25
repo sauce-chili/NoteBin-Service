@@ -7,15 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
+import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class NoteCacheHeater {
     private final NoteRepository noteRepository;
+    private final NoteMapper noteMapper;
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
         int loaded = 0;
@@ -36,6 +39,8 @@ public class NoteCacheHeater {
             }
         }
 
-        return List.of();
+        return mostUsedNotes.stream()
+                .map(noteMapper::toCacheable)
+                .collect(Collectors.toList());
     }
 }
