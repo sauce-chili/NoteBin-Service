@@ -30,7 +30,7 @@ public class NoteCacheHeater {
     NoteCacheHeater(
             NoteRepository noteRepository,
             NoteMapper noteMapper,
-            int pageSize
+            @Qualifier("pageSize") int pageSize
     ) {
         this.noteRepository = noteRepository;
         this.noteMapper = noteMapper;
