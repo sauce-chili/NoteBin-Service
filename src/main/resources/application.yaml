@@ -31,7 +31,7 @@ spring:
   note:
     default-ttl: 60m
     cache-capacity: 2048
-    pageSize: 20
+    page-size: 20
 
 server:
   port: 8080
