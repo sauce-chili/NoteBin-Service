@@ -1,54 +1,42 @@
 package vstu.isd.notebin.exception;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatusCode;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Getter
 public abstract class BaseClientException extends RuntimeException {
-    private final String errorName;
-    private final int apiErrorCode;
-    private final int statusCode;
-    protected String detailsMessageLocaleTag;
-    protected Object[] detailsMessageArgs;
+
+    @Getter
+    @Setter
+    private ClientExceptionName exceptionName;
+    @Getter
+    @Setter
+    @Nullable
+    private HttpStatusCode statusCode;
 
     public BaseClientException(
-            ClientExpInfo clientExpInfo,
-            int statusCode,
-            String detailsMessageLocaleTag,
-            Object... detailsMessageArgs
+            String reason,
+            ClientExceptionName exceptionName,
+            HttpStatusCode HttpStatusCode
     ) {
-        this(clientExpInfo, statusCode);
-        this.detailsMessageLocaleTag = detailsMessageLocaleTag;
-        this.detailsMessageArgs = detailsMessageArgs;
-    }
-
-    public BaseClientException(ClientExpInfo clientExpInfo, int statusCode) {
-        this(clientExpInfo.getErrorName(), clientExpInfo.getApiErrorCode(), statusCode);
-    }
-
-    public BaseClientException(String errorName, int errorCode, int statusCode) {
-        this.errorName = errorName;
-        this.apiErrorCode = errorCode;
-        this.statusCode = statusCode;
+        super(reason);
+        this.exceptionName = exceptionName;
+        this.statusCode = HttpStatusCode;
     }
 
     public BaseClientException(
-            String errorName,
-            int errorCode,
-            int statusCode,
-            String detailsMessageLocaleTag,
-            Object... detailsMessageArgs
+            String reason,
+            ClientExceptionName exceptionName
     ) {
-        this.errorName = errorName;
-        this.apiErrorCode = errorCode;
-        this.statusCode = statusCode;
-        this.detailsMessageLocaleTag = detailsMessageLocaleTag;
-        this.detailsMessageArgs = detailsMessageArgs;
+        super(reason);
+        this.exceptionName = exceptionName;
     }
 
-    public Map<String, Object> detailsBody() {
-        return new HashMap<>();
+    public Map<String, Object> properties() {
+        return new LinkedHashMap<>();
     }
 }
