@@ -12,6 +12,7 @@ import vstu.isd.notebin.exception.GroupValidationException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,21 +24,9 @@ public class GlobalExceptionHandler {
     public ErrorResponseException handleGroupValidationException(GroupValidationException groupExp) {
 
         ProblemDetail problemDetail = buildBaseClientExceptionProblemDetail(groupExp);
-        problemDetail.setProperty("errors", buildJsonErrors(groupExp));
+        problemDetail.setProperty("errors", buildGroupValidationExceptionsErrors(groupExp));
 
         return new ErrorResponseException(groupExp.getStatusCode(), problemDetail, groupExp);
-    }
-
-    private List<Map<String, Object>> buildJsonErrors(GroupValidationException groupException) {
-        return groupException.getExceptions().stream()
-                .map(e -> Map.of(
-                        "api_error_code", e.getExceptionName().getApiErrorCode(),
-                        "api_error_name", e.getExceptionName().name(),
-                        "detail", e.getMessage(),
-                        "properties", e.properties()
-
-                ))
-                .toList();
     }
 
     private ProblemDetail buildBaseClientExceptionProblemDetail(BaseClientException baseClientException) {
@@ -48,16 +37,8 @@ public class GlobalExceptionHandler {
                         HttpStatus.INTERNAL_SERVER_ERROR : baseClientException.getStatusCode()
         );
 
-        problemDetail.setProperty("api_error_code", baseClientException.getExceptionName().getApiErrorCode());
-        problemDetail.setProperty("api_error_name", baseClientException.getExceptionName().name());
-
-        Map<String, Object> properties = baseClientException.properties();
-
-        if (properties == null) {
-            properties = Map.of();
-        }
-
-        problemDetail.setProperty("properties", properties);
+        buildBaseClientExceptionProblemDetailProperties(baseClientException)
+                .forEach(problemDetail::setProperty);
 
         return problemDetail;
     }
@@ -72,6 +53,24 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("date", LocalDateTime.now());
 
         return problemDetail;
+    }
+
+    private List<Map<String, Object>> buildGroupValidationExceptionsErrors(GroupValidationException groupException) {
+        return groupException.getExceptions().stream()
+                .map(e -> {
+                    var simpleExpRepresentation = buildBaseClientExceptionProblemDetailProperties(e);
+                    simpleExpRepresentation.put("detail", e.getMessage());
+                    return simpleExpRepresentation;
+                })
+                .toList();
+    }
+
+    private Map<String, Object> buildBaseClientExceptionProblemDetailProperties(BaseClientException baseClientException) {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("api_error_code", baseClientException.getExceptionName().getApiErrorCode());
+        properties.put("api_error_name", baseClientException.getExceptionName().name());
+        properties.put("properties", baseClientException.properties());
+        return properties;
     }
 
     @ExceptionHandler(BaseClientException.class)
