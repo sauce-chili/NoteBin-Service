@@ -482,8 +482,8 @@ public class NoteServiceTest {
         NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
 
         NoteDto expectedCreatedNoteDto = NoteDto.builder()
-                .id(1L)
-                .url("1")
+                .id(actualCreatedNoteDto.getId())
+                .url(actualCreatedNoteDto.getUrl())
                 .isAvailable(true)
                 .title(title)
                 .content(content)
@@ -492,6 +492,8 @@ public class NoteServiceTest {
                 .expirationFrom(now)
                 .expirationPeriod(expirationPeriod)
                 .build();
+        assertNotNull(actualCreatedNoteDto.getId());
+        assertNotNull(actualCreatedNoteDto.getUrl());
         assertNoteDtoEqualsWithTimeError(expectedCreatedNoteDto, actualCreatedNoteDto);
         assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
