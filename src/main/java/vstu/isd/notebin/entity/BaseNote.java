@@ -53,9 +53,7 @@ public abstract class BaseNote {
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (this == obj) return true;
-        if (getClass() != obj.getClass()) return false;
-
-        BaseNote other = (BaseNote) obj;
+        if (!(obj instanceof BaseNote other)) return false;
 
         if (!getId().equals(other.getId())) return false;
         if (!getTitle().equals(other.getTitle())) return false;
