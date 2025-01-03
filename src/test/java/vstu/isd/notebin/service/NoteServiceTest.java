@@ -494,7 +494,7 @@ public class NoteServiceTest {
                 .build();
         assertNotNull(actualCreatedNoteDto.getId());
         assertNotNull(actualCreatedNoteDto.getUrl());
-        assertNoteDtoEqualsWithTimeError(expectedCreatedNoteDto, actualCreatedNoteDto);
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
         assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
     }
@@ -529,7 +529,7 @@ public class NoteServiceTest {
                 .expirationFrom(now)
                 .expirationPeriod(expirationPeriod)
                 .build();
-        assertNoteDtoEqualsWithTimeError(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
         assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
 
@@ -545,7 +545,7 @@ public class NoteServiceTest {
                 .expirationFrom(now)
                 .expirationPeriod(expirationPeriod)
                 .build();
-        assertNoteDtoEqualsWithTimeError(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
         assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
     }
@@ -589,7 +589,7 @@ public class NoteServiceTest {
                 .expirationFrom(now)
                 .expirationPeriod(expirationPeriod)
                 .build();
-        assertNoteDtoEqualsWithTimeError(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
         assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
 
@@ -605,7 +605,7 @@ public class NoteServiceTest {
                 .expirationFrom(nowSecond)
                 .expirationPeriod(expirationPeriod)
                 .build();
-        assertNoteDtoEqualsWithTimeError(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
         assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
     }
