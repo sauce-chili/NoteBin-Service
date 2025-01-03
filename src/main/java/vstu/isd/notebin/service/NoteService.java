@@ -82,10 +82,8 @@ public class NoteService {
     // Вынести это в паттерн команда
     private NoteCacheable changeNoteAvailabilityIfNeeded(NoteCacheable noteCacheable) {
 
-        UnaryOperator<BaseNote> noteModifier = null;
-
-        switch (noteCacheable.getExpirationType()) {
-            case BURN_AFTER_READ -> noteModifier = note -> {
+        UnaryOperator<BaseNote> noteModifier = switch (noteCacheable.getExpirationType()) {
+            case BURN_AFTER_READ -> note -> {
                 if (note.isAvailable() && note.getExpirationType() == ExpirationType.BURN_AFTER_READ) {
                     note.setAvailable(false);
                     return note;
@@ -94,9 +92,9 @@ public class NoteService {
             };
             case BURN_BY_PERIOD -> {
                 if (!noteCacheable.isExpired()) {
-                    return noteCacheable;
+                    yield null;
                 }
-                noteModifier = note -> {
+                yield note -> {
                     if (note.isAvailable() &&
                             note.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
                             note.isExpired()
@@ -107,9 +105,11 @@ public class NoteService {
                     throw new OptimisticLockException();
                 };
             }
-            case NEVER -> {
-                return noteCacheable;
-            }
+            case NEVER -> null;
+        };
+
+        if (noteModifier == null) {
+            return noteCacheable;
         }
 
         return changeAvailabilityNote(noteCacheable.getUrl(), noteModifier);
