@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.mapper.NoteMapper;
@@ -34,6 +35,7 @@ public class NoteCacheHeater {
     private final static Pageable EMPTY_PAGEABLE = Pageable.unpaged();
     private final int INDEX_OF_FIRST_PAGE = 0;
 
+    @Transactional
     public List<NoteCacheable> getMostUsedNotes(int amount) {
 
         List<Note> mostUsedNotes = new LinkedList<>();
