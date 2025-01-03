@@ -85,9 +85,9 @@ public class NoteCacheHeaterTest {
 
         Duration expirationPeriod = Duration.ofMinutes(15);
 
-        int TOTAL_COUNT_OF_MOTES = PAGE_SIZE * 2;
+        int TOTAL_COUNT_OF_NOTES = PAGE_SIZE * 2;
         List<Note> notesInRep = new LinkedList<>();
-        for (int i = 1; i <= TOTAL_COUNT_OF_MOTES; i++) {
+        for (int i = 1; i <= TOTAL_COUNT_OF_NOTES; i++) {
             LocalDateTime createdAt = LocalDateTime.now().minusMinutes(i);
             Note note = Note.builder()
                     .id((long) i)
@@ -104,7 +104,7 @@ public class NoteCacheHeaterTest {
             noteRepository.save(note);
         }
 
-        List<NoteCacheable> actual = noteCacheHeater.getMostUsedNotes(TOTAL_COUNT_OF_MOTES);
+        List<NoteCacheable> actual = noteCacheHeater.getMostUsedNotes(TOTAL_COUNT_OF_NOTES);
 
         List<NoteCacheable> exp = notesInRep.stream()
                 .map(noteMapper::toCacheable)
