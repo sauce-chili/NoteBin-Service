@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
+import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
@@ -81,31 +82,21 @@ public class NoteService {
     // Вынести это в паттерн команда
     private NoteCacheable changeNoteAvailabilityIfNeeded(NoteCacheable noteCacheable) {
 
-        UnaryOperator<Note> repoModifier = null;
-        UnaryOperator<NoteCacheable> cacheModifier = null;
+        UnaryOperator<BaseNote> noteModifier = null;
 
         switch (noteCacheable.getExpirationType()) {
-            case BURN_AFTER_READ -> {
-                cacheModifier = note -> {
-                    if (note.isAvailable() && note.getExpirationType() == ExpirationType.BURN_AFTER_READ) {
-                        note.setAvailable(false);
-                        return note;
-                    }
-                    throw new OptimisticLockException();
-                };
-                repoModifier = note -> {
-                    if (note.isAvailable() && note.getExpirationType() == ExpirationType.BURN_AFTER_READ) {
-                        note.setAvailable(false);
-                        return note;
-                    }
-                    throw new OptimisticLockException();
-                };
-            }
+            case BURN_AFTER_READ -> noteModifier = note -> {
+                if (note.isAvailable() && note.getExpirationType() == ExpirationType.BURN_AFTER_READ) {
+                    note.setAvailable(false);
+                    return note;
+                }
+                throw new OptimisticLockException();
+            };
             case BURN_BY_PERIOD -> {
                 if (!noteCacheable.isExpired()) {
                     return noteCacheable;
                 }
-                cacheModifier = note -> {
+                noteModifier = note -> {
                     if (note.isAvailable() &&
                             note.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
                             note.isExpired()
@@ -115,39 +106,27 @@ public class NoteService {
                     }
                     throw new OptimisticLockException();
                 };
-                repoModifier = note -> {
-                    if (note.isAvailable() &&
-                            note.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
-                            note.isExpired()
-                    ) {
-                        note.setAvailable(false);
-                        return note;
-                    }
-                    throw new OptimisticLockException();
-                };
-
             }
             case NEVER -> {
                 return noteCacheable;
             }
         }
 
-        return changeAvailabilityNote(noteCacheable.getUrl(), cacheModifier, repoModifier);
+        return changeAvailabilityNote(noteCacheable.getUrl(), noteModifier);
     }
 
     private NoteCacheable changeAvailabilityNote(
             String url,
-            UnaryOperator<NoteCacheable> cacheModifier,
-            UnaryOperator<Note> repositoryModifier
+            UnaryOperator<BaseNote> noteModifier
     ) {
         try {
-            noteCache.update(url, cacheModifier);
+            noteCache.update(url, n -> (NoteCacheable) noteModifier.apply(n));
         } catch (NoSuchElementException e) {
             // state of system changed
             throw new OptimisticLockException();
         }
 
-        Note updated = noteRepository.updateWithLock(url, repositoryModifier);
+        Note updated = noteRepository.updateWithLock(url, n -> (Note) noteModifier.apply(n));
         return noteMapper.toCacheable(updated);
     }
 }
