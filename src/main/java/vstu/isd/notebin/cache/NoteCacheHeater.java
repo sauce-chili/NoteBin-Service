@@ -72,10 +72,6 @@ public class NoteCacheHeater {
 
     private Pageable nextPageable(Page page, Pageable pageable) {
 
-        if(page.hasNext()){
-            return pageable.next();
-        }
-
-        return EMPTY_PAGEABLE;
+        return page.hasNext() ? pageable.next() : EMPTY_PAGEABLE;
     }
 }
