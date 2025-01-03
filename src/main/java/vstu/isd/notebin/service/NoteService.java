@@ -192,10 +192,9 @@ public class NoteService {
     @Transactional
     public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
 
-        Optional<ValidationGroupException> validationError = NoteServiceValidator.validateCreateNoteRequest();
-        if (validationError.isPresent()) {
-            throw validationError.get();
-        }
+        NoteServiceValidator.validateCreateNoteRequest().ifPresent(e-> {
+            throw e;
+        });
 
         String url = urlGenerator.generateUrl();
         Note noteWithoutId = noteMapper.toNote(createNoteRequest, url);
