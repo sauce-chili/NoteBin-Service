@@ -111,4 +111,36 @@ public class NoteCacheHeaterTest {
                 .collect(Collectors.toList());
         assertEquals(exp, actual);
     }
+
+    @Test
+    void heaterReturnLessThanRequired() {
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+
+        int TOTAL_COUNT_OF_NOTES = PAGE_SIZE * 2;
+        List<Note> notesInRep = new LinkedList<>();
+        for (int i = 1; i <= TOTAL_COUNT_OF_NOTES; i++) {
+            LocalDateTime createdAt = LocalDateTime.now().minusMinutes(i);
+            Note note = Note.builder()
+                    .id((long) i)
+                    .title("Title of note " + i)
+                    .content("Content of note " + i)
+                    .createdAt(createdAt)
+                    .url(String.valueOf(i))
+                    .expirationType(ExpirationType.NEVER)
+                    .expirationPeriod(expirationPeriod)
+                    .expirationFrom(createdAt)
+                    .isAvailable(true)
+                    .build();
+            notesInRep.add(note);
+            noteRepository.save(note);
+        }
+
+        List<NoteCacheable> actual = noteCacheHeater.getMostUsedNotes(TOTAL_COUNT_OF_NOTES * 2);
+
+        List<NoteCacheable> exp = notesInRep.stream()
+                .map(noteMapper::toCacheable)
+                .collect(Collectors.toList());
+        assertEquals(exp, actual);
+    }
 }
