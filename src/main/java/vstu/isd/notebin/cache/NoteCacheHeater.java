@@ -32,12 +32,12 @@ public class NoteCacheHeater {
     }
 
     private final static Pageable EMPTY_PAGEABLE = Pageable.unpaged();
+    private final int INDEX_OF_FIRST_PAGE = 0;
 
     public List<NoteCacheable> getMostUsedNotes(int amount) {
 
         List<Note> mostUsedNotes = new LinkedList<>();
 
-        final int INDEX_OF_FIRST_PAGE = 0;
         Pageable pageable = PageRequest.of(INDEX_OF_FIRST_PAGE, PAGE_SIZE);
         int remaining = amount;
         while(remaining > 0 && pageable != EMPTY_PAGEABLE){
