@@ -105,5 +105,13 @@ public class ChangeNoteAvailabilityCommand {
         public static ChangeAvailabilityResult ofChanged(NoteDto note, boolean isAvailableAfterChange) {
             return new ChangeAvailabilityResult(note, true, isAvailableAfterChange);
         }
+
+        public boolean isNotChanged() {
+            return !isChanged;
+        }
+
+        public boolean isNotAvailableAfterChange() {
+            return isChanged && !isAvailableAfterChange;
+        }
     }
 }
