@@ -10,13 +10,13 @@ import vstu.isd.notebin.cache.util.CASUpdate;
 import vstu.isd.notebin.entity.NoteCacheable;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * {@code NoteCache} a component responsible for managing a cache of notes in a Redis cache.
@@ -36,9 +36,9 @@ public class NoteCache {
 
     NoteCache(
             RedisTemplate<String, NoteCacheable> redisTemplate,
-            NoteCacheHeater cacheHeater,
             @Qualifier("cacheNoteCapacity") int capacity,
-            Duration defaultTTL
+            Duration defaultTTL,
+            NoteCacheHeater cacheHeater
     ) {
         this.redisTemplate = redisTemplate;
         this.cacheHeater = cacheHeater;
@@ -48,10 +48,10 @@ public class NoteCache {
 
     @PostConstruct
     public void init() {
-
-        List<NoteCacheable> necessaryCaches = cacheHeater.getMostUsedNotes(CAPACITY);
-
-        necessaryCaches.forEach(note -> redisTemplate.opsForValue().set(note.getUrl(), note));
+        redisTemplate.opsForValue().multiSet(
+                cacheHeater.getMostUsedNotes(CAPACITY).stream()
+                        .collect(Collectors.toMap(NoteCacheable::getUrl, note -> note))
+        );
     }
 
     /**
