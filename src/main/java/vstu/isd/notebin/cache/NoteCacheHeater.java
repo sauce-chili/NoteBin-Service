@@ -59,15 +59,15 @@ public class NoteCacheHeater {
         List<Note> currentNotesOnPage = notePage.getContent();
         List<Note> necessaryNotes = currentNotesOnPage.subList(
                 0,
-                countOfNecessaryNotesOnPage(necessary, currentNotesOnPage)
+                countOfNecessaryNotesOnPage(necessary, currentNotesOnPage.size())
         );
 
         return necessaryNotes;
     }
 
-    private int countOfNecessaryNotesOnPage(int remaining, List<Note> currentNotesOnPage) {
+    private int countOfNecessaryNotesOnPage(int remaining, int notesOnPage) {
 
-        return Math.min(remaining, currentNotesOnPage.size());
+        return Math.min(remaining, notesOnPage);
     }
 
     private Pageable nextPageable(Page page, Pageable pageable) {
