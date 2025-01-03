@@ -10,19 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.entity.BaseNote;
-import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.service.ChangeNoteAvailabilityCommand.ChangeAvailabilityResult;
 
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +30,8 @@ public class NoteService {
     private final NoteCache noteCache;
     private final NoteMapper noteMapper;
 
-    // currently under refactoring
+    private final ChangeNoteAvailabilityCommand changeNoteAvailabilityCommand;
+
     @Transactional
     @Retryable(
             maxAttempts = 5,
@@ -50,17 +48,22 @@ public class NoteService {
             throw new NoteUnavailableException(getNoteRequestDto.getUrl());
         }
 
+        ChangeAvailabilityResult changeResult;
         try {
-            note = changeNoteAvailabilityIfNeeded(note);
+            changeResult = changeNoteAvailabilityCommand.execute(note);
         } catch (NoSuchElementException e) {
             throw new NoteNonExistsException(getNoteRequestDto.getUrl());
         }
 
-        if (note.getExpirationType() == ExpirationType.BURN_BY_PERIOD && note.isExpired()) {
-            throw new NoteUnavailableException(getNoteRequestDto.getUrl());
+        if (! changeResult.isChanged()){
+            return noteMapper.toDto(note);
         }
 
-        return noteMapper.toDto(note);
+        if (!changeResult.isAvailableAfterChange()) {
+            throw new NoteUnavailableException(changeResult.note().getUrl());
+        }
+
+        return changeResult.note();
     }
 
     private Optional<NoteCacheable> getNoteAndCachingIfNecessary(String url) {
@@ -77,56 +80,5 @@ public class NoteService {
         }
 
         return Optional.empty();
-    }
-
-    // Вынести это в паттерн команда
-    private NoteCacheable changeNoteAvailabilityIfNeeded(NoteCacheable noteCacheable) {
-
-        UnaryOperator<BaseNote> noteModifier = switch (noteCacheable.getExpirationType()) {
-            case BURN_AFTER_READ -> note -> {
-                if (note.isAvailable() && note.getExpirationType() == ExpirationType.BURN_AFTER_READ) {
-                    note.setAvailable(false);
-                    return note;
-                }
-                throw new OptimisticLockException();
-            };
-            case BURN_BY_PERIOD -> {
-                if (!noteCacheable.isExpired()) {
-                    yield null;
-                }
-                yield note -> {
-                    if (note.isAvailable() &&
-                            note.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
-                            note.isExpired()
-                    ) {
-                        note.setAvailable(false);
-                        return note;
-                    }
-                    throw new OptimisticLockException();
-                };
-            }
-            case NEVER -> null;
-        };
-
-        if (noteModifier == null) {
-            return noteCacheable;
-        }
-
-        return changeAvailabilityNote(noteCacheable.getUrl(), noteModifier);
-    }
-
-    private NoteCacheable changeAvailabilityNote(
-            String url,
-            UnaryOperator<BaseNote> noteModifier
-    ) {
-        try {
-            noteCache.update(url, n -> (NoteCacheable) noteModifier.apply(n));
-        } catch (NoSuchElementException e) {
-            // state of system changed
-            throw new OptimisticLockException();
-        }
-
-        Note updated = noteRepository.updateWithLock(url, n -> (Note) noteModifier.apply(n));
-        return noteMapper.toCacheable(updated);
     }
 }
