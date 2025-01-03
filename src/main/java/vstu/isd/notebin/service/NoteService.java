@@ -55,11 +55,11 @@ public class NoteService {
             throw new NoteNonExistsException(getNoteRequestDto.getUrl());
         }
 
-        if (! changeResult.isChanged()){
+        if (changeResult.isNotChanged()){
             return noteMapper.toDto(note);
         }
 
-        if (!changeResult.isAvailableAfterChange()) {
+        if (changeResult.isNotAvailableAfterChange()) {
             throw new NoteUnavailableException(changeResult.note().getUrl());
         }
 
