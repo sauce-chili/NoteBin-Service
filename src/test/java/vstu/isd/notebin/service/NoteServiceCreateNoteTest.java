@@ -293,6 +293,32 @@ public class NoteServiceCreateNoteTest {
         assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
     }
 
+    @Test
+    void titleLengthIsLargerThanMaxLength(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+    }
+
     // invalid content --------------------------------------------------------------------------------
     @Test
     void contentIsNull(){
