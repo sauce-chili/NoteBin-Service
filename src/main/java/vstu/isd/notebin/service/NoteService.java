@@ -17,10 +17,10 @@ import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
-import vstu.isd.notebin.exception.ValidationGroupException;
 import vstu.isd.notebin.generator.UrlGenerator;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.validation.noteValidator;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -192,7 +192,7 @@ public class NoteService {
     @Transactional
     public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
 
-        NoteServiceValidator.validateCreateNoteRequest().ifPresent(e-> {
+        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent(e-> {
             throw e;
         });
 
