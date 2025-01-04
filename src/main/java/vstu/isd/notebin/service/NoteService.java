@@ -36,6 +36,7 @@ public class NoteService {
     private final NoteCache noteCache;
     private final NoteMapper noteMapper;
     private final UrlGenerator urlGenerator;
+    private final noteValidator noteValidator;
 
     // currently under refactoring
     @Transactional
@@ -192,7 +193,7 @@ public class NoteService {
     @Transactional
     public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
 
-        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent(e-> {
+        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent( e -> {
             throw e;
         });
 
