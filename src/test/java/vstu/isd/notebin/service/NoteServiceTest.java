@@ -15,8 +15,7 @@ import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
-import vstu.isd.notebin.exception.NoteNonExistsException;
-import vstu.isd.notebin.exception.NoteUnavailableException;
+import vstu.isd.notebin.exception.*;
 import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
@@ -652,5 +651,194 @@ public class NoteServiceTest {
 
         assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+    }
+
+    // invalid title ----------------------------------------------------------------------------------
+    @Test
+    void titleIsNull(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(null)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+    }
+
+    @Test
+    void titleIsInvalid(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = ",Title";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+    }
+
+    // invalid content --------------------------------------------------------------------------------
+    @Test
+    void contentIsNull(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "Title";
+        String content = null;
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+    }
+
+    @Test
+    void contentIsInvalid(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "Title";
+        String content = ",.,., . .,. ";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+    }
+
+    // invalid expiration type ------------------------------------------------------------------------
+    @Test
+    void expirationTypeIsNull(){
+
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        String title = "Title";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(null)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(0).getExceptionName());
+    }
+
+    // invalid expiration period ----------------------------------------------------------------------
+    @Test
+    void expirationPeriodIsNull(){
+
+        Duration expirationPeriod = null;
+        String title = "Title";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+    }
+
+    // invalid all fields ----------------------------------------------------------------------------
+    @Test
+    void allFieldsAreInvalid(){
+
+        Duration expirationPeriod = null;
+        String title = ",Title";
+        String content = "  ., ";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(null)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(4, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(2).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(3).getExceptionName());
     }
 }
