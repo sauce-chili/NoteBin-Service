@@ -3,8 +3,6 @@ package vstu.isd.notebin.validation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.exception.BaseClientException;
-import vstu.isd.notebin.exception.ClientExpInfo;
-import vstu.isd.notebin.exception.ValidationGroupException;
 
 import java.util.Optional;
 

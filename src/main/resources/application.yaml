@@ -31,6 +31,7 @@ spring:
   note:
     default-ttl: 60m
     cache-capacity: 2048
+    page-size: 20
 
   hashes:
     hash-pool-size: 2000 # must be equals `batch_size`

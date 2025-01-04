@@ -7,7 +7,6 @@ import org.mapstruct.ReportingPolicy;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteResponseDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.BaseNote;

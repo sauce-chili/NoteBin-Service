@@ -1,5 +1,6 @@
 package vstu.isd.notebin.cache;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisOperations;
@@ -15,6 +16,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * {@code NoteCache} a component responsible for managing a cache of notes in a Redis cache.
@@ -34,9 +36,9 @@ public class NoteCache {
 
     NoteCache(
             RedisTemplate<String, NoteCacheable> redisTemplate,
-            NoteCacheHeater cacheHeater,
             @Qualifier("cacheNoteCapacity") int capacity,
-            Duration defaultTTL
+            Duration defaultTTL,
+            NoteCacheHeater cacheHeater
     ) {
         this.redisTemplate = redisTemplate;
         this.cacheHeater = cacheHeater;
@@ -44,10 +46,13 @@ public class NoteCache {
         DEFAULT_TTL = defaultTTL;
     }
 
-//    @PostConstruct
-//    public void init() {
-//        // TODO Add cache filling to the required size
-//    }
+    @PostConstruct
+    public void init() {
+        redisTemplate.opsForValue().multiSet(
+                cacheHeater.getMostUsedNotes(CAPACITY).stream()
+                        .collect(Collectors.toMap(NoteCacheable::getUrl, note -> note))
+        );
+    }
 
     /**
      * Retrieves a note from the cache by its URL.
@@ -93,18 +98,18 @@ public class NoteCache {
      * @return {@code true} if the note was successfully saved, {@code false} if it already exists
      */
     public boolean save(NoteCacheable note) {
-        return Boolean.TRUE.equals(
-                DEFAULT_TTL != null ?
-                        redisTemplate.opsForValue().setIfAbsent(
-                                note.getUrl(),
-                                note,
-                                DEFAULT_TTL
-                        )
-                        :
-                        redisTemplate.opsForValue().setIfAbsent(
-                                note.getUrl(),
-                                note
-                        )
+        return Boolean.TRUE.equals(DEFAULT_TTL != null ?
+                redisTemplate.opsForValue().setIfAbsent(
+                        note.getUrl(),
+                        note,
+                        DEFAULT_TTL
+                )
+                :
+                redisTemplate.opsForValue().setIfAbsent(
+                        note.getUrl(),
+                        note
+
+                )
         );
     }
 
