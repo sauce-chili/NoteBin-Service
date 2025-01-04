@@ -1,10 +1,10 @@
-package vstu.isd.notebin.service;
+package vstu.isd.notebin.validation;
 
 import vstu.isd.notebin.exception.ValidationGroupException;
 
 import java.util.Optional;
 
-public class NoteServiceValidator {
+public class noteValidator {
 
     public static Optional<ValidationGroupException> validateCreateNoteRequest(){
 
