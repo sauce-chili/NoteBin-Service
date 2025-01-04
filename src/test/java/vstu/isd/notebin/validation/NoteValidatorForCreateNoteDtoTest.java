@@ -109,6 +109,15 @@ class NoteValidatorForCreateNoteDtoTest {
         assertEquals(0, actual.size());
     }
 
+    @Test
+    void titleContainsAllAllowedCharacters() {
+        String title = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?;:()[]{}\"'";
+
+        List<ValidationException> actual = noteValidator.validateTitle(title);
+
+        assertEquals(0, actual.size());
+    }
+
     // content ---------------------------------------------------------------------------------------------------------
     @Test
     void contentIsNull() {
