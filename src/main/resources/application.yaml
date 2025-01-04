@@ -40,6 +40,13 @@ spring:
     hash-cache-size: 500
     cache-exhaustion-percentage: 20 # in percent !!!
 
+  validationRule:
+    title-regexp: ^[a-zA-Z0-9].*$
+    content-regexp: .*[a-zA-Z0-9].*
+    title-length: 128
+
+
+
 server:
   port: 8080
 
