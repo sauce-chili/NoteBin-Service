@@ -63,7 +63,7 @@ public class noteValidator {
                     ? "Content is not set"
                     : "Content must contain at least one digit or letter.";
 
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
         }
 
         return List.of();
@@ -73,7 +73,7 @@ public class noteValidator {
 
         if (expirationType == null) {
             String exceptionDescription = "Expiration type not set";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_TYPE));
         }
 
         return List.of();
@@ -83,7 +83,7 @@ public class noteValidator {
 
         if (expirationPeriod == null) {
             String exceptionDescription = "Expiration period not set";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
         }
 
         return List.of();
