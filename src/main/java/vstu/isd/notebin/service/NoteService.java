@@ -20,7 +20,7 @@ import vstu.isd.notebin.exception.NoteUnavailableException;
 import vstu.isd.notebin.generator.UrlGenerator;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
-import vstu.isd.notebin.validation.noteValidator;
+import vstu.isd.notebin.validation.NoteValidator;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -36,7 +36,7 @@ public class NoteService {
     private final NoteCache noteCache;
     private final NoteMapper noteMapper;
     private final UrlGenerator urlGenerator;
-    private final noteValidator noteValidator;
+    private final NoteValidator noteValidator;
 
     // currently under refactoring
     @Transactional

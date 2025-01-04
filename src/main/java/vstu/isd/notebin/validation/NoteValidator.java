@@ -15,13 +15,13 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Component
-public class noteValidator {
+public class NoteValidator {
 
     private final String titleRegexp;
     private final String contentRegexp;
     private final int titleLength;
 
-    public noteValidator(
+    public NoteValidator(
             @Qualifier("titleRegexp") String titleRegexp,
             @Qualifier("contentRegexp") String contentRegexp,
             @Qualifier("titleLength") int titleLength
@@ -43,22 +43,37 @@ public class noteValidator {
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
     }
 
-    private List<ValidationException> validateTitle(String title){
+    protected List<ValidationException> validateTitle(String title){
 
-        if (title == null || !Pattern.matches(titleRegexp, title)) {
-            String exceptionDescription = (title == null)
-                    ? "Title is not set"
-                    : "Title must contain only white delimiters. At the same time, the first symbol must be a digit or letter.";
+        List<ValidationException> exceptions = new LinkedList<>();
 
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+        if (title == null) {
+            String exceptionDescription = "Title is not set";
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+
+            return exceptions;
         }
 
-        return List.of();
+        if (!Pattern.matches(titleRegexp, title)) {
+            String exceptionDescription = "Title must contain only white delimiters. " +
+                    "At the same time, the first symbol must be a digit or letter.";
+
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+        }
+
+        if (title.length() > titleLength) {
+            String exceptionDescription = "Title length is too long. " +
+                    "Max length is " + titleLength + " symbols.";
+
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+        }
+
+        return exceptions;
     }
 
-    private List<ValidationException> validateContent(String content){
+    protected List<ValidationException> validateContent(String content){
 
-        if (content == null || !Pattern.matches(titleRegexp, content)) {
+        if (content == null || !Pattern.matches(contentRegexp, content)) {
             String exceptionDescription = (content == null)
                     ? "Content is not set"
                     : "Content must contain at least one digit or letter.";
@@ -69,7 +84,7 @@ public class noteValidator {
         return List.of();
     }
 
-    private List<ValidationException> validateExpirationType(ExpirationType expirationType){
+    protected List<ValidationException> validateExpirationType(ExpirationType expirationType){
 
         if (expirationType == null) {
             String exceptionDescription = "Expiration type not set";
@@ -79,7 +94,7 @@ public class noteValidator {
         return List.of();
     }
 
-    private List<ValidationException> validateExpirationPeriod(Duration expirationPeriod){
+    protected List<ValidationException> validateExpirationPeriod(Duration expirationPeriod){
 
         if (expirationPeriod == null) {
             String exceptionDescription = "Expiration period not set";
