@@ -19,6 +19,14 @@ public enum ClientExpInfo {
     INVALID_CONTENT(
             801,
             "INVALID_CONTENT"
+    ),
+    INVALID_EXPIRATION_TYPE(
+            802,
+            "INVALID_EXPIRATION_TYPE"
+    ),
+    INVALID_EXPIRATION_PERIOD(
+            803,
+            "INVALID_EXPIRATION_PERIOD"
     );
 
     private final int apiErrorCode;
