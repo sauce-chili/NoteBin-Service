@@ -54,4 +54,17 @@ public class TestAsserts {
         Optional<NoteCacheable> noteInCache = noteCache.get(noteDto.getUrl());
         assertTrue(noteInCache.isPresent());
     }
+
+    public static void assertOneOfTwoNoteDto(NoteDto actual, NoteDto expected1, NoteDto expected2) {
+        boolean firstPassed = false;
+        try {
+            assertNoteDtoEquals(expected1, actual);
+            firstPassed = true;
+        } catch (AssertionError ignored) {
+        }
+
+        if (!firstPassed) {
+            assertNoteDtoEquals(expected2, actual);
+        }
+    }
 }
