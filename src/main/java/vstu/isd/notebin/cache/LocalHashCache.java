@@ -7,7 +7,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vstu.isd.notebin.services.HashService;
+import vstu.isd.notebin.service.HashService;
 
 import java.util.NoSuchElementException;
 import java.util.Queue;
