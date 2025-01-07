@@ -3,6 +3,7 @@ package vstu.isd.notebin.validation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
+import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.ClientExceptionName;
 import vstu.isd.notebin.exception.GroupValidationException;
@@ -147,6 +148,47 @@ public class NoteValidator {
 
         if (expirationType == ExpirationType.BURN_BY_PERIOD && expirationPeriod == null) {
             String exceptionDescription = "Expiration period must be set when expiration type is BURN BY PERIOD";
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
+        }
+
+        return List.of();
+    }
+
+    public Optional<GroupValidationException> validateUpdateNoteRequestDto(UpdateNoteRequestDto updateNoteRequestDto){
+
+        List<ValidationException> exceptions = new LinkedList<>();
+
+        exceptions.addAll(validateUpdateNoteRequestDtoForAllFieldsNotNull(updateNoteRequestDto));
+        boolean allFieldsAreNull = !exceptions.isEmpty();
+        if(allFieldsAreNull){
+            return Optional.of(new GroupValidationException(exceptions));
+        }
+
+        if (updateNoteRequestDto.getTitle() != null){
+            exceptions.addAll(validateTitleByContent(updateNoteRequestDto.getTitle()));
+        }
+
+        if (updateNoteRequestDto.getContent() != null){
+            exceptions.addAll(validateContentByContent(updateNoteRequestDto.getContent()));
+        }
+
+        if (updateNoteRequestDto.getExpirationType() != null){
+            exceptions.addAll(validateExpirationPeriod(updateNoteRequestDto.getExpirationPeriod(),
+                    updateNoteRequestDto.getExpirationType()));
+        }
+
+        return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
+    }
+
+    private List<ValidationException> validateUpdateNoteRequestDtoForAllFieldsNotNull(UpdateNoteRequestDto updateNoteRequestDto){
+
+        if (updateNoteRequestDto.getTitle()            == null &&
+                updateNoteRequestDto.getContent()          == null &&
+                updateNoteRequestDto.getExpirationType()   == null &&
+                updateNoteRequestDto.getExpirationPeriod() == null &&
+                updateNoteRequestDto.getIsAvailable()      == null) {
+
+            String exceptionDescription = "All fields in update request are not set.";
             return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
         }
 
