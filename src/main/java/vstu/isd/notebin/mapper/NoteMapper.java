@@ -42,19 +42,27 @@ public interface NoteMapper {
         if (updateRequest.getTitle() != null) {
             persisted.setTitle(updateRequest.getTitle());
         }
+
         if (updateRequest.getContent() != null) {
             persisted.setContent(updateRequest.getContent());
         }
+
         if (updateRequest.getExpirationType() != null) {
             persisted.setExpirationType(updateRequest.getExpirationType());
             persisted.setExpirationPeriod(updateRequest.getExpirationPeriod());
             persisted.setExpirationFrom(
                     updateRequest.getExpirationType() == ExpirationType.BURN_BY_PERIOD ? expirationFrom : null
             );
+        } else if (persisted.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
+                   persisted.getExpirationPeriod() != null) {
+
+            persisted.setExpirationPeriod(updateRequest.getExpirationPeriod());
         }
+
         if (updateRequest.getIsAvailable() != null) {
             persisted.setAvailable(updateRequest.getIsAvailable());
         }
+
         return persisted;
     }
 
