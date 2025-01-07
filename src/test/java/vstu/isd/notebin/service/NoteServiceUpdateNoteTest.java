@@ -813,8 +813,8 @@ public class NoteServiceUpdateNoteTest {
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
-                .expirationType(ExpirationType.BURN_BY_PERIOD)
-                .expirationPeriod(expirationPeriod)
+                .expirationType(null)
+                .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
 
