@@ -38,7 +38,7 @@ public interface NoteMapper {
     @Mapping(source = "available", target = "isAvailable")
     NoteCacheable toCacheable(NoteDto noteDto);
 
-    default <T extends BaseNote> T fromUpdateRequest(T persisted, UpdateNoteRequestDto updateRequest) {
+    default <T extends BaseNote> T fromUpdateRequest(T persisted, UpdateNoteRequestDto updateRequest, LocalDateTime expirationFrom) {
         if (updateRequest.getTitle() != null) {
             persisted.setTitle(updateRequest.getTitle());
         }
@@ -46,11 +46,11 @@ public interface NoteMapper {
             persisted.setContent(updateRequest.getContent());
         }
         if (updateRequest.getExpirationType() != null) {
-            if (updateRequest.getExpirationType() == ExpirationType.BURN_BY_PERIOD) {
-                persisted.setExpirationPeriod(updateRequest.getExpirationPeriod());
-            }
             persisted.setExpirationType(updateRequest.getExpirationType());
-            persisted.setExpirationFrom(LocalDateTime.now());
+            persisted.setExpirationPeriod(updateRequest.getExpirationPeriod());
+            persisted.setExpirationFrom(
+                    updateRequest.getExpirationType() == ExpirationType.BURN_BY_PERIOD ? expirationFrom : null
+            );
         }
         if (updateRequest.getIsAvailable() != null) {
             persisted.setAvailable(updateRequest.getIsAvailable());
