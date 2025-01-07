@@ -28,7 +28,7 @@ import static vstu.isd.notebin.testutils.TestAsserts.*;
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class NoteServiceCreateNoteTest {
 
     @SpyBean
