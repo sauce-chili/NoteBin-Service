@@ -68,7 +68,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
         persistedRepoNote = noteRepository.save(persistedRepoNote);
 
@@ -80,7 +80,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
         noteCache.save(persistedCacheNote);
 
@@ -94,7 +94,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
 
         assertNoteDtoEquals(expectedNote, actualNote);
@@ -128,7 +128,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
         persistedRepoNote = noteRepository.save(persistedRepoNote);
 
@@ -140,7 +140,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
         noteCache.save(persistedCacheNote);
 
@@ -182,7 +182,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.BURN_AFTER_READ)
                 .createdAt(now)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .build();
 
         assertNoteDtoEquals(expectedNote, actualNote);
@@ -340,7 +340,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.NEVER)
                 .createdAt(createAt)
-                .expirationFrom(createAt)
+                .expirationFrom(null)
                 .build();
         persistedRepoNote = noteRepository.save(persistedRepoNote);
 
@@ -381,7 +381,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.NEVER)
                 .createdAt(createAt)
-                .expirationFrom(createAt)
+                .expirationFrom(null)
                 .build();
 
         actualNotes.forEach(n -> assertEquals(expectedNote, n));
@@ -420,7 +420,7 @@ public class NoteServiceTest {
                 .content("content")
                 .expirationType(ExpirationType.NEVER)
                 .createdAt(createAt)
-                .expirationFrom(createAt)
+                .expirationFrom(null)
                 .build();
         persistedRepoNote = noteRepository.save(persistedRepoNote);
 
