@@ -178,10 +178,7 @@ public class NoteService {
 
         try {
             noteCache.update(url, cached -> {
-                cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest);
-                if (updateNoteRequest.getExpirationType() != null) {
-                    cached.setExpirationFrom(expirationFrom);
-                }
+                cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
                 return cached;
             });
         } catch (NoSuchElementException ignored) {
@@ -192,10 +189,7 @@ public class NoteService {
 
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
-                persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest);
-                if (updateNoteRequest.getExpirationType() != null) {
-                    persisted.setExpirationFrom(expirationFrom);
-                }
+                persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest, expirationFrom);
                 return persisted;
             });
 
