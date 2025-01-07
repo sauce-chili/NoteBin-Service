@@ -182,14 +182,14 @@ public class NoteValidator {
 
     private List<ValidationException> validateUpdateNoteRequestDtoForAllFieldsNotNull(UpdateNoteRequestDto updateNoteRequestDto){
 
-        if (updateNoteRequestDto.getTitle()            == null &&
+        if     (updateNoteRequestDto.getTitle()            == null &&
                 updateNoteRequestDto.getContent()          == null &&
                 updateNoteRequestDto.getExpirationType()   == null &&
                 updateNoteRequestDto.getExpirationPeriod() == null &&
                 updateNoteRequestDto.getIsAvailable()      == null) {
 
             String exceptionDescription = "All fields in update request are not set.";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO));
         }
 
         return List.of();
