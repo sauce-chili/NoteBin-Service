@@ -809,12 +809,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInRepos();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
-        Duration expirationPeriod = null;
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
