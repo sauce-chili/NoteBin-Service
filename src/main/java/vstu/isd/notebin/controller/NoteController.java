@@ -1,7 +1,6 @@
 package vstu.isd.notebin.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
