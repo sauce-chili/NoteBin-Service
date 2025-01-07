@@ -56,14 +56,13 @@ public class NoteServiceCreateNoteTest {
     public void createNote() {
 
         LocalDateTime now = LocalDateTime.now();
-        Duration expirationPeriod = Duration.ofMinutes(15);
         String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
                 .expirationType(ExpirationType.NEVER)
-                .expirationPeriod(expirationPeriod)
+                .expirationPeriod(null)
                 .build();
 
         NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
@@ -76,8 +75,8 @@ public class NoteServiceCreateNoteTest {
                 .content(content)
                 .createdAt(now)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(now)
-                .expirationPeriod(expirationPeriod)
+                .expirationFrom(null)
+                .expirationPeriod(null)
                 .build();
         assertNotNull(actualCreatedNoteDto.getId());
         assertNotNull(actualCreatedNoteDto.getUrl());
@@ -90,7 +89,7 @@ public class NoteServiceCreateNoteTest {
     public void createTwoSameNotes() {
 
         LocalDateTime now = LocalDateTime.now();
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -113,7 +112,7 @@ public class NoteServiceCreateNoteTest {
                 .content(content)
                 .createdAt(now)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
@@ -129,7 +128,7 @@ public class NoteServiceCreateNoteTest {
                 .content(content)
                 .createdAt(now)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
@@ -141,7 +140,7 @@ public class NoteServiceCreateNoteTest {
     public void createTwoDifferentNotes() {
 
         LocalDateTime now = LocalDateTime.now();
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDtoFirst = CreateNoteRequestDto.builder()
@@ -153,7 +152,7 @@ public class NoteServiceCreateNoteTest {
         NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDtoFirst);
 
         LocalDateTime nowSecond = LocalDateTime.now();
-        Duration expirationPeriodSecond = Duration.ofMinutes(15);
+        Duration expirationPeriodSecond = null;
         String titleSecond = "New note";
         String contentSecond = "My content";
         CreateNoteRequestDto createNoteRequestDtoSecond = CreateNoteRequestDto.builder()
@@ -173,7 +172,7 @@ public class NoteServiceCreateNoteTest {
                 .content(content)
                 .createdAt(now)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(now)
+                .expirationFrom(null)
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
@@ -189,8 +188,8 @@ public class NoteServiceCreateNoteTest {
                 .content(contentSecond)
                 .createdAt(nowSecond)
                 .expirationType(ExpirationType.NEVER)
-                .expirationFrom(nowSecond)
-                .expirationPeriod(expirationPeriod)
+                .expirationFrom(null)
+                .expirationPeriod(expirationPeriodSecond)
                 .build();
         assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
         assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
@@ -200,7 +199,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     public void createTwoConcurrentNotes() {
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDtoFirst = CreateNoteRequestDto.builder()
@@ -210,7 +209,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
-        Duration expirationPeriodSecond = Duration.ofMinutes(15);
+        Duration expirationPeriodSecond = null;
         String titleSecond = "New note 2";
         String contentSecond = "My content 2";
         CreateNoteRequestDto createNoteRequestDtoSecond = CreateNoteRequestDto.builder()
@@ -245,7 +244,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void titleIsNull(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(null)
@@ -270,7 +269,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void titleIsInvalid(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = ",Title";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -296,7 +295,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void titleLengthIsLargerThanMaxLength(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -323,7 +322,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void contentIsNull(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "Title";
         String content = null;
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -349,7 +348,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void contentIsInvalid(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "Title";
         String content = ",.,., . .,. ";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -376,7 +375,7 @@ public class NoteServiceCreateNoteTest {
     @Test
     void expirationTypeIsNull(){
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
         String title = "Title";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
@@ -400,16 +399,136 @@ public class NoteServiceCreateNoteTest {
     }
 
     // invalid expiration period ----------------------------------------------------------------------
-    @Test
-    void expirationPeriodIsNull(){
 
-        Duration expirationPeriod = null;
-        String title = "Title";
+    @Test
+    void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead(){
+
+        LocalDateTime now = LocalDateTime.now();
+        String title = "New note";
         String content = "My content";
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
+                .expirationType(ExpirationType.BURN_AFTER_READ)
+                .expirationPeriod(null)
+                .build();
+
+        NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
+        NoteDto expectedCreatedNoteDto = NoteDto.builder()
+                .id(actualCreatedNoteDto.getId())
+                .url(actualCreatedNoteDto.getUrl())
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(now)
+                .expirationType(ExpirationType.BURN_AFTER_READ)
+                .expirationFrom(null)
+                .expirationPeriod(null)
+                .build();
+        assertNotNull(actualCreatedNoteDto.getId());
+        assertNotNull(actualCreatedNoteDto.getUrl());
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
+        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+    }
+
+    @Test
+    void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod(){
+
+        LocalDateTime now = LocalDateTime.now();
+        String title = "New note";
+        String content = "My content";
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
+        NoteDto expectedCreatedNoteDto = NoteDto.builder()
+                .id(actualCreatedNoteDto.getId())
+                .url(actualCreatedNoteDto.getUrl())
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(now)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationFrom(now)
+                .expirationPeriod(expirationPeriod)
+                .build();
+        assertNotNull(actualCreatedNoteDto.getId());
+        assertNotNull(actualCreatedNoteDto.getUrl());
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
+        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
+        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+    }
+
+    @Test
+    void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod(){
+
+        String title = "New note";
+        String content = "My content";
+        Duration expirationPeriod = null;
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+    }
+
+    @Test
+    void expirationPeriodSetWhenExpirationTypeIsNever(){
+
+        String title = "New note";
+        String content = "My content";
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
                 .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.createNote(createNoteRequestDto);
+                }
+        );
+
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+    }
+
+    @Test
+    void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead(){
+
+        String title = "New note";
+        String content = "My content";
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.BURN_AFTER_READ)
                 .expirationPeriod(expirationPeriod)
                 .build();
 
@@ -449,10 +568,9 @@ public class NoteServiceCreateNoteTest {
 
         List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(4, exceptions.size());
+        assertEquals(3, exceptions.size());
         assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
         assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(2).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(3).getExceptionName());
     }
 }
