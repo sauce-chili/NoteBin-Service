@@ -214,12 +214,72 @@ class NoteValidatorForCreateNoteDtoTest {
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, actual.get(0).getExceptionName());
     }
 
-    // expiration type -------------------------------------------------------------------------------------------------
+    // expiration period -----------------------------------------------------------------------------------------------
+
     @Test
-    void expirationPeriodsIsNull() {
+    void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead(){
+
+        ExpirationType expirationType = ExpirationType.BURN_AFTER_READ;
         Duration expirationPeriod = null;
 
-        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod);
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
+
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    void expirationPeriodNotSetWhileExpirationTypeIsNever(){
+
+        ExpirationType expirationType = ExpirationType.NEVER;
+        Duration expirationPeriod = null;
+
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
+
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod(){
+
+        ExpirationType expirationType = ExpirationType.BURN_BY_PERIOD;
+        Duration expirationPeriod = Duration.ofMinutes(15);
+
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
+
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod(){
+
+        ExpirationType expirationType = ExpirationType.BURN_BY_PERIOD;
+        Duration expirationPeriod = null;
+
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
+
+        assertEquals(1, actual.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, actual.get(0).getExceptionName());
+    }
+
+    @Test
+    void expirationPeriodSetWhenExpirationTypeIsNever(){
+
+        ExpirationType expirationType = ExpirationType.NEVER;
+        Duration expirationPeriod = Duration.ofMinutes(15);
+
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
+
+        assertEquals(1, actual.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, actual.get(0).getExceptionName());
+    }
+
+    @Test
+    void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead(){
+
+        ExpirationType expirationType = ExpirationType.BURN_AFTER_READ;
+        Duration expirationPeriod = Duration.ofMinutes(15);
+
+        List<ValidationException> actual = noteValidator.validateExpirationPeriod(expirationPeriod, expirationType);
 
         assertEquals(1, actual.size());
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, actual.get(0).getExceptionName());
@@ -240,17 +300,16 @@ class NoteValidatorForCreateNoteDtoTest {
                 .build();
 
         Optional<GroupValidationException> optionalGroupOfExceptions =
-                    noteValidator.validateCreateNoteRequestDto(createNoteRequestDto);
+                noteValidator.validateCreateNoteRequestDto(createNoteRequestDto);
 
         assertTrue(optionalGroupOfExceptions.isPresent());
         GroupValidationException groupValidationException = optionalGroupOfExceptions.get();
         List<? extends ValidationException> exceptions = groupValidationException.getExceptions();
 
-        assertEquals(5, exceptions.size());
+        assertEquals(4, exceptions.size());
         assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
         assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(1).getExceptionName());
         assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(2).getExceptionName());
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(3).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(4).getExceptionName());
     }
 }
