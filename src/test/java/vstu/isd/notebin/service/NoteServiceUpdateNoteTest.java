@@ -800,7 +800,168 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+
+
+
+
+
+    @Test
+    void invalidTitle(){
+
+        addNoteInRepos();
+
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(".Hello")
+                .content(null)
+                .expirationType(null)
+                .expirationPeriod(null)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
+    void invalidContent(){
+
+        addNoteInRepos();
+
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(null)
+                .content(". ?/&^&*^(^")
+                .expirationType(null)
+                .expirationPeriod(null)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
+    void invalidExpirationPeriod(){
+
+        addNoteInRepos();
+
+        Duration expirationPeriod = null;
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(null)
+                .content(null)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationPeriod(expirationPeriod)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+
+        assertEquals(1, exceptions.size());
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
+    void allFieldsInvalid(){
+
+        addNoteInRepos();
+
+        Duration expirationPeriod = null;
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(".Hello")
+                .content(". ?/&^&*^(^")
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationPeriod(expirationPeriod)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+
+
+        assertEquals(3, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(2).getExceptionName());
 
         Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
