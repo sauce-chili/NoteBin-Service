@@ -61,10 +61,25 @@ public interface NoteMapper {
     @Mapping(source = "available", target = "isAvailable")
     GetNoteResponseDto toGetNoteResponseDto(NoteDto note);
 
-    @Mapping(target = "id", expression = "java(null)")
-    @Mapping(target = "url", expression = "java(url)")
-    @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "isAvailable", constant = "true")
-    @Mapping(target = "expirationFrom", expression = "java(LocalDateTime.now())")
-    Note toNote(CreateNoteRequestDto createNoteRequestDto, String url);
+    default Note toNote(CreateNoteRequestDto createNoteRequestDto, String url) {
+        LocalDateTime now = LocalDateTime.now();
+
+        Note note = Note.builder()
+                .id(null)
+                .title(createNoteRequestDto.getTitle())
+                .content(createNoteRequestDto.getContent())
+                .createdAt(now)
+                .url(url)
+                .expirationType(createNoteRequestDto.getExpirationType())
+                .expirationPeriod(createNoteRequestDto.getExpirationPeriod())
+                .expirationFrom(null)
+                .isAvailable(true)
+                .build();
+
+        if (note.getExpirationType() == ExpirationType.BURN_BY_PERIOD){
+            note.setExpirationFrom(now);
+        }
+
+        return note;
+    }
 }
