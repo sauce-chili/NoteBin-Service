@@ -848,11 +848,6 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(1, noteCache.size());
     }
 
-
-
-
-
-
     @Test
     void invalidTitle(){
 
