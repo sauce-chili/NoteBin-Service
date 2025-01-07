@@ -12,6 +12,7 @@ import vstu.isd.notebin.entity.NoteCacheable;
 import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -172,5 +173,16 @@ public class NoteCache {
      */
     public NoteCacheable deleteNote(String url) {
         return redisTemplate.opsForValue().getAndDelete(url);
+    }
+
+    /**
+     * Counts values in cache.
+     *
+     * @return count of values in cache
+     */
+    public int size() {
+
+        Set<String> keys = redisTemplate.keys("*");
+        return keys.size();
     }
 }
