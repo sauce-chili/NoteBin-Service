@@ -805,7 +805,7 @@ public class NoteServiceUpdateNoteTest {
 
     // validation ------------------------------------------------------------------------------------------------------
     @Test
-    void expPeriodIsNullWhileExpTypeChangedToBurnByPeriod(){
+    void allFieldsAreNull(){
 
         addNoteInRepos();
 
