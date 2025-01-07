@@ -38,7 +38,8 @@ public class NoteValidator {
         exceptions.addAll(validateTitle(createNoteRequestDto.getTitle()));
         exceptions.addAll(validateContent(createNoteRequestDto.getContent()));
         exceptions.addAll(validateExpirationType(createNoteRequestDto.getExpirationType()));
-        exceptions.addAll(validateExpirationPeriod(createNoteRequestDto.getExpirationPeriod()));
+        exceptions.addAll(validateExpirationPeriod(createNoteRequestDto.getExpirationPeriod(),
+                createNoteRequestDto.getExpirationType()));
 
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
     }
@@ -47,12 +48,30 @@ public class NoteValidator {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
+        exceptions.addAll(validateTitleForNotNull(title));
+
+        if(exceptions.isEmpty()){
+            exceptions.addAll(validateTitleByContent(title));
+        }
+
+        return exceptions;
+    }
+
+    private List<ValidationException> validateTitleForNotNull(String title){
+
+        List<ValidationException> exceptions = new LinkedList<>();
+
         if (title == null) {
             String exceptionDescription = "Title is not set";
             exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
-
-            return exceptions;
         }
+
+        return exceptions;
+    }
+
+    private List<ValidationException> validateTitleByContent(String title){
+
+        List<ValidationException> exceptions = new LinkedList<>();
 
         if (!Pattern.matches(titleRegexp, title)) {
             String exceptionDescription = "Title must contain only white delimiters. " +
@@ -73,11 +92,31 @@ public class NoteValidator {
 
     protected List<ValidationException> validateContent(String content){
 
-        if (content == null || !Pattern.matches(contentRegexp, content)) {
-            String exceptionDescription = (content == null)
-                    ? "Content is not set"
-                    : "Content must contain at least one digit or letter.";
+        List<ValidationException> exceptions = new LinkedList<>();
 
+        exceptions.addAll(validateContentForNotNull(content));
+
+        if(exceptions.isEmpty()){
+            exceptions.addAll(validateContentByContent(content));
+        }
+
+        return exceptions;
+    }
+
+    private List<ValidationException> validateContentForNotNull(String content){
+
+        if (content == null) {
+            String exceptionDescription = "Content is not set";
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
+        }
+
+        return List.of();
+    }
+
+    private List<ValidationException> validateContentByContent(String content){
+
+        if (!Pattern.matches(contentRegexp, content)) {
+            String exceptionDescription = "Content must contain at least one digit or letter.";
             return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
         }
 
@@ -94,10 +133,20 @@ public class NoteValidator {
         return List.of();
     }
 
-    protected List<ValidationException> validateExpirationPeriod(Duration expirationPeriod){
+    protected List<ValidationException> validateExpirationPeriod(Duration expirationPeriod, ExpirationType expirationType){
 
-        if (expirationPeriod == null) {
-            String exceptionDescription = "Expiration period not set";
+        if (expirationType == ExpirationType.NEVER && expirationPeriod != null) {
+            String exceptionDescription = "Expiration period must be not set when expiration type is NEVER";
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
+        }
+
+        if (expirationType == ExpirationType.BURN_AFTER_READ && expirationPeriod != null) {
+            String exceptionDescription = "Expiration period must be not set when expiration type is BURN AFTER READ";
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
+        }
+
+        if (expirationType == ExpirationType.BURN_BY_PERIOD && expirationPeriod == null) {
+            String exceptionDescription = "Expiration period must be set when expiration type is BURN BY PERIOD";
             return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD));
         }
 
