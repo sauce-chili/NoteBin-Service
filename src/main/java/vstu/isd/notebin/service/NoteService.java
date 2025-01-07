@@ -164,6 +164,18 @@ public class NoteService {
 
         LocalDateTime expirationFrom = LocalDateTime.now();
 
+        noteValidator.validateUpdateNoteRequestDto(updateNoteRequest).ifPresent( e -> {
+            throw e;
+        });
+
+        updateNoteInCache(url, updateNoteRequest, expirationFrom);
+        NoteDto updatedNote = updateNoteInRepository(url, updateNoteRequest, expirationFrom);
+
+        return updatedNote;
+    }
+
+    private void updateNoteInCache(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
+
         try {
             noteCache.update(url, cached -> {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest);
@@ -174,6 +186,9 @@ public class NoteService {
             });
         } catch (NoSuchElementException ignored) {
         }
+    }
+
+    private NoteDto updateNoteInRepository(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
 
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
