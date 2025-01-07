@@ -804,6 +804,7 @@ public class NoteServiceUpdateNoteTest {
     }
 
     // validation ------------------------------------------------------------------------------------------------------
+remove
     @Test
     void allFieldsAreNull(){
 
