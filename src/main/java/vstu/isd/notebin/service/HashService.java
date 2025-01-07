@@ -1,4 +1,4 @@
-package vstu.isd.notebin.services;
+package vstu.isd.notebin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
