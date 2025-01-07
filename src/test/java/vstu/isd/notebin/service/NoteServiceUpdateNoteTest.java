@@ -158,6 +158,44 @@ public class NoteServiceUpdateNoteTest {
     }
 
     @Test
+    void updateExpirationPeriod(){
+
+        addNoteInReposWithExpTypeBurnByPeriod();
+
+        try {
+            sleep(2000);
+        } catch (InterruptedException ignored) {
+        }
+
+        Duration expirationPeriod = Duration.ofMinutes(37);
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(null)
+                .content(null)
+                .expirationType(null)
+                .expirationPeriod(expirationPeriod)
+                .isAvailable(null)
+                .build();
+        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
+                .url(url)
+                .build();
+
+        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
+
+
+        expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
+        NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+
+
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
+        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
+        assertEquals(1, noteRepository.count());
+        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
     void changeExpTypeFromNeverToBurnAfterRead(){
 
         addNoteInRepos();
