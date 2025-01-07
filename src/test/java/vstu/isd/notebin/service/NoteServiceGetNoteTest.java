@@ -33,7 +33,7 @@ import static vstu.isd.notebin.testutils.TestAsserts.*;
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
-public class NoteServiceTest {
+public class NoteServiceGetNoteTest {
 
     @SpyBean
     private NoteRepository noteRepository;
