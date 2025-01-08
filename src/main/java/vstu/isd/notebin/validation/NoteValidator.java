@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
+import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.ClientExceptionName;
 import vstu.isd.notebin.exception.GroupValidationException;
@@ -154,13 +155,42 @@ public class NoteValidator {
         return List.of();
     }
 
+    public <T extends BaseNote> Optional<ValidationException> validatePersistedAndUpdateRequest(T persisted, UpdateNoteRequestDto updateRequest) {
+
+        if (updateRequest.getExpirationType() != null){
+
+            return Optional.empty();
+        }
+
+        if (updateRequest.getExpirationPeriod() == null){
+            if (persisted.getExpirationType() == ExpirationType.BURN_BY_PERIOD) {
+                String description = "Note has expiration type " + ExpirationType.BURN_BY_PERIOD + ". Expiration type doesn't update. " +
+                        "That's mean expirationPeriod must be set.";
+                return Optional.of(
+                        new ValidationException( description, ClientExceptionName.INVALID_EXPIRATION_PERIOD)
+                );
+            }
+        } else {
+            if (persisted.getExpirationType() != ExpirationType.BURN_BY_PERIOD) {
+                String description = "expirationPeriod updates, expirationType doesn't update. " +
+                        "But expirationType of note is " + persisted.getExpirationType() +
+                        ". Hence, expirationPeriod must me not set.";
+                return Optional.of(
+                        new ValidationException( description, ClientExceptionName.INVALID_EXPIRATION_PERIOD)
+                );
+            }
+        }
+
+        return Optional.empty();
+    }
+
     public Optional<GroupValidationException> validateUpdateNoteRequestDto(UpdateNoteRequestDto updateNoteRequestDto){
 
         List<ValidationException> exceptions = new LinkedList<>();
 
         exceptions.addAll(validateUpdateNoteRequestDtoForAllFieldsNotNull(updateNoteRequestDto));
         boolean allFieldsAreNull = !exceptions.isEmpty();
-        if(allFieldsAreNull){
+        if (allFieldsAreNull){
             return Optional.of(new GroupValidationException(exceptions));
         }
 
