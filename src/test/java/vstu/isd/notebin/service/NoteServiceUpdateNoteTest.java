@@ -804,7 +804,7 @@ public class NoteServiceUpdateNoteTest {
     }
 
     // validation ------------------------------------------------------------------------------------------------------
-remove
+
     @Test
     void allFieldsAreNull(){
 
@@ -949,6 +949,80 @@ remove
 
         assertEquals(1, exceptions.size());
         assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
+    void expirationPeriodNotNullWhenExpTypeInRepIsNever(){
+
+        addNoteInRepos();
+
+        Duration expirationPeriod = Duration.ofMinutes(37);
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(null)
+                .content(null)
+                .expirationType(null)
+                .expirationPeriod(expirationPeriod)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+
+
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exception.getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
+        assertEquals(1, noteRepository.count());
+        assertEquals(1, noteCache.size());
+    }
+
+    @Test
+    void expirationPeriodNotNullWhenExpTypeInRepIsBurnAfterRead(){
+
+        addNoteInReposWithExpTypeBurnAfterRead();
+
+        Duration expirationPeriod = Duration.ofMinutes(37);
+        String url = "1";
+        UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                .title(null)
+                .content(null)
+                .expirationType(null)
+                .expirationPeriod(expirationPeriod)
+                .isAvailable(null)
+                .build();
+
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
+
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+
+
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exception.getExceptionName());
 
         Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
