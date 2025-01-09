@@ -775,8 +775,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
     }
 
-    // validation ------------------------------------------------------------------------------------------------------
-
     @Test
     void allFieldsAreNull(){
 
