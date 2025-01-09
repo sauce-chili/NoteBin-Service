@@ -10,11 +10,11 @@ public class ValidationConfig {
     @Value("${spring.validationRule.title-regexp}")
     private String titleRegexp;
 
-    @Value("${spring.validationRule.content-regexp}")
-    private String contentRegexp;
-
     @Value("${spring.validationRule.title-length}")
     private int titleLength;
+
+    @Value("${spring.validationRule.content-length}")
+    private int contentLength;
 
     @Bean
     public String titleRegexp() {
@@ -22,12 +22,12 @@ public class ValidationConfig {
     }
 
     @Bean
-    public String contentRegexp() {
-        return contentRegexp;
+    public int titleLength() {
+        return titleLength;
     }
 
     @Bean
-    public int titleLength() {
-        return titleLength;
+    public int contentLength() {
+        return contentLength;
     }
 }

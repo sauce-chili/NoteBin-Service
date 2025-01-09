@@ -43,8 +43,8 @@ spring:
 
   validationRule:
     title-regexp: ^[a-zA-Z0-9][a-zA-Z0-9 .,!?;:()\[\]{}\"']*$
-    content-regexp: .*[a-zA-Z0-9].*
     title-length: 128
+    content-length: 16384
 
 
 

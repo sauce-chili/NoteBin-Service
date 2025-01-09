@@ -20,17 +20,17 @@ import java.util.regex.Pattern;
 public class NoteValidator {
 
     private final String titleRegexp;
-    private final String contentRegexp;
     private final int titleLength;
+    private final int contentLength;
 
     public NoteValidator(
             @Qualifier("titleRegexp") String titleRegexp,
-            @Qualifier("contentRegexp") String contentRegexp,
-            @Qualifier("titleLength") int titleLength
+            @Qualifier("titleLength") int titleLength,
+            @Qualifier("contentLength") int contentLength
     ) {
         this.titleRegexp = titleRegexp;
-        this.contentRegexp = contentRegexp;
         this.titleLength = titleLength;
+        this.contentLength = contentLength;
     }
 
     public Optional<GroupValidationException> validateCreateNoteRequestDto(CreateNoteRequestDto createNoteRequestDto){
@@ -99,8 +99,9 @@ public class NoteValidator {
 
     private List<ValidationException> validateContentContent(String content){
 
-        if (!Pattern.matches(contentRegexp, content)) {
-            String exceptionDescription = "Content must contain at least one digit or letter.";
+        if (content.length() > contentLength) {
+            String exceptionDescription = "Content is too long. " +
+                    "Max length is " + contentLength + " symbols.";;
             return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
         }
 
