@@ -153,6 +153,7 @@ public class NoteServiceUpdateNoteTest {
         GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
                 .url(url)
                 .build();
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
 
         NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
@@ -165,7 +166,7 @@ public class NoteServiceUpdateNoteTest {
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -196,13 +197,14 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -232,12 +234,13 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_AFTER_READ);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -269,13 +272,14 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -305,12 +309,13 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_AFTER_READ);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -342,13 +347,14 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -380,12 +386,13 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationFrom(null);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -417,12 +424,13 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setExpirationFrom(null);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -450,12 +458,13 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setContent(content);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -490,13 +499,14 @@ public class NoteServiceUpdateNoteTest {
         expNoteAfterUpdate.setAvailable(isAvailable);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
@@ -558,6 +568,7 @@ public class NoteServiceUpdateNoteTest {
 
         // ----------------------------------------------------------------------------
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate1.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate1 = noteService.updateNote(url1, updateNoteRequestDto1);
         expNoteAfterUpdate2.setExpirationFrom(LocalDateTime.now());
@@ -565,7 +576,7 @@ public class NoteServiceUpdateNoteTest {
 
         // ----------------------------------------------------------------------------
 
-        assertEquals(2, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
 
         assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteAfterUpdate1);
         assertNoteExistsInRepository(actualNoteAfterUpdate1, noteRepository);
@@ -622,6 +633,8 @@ public class NoteServiceUpdateNoteTest {
 
         // ----------------------------------------------------------------------------
 
+
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         noteService.updateNote(url, updateNoteRequestDto1);
 
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
@@ -629,7 +642,7 @@ public class NoteServiceUpdateNoteTest {
 
         // ----------------------------------------------------------------------------
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
@@ -697,13 +710,13 @@ public class NoteServiceUpdateNoteTest {
         LocalDateTime expTimeOfExpirationFrom = LocalDateTime.now().plusSeconds(1);
         expNoteAfterUpdate1.setExpirationFrom(expTimeOfExpirationFrom);
         expNoteAfterUpdate2.setExpirationFrom(expTimeOfExpirationFrom);
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         combinedFuture.join();
-
 
         Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
 
         assertOneOfTwoNoteDto(updatedNoteInRep, expNoteAfterUpdate1, expNoteAfterUpdate2);
     }
@@ -729,6 +742,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         assertThrows(ValidationException.class,
                 () -> noteService.updateNote(url, updateNoteRequestDto)
         );
@@ -736,7 +750,7 @@ public class NoteServiceUpdateNoteTest {
 
         NoteDto actualNoteAfterUpdateInRepos = noteService.getNote(getNoteRequestDto);
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
     }
 
@@ -759,6 +773,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         assertThrows(ValidationException.class,
                 () -> noteService.updateNote(url, updateNoteRequestDto)
         );
@@ -766,7 +781,7 @@ public class NoteServiceUpdateNoteTest {
 
         NoteDto actualNoteAfterUpdateInRepos = noteService.getNote(getNoteRequestDto);
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
     }
 
@@ -789,6 +804,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         assertThrows(ValidationException.class,
                 () -> noteService.updateNote(url, updateNoteRequestDto)
         );
@@ -796,7 +812,7 @@ public class NoteServiceUpdateNoteTest {
 
         NoteDto actualNoteAfterUpdateInRepos = noteService.getNote(getNoteRequestDto);
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
     }
 
@@ -820,6 +836,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -836,7 +853,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -857,6 +874,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -873,7 +891,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -894,6 +912,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -910,7 +929,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -932,6 +951,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -948,7 +968,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -970,6 +990,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> {
@@ -984,7 +1005,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -1006,6 +1027,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         ValidationException exception = assertThrows(
                 ValidationException.class,
                 () -> {
@@ -1020,7 +1042,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 
     @Test
@@ -1042,6 +1064,7 @@ public class NoteServiceUpdateNoteTest {
         NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -1060,6 +1083,6 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
-        assertEquals(1, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
     }
 }
