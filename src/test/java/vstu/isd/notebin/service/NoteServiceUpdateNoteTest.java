@@ -20,6 +20,7 @@ import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -65,7 +66,7 @@ public class NoteServiceUpdateNoteTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    void addNoteInRepos(){
+    NoteDto addNoteInRepos(){
 
         String title = "New note";
         String content = "My content";
@@ -76,7 +77,7 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .build();
 
-        noteService.createNote(createNoteRequestDto);
+        return noteService.createNote(createNoteRequestDto);
     }
 
     void addNoteInReposWithExpTypeBurnAfterRead(){
@@ -195,14 +196,19 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
@@ -721,11 +727,17 @@ public class NoteServiceUpdateNoteTest {
         List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
@@ -756,14 +768,19 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
@@ -794,14 +811,19 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_CONTENT
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
@@ -833,14 +855,19 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
@@ -872,16 +899,21 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertEquals(3, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(2).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE,
+                ClientExceptionName.INVALID_CONTENT,
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
