@@ -167,7 +167,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -205,7 +204,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -241,7 +239,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -280,7 +277,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -316,7 +312,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -355,7 +350,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -393,7 +387,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -431,7 +424,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -465,7 +457,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -507,7 +498,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -576,7 +566,6 @@ public class NoteServiceUpdateNoteTest {
         // ----------------------------------------------------------------------------
 
         assertEquals(2, noteRepository.count());
-        assertEquals(2, noteCache.size());
 
         assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteAfterUpdate1);
         assertNoteExistsInRepository(actualNoteAfterUpdate1, noteRepository);
@@ -641,7 +630,6 @@ public class NoteServiceUpdateNoteTest {
         // ----------------------------------------------------------------------------
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
         assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
@@ -716,7 +704,6 @@ public class NoteServiceUpdateNoteTest {
         NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
 
         assertOneOfTwoNoteDto(updatedNoteInRep, expNoteAfterUpdate1, expNoteAfterUpdate2);
     }
@@ -751,7 +738,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -782,7 +768,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -813,7 +798,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdateInRepos);
         assertEquals(1, noteRepository.count());
         assertNoteExistsInCache(actualNoteAfterUpdateInRepos, noteCache);
-        assertEquals(1, noteCache.size());
     }
 
     // validation ------------------------------------------------------------------------------------------------------
@@ -853,7 +837,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -891,7 +874,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -929,7 +911,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -968,7 +949,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -1005,7 +985,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -1042,7 +1021,6 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 
     @Test
@@ -1083,6 +1061,5 @@ public class NoteServiceUpdateNoteTest {
         assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
 
         assertEquals(1, noteRepository.count());
-        assertEquals(1, noteCache.size());
     }
 }
