@@ -56,13 +56,13 @@ public class NoteValidator {
         }
 
         if(exceptions.isEmpty()){
-            exceptions.addAll(validateTitleByContent(title));
+            exceptions.addAll(validateTitleContent(title));
         }
 
         return exceptions;
     }
 
-    private List<ValidationException> validateTitleByContent(String title){
+    private List<ValidationException> validateTitleContent(String title){
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -186,7 +186,7 @@ public class NoteValidator {
         }
 
         if (updateNoteRequestDto.getTitle() != null){
-            exceptions.addAll(validateTitleByContent(updateNoteRequestDto.getTitle()));
+            exceptions.addAll(validateTitleContent(updateNoteRequestDto.getTitle()));
         }
 
         if (updateNoteRequestDto.getContent() != null){
