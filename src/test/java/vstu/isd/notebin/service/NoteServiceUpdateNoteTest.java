@@ -165,7 +165,7 @@ public class NoteServiceUpdateNoteTest {
     }
 
     @Test
-    void updateExpirationPeriod(){
+    void expirationPeriodNotNullWhenExpTypeNull(){
 
         addNoteInReposWithExpTypeBurnByPeriod();
 
@@ -184,17 +184,28 @@ public class NoteServiceUpdateNoteTest {
 
         NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
+        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
+        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
-        expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
-        NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        GroupValidationException groupOfExceptions = assertThrows(
+                GroupValidationException.class,
+                () -> {
+                    noteService.updateNote(url, updateNoteRequestDto);
+                }
+        );
+        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
 
-        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
+        assertEquals(1, exceptions.size());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+
+        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
+        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
+        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+
         assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
     }
 
     @Test
