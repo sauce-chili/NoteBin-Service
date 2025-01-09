@@ -15,14 +15,6 @@ public class UrlGeneratorImpl implements UrlGenerator {
     private final HashCache hashCache;
 
     @Override
-    public List<String> generateUrls(int amount) {
-
-        return Stream.generate(hashCache::getHash)
-                .limit(amount)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public String generateUrl() {
 
         int AMOUNT = 1;

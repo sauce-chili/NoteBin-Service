@@ -5,7 +5,5 @@ import java.util.stream.Stream;
 
 public interface UrlGenerator {
 
-    List<String> generateUrls(int amount);
-
     String generateUrl();
 }
