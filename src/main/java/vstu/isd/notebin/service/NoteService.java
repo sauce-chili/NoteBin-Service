@@ -179,9 +179,6 @@ public class NoteService {
         try {
             noteCache.update(url, cached -> {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
-                noteValidator.validatePersistedAndUpdateRequest(cached, updateNoteRequest).ifPresent( e -> {
-                    throw e;
-                });
                 return cached;
             });
         } catch (NoSuchElementException ignored) {
@@ -193,9 +190,6 @@ public class NoteService {
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
                 persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest, expirationFrom);
-                noteValidator.validatePersistedAndUpdateRequest(persisted, updateNoteRequest).ifPresent( e -> {
-                    throw e;
-                });
                 return persisted;
             });
 
