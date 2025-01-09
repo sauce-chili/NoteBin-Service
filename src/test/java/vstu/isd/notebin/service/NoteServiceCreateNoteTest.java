@@ -37,11 +37,24 @@ public class NoteServiceCreateNoteTest {
     private NoteCache noteCache;
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private int contentLength;
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
 
     private final static ExecutorService executors = Executors.newFixedThreadPool(MAXIMUM_POOL_SIZE);
+
+    /**
+     * Generates string specified length.
+     *
+     * @param length length
+     * @return string specified length.
+     */
+    String stringOfLength(int length){
+
+        return "a".repeat(Math.max(0, length));
+    }
 
     /*
      * Tests for NoteService.createNote(...)
@@ -350,7 +363,7 @@ public class NoteServiceCreateNoteTest {
 
         Duration expirationPeriod = null;
         String title = "Title";
-        String content = ",.,., . .,. ";
+        String content = stringOfLength(contentLength + 1);
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
@@ -551,7 +564,7 @@ public class NoteServiceCreateNoteTest {
 
         Duration expirationPeriod = null;
         String title = ",Title";
-        String content = "  ., ";
+        String content = stringOfLength(contentLength + 1);
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
