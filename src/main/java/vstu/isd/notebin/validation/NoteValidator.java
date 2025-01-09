@@ -53,11 +53,10 @@ public class NoteValidator {
         if (title == null) {
             String exceptionDescription = "Title is not set";
             exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+            return exceptions;
         }
 
-        if(exceptions.isEmpty()){
-            exceptions.addAll(validateTitleContent(title));
-        }
+        exceptions.addAll(validateTitleContent(title));
 
         return exceptions;
     }
