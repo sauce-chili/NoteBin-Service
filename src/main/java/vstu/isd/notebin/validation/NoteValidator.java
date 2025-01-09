@@ -153,6 +153,11 @@ public class NoteValidator {
         if (updateNoteRequestDto.getExpirationType() != null){
             exceptions.addAll(validateExpirationPeriod(updateNoteRequestDto.getExpirationPeriod(),
                     updateNoteRequestDto.getExpirationType()));
+        } else if (updateNoteRequestDto.getExpirationPeriod() != null){
+            String exceptionDescription = "Expiration period can be set only if expirationType set to BURN_AFTER_READ";
+            exceptions.add(
+                    new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD)
+            );
         }
 
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
