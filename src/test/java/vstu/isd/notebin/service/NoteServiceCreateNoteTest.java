@@ -152,13 +152,13 @@ public class NoteServiceCreateNoteTest {
         NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDtoFirst);
 
         LocalDateTime nowSecond = LocalDateTime.now();
-        Duration expirationPeriodSecond = null;
-        String titleSecond = "New note";
-        String contentSecond = "My content";
+        Duration expirationPeriodSecond = Duration.ofMinutes(20);
+        String titleSecond = "Another note";
+        String contentSecond = "Another content of my note";
         CreateNoteRequestDto createNoteRequestDtoSecond = CreateNoteRequestDto.builder()
                 .title(titleSecond)
                 .content(contentSecond)
-                .expirationType(ExpirationType.NEVER)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
                 .expirationPeriod(expirationPeriodSecond)
                 .build();
         NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDtoSecond);
@@ -187,8 +187,8 @@ public class NoteServiceCreateNoteTest {
                 .title(titleSecond)
                 .content(contentSecond)
                 .createdAt(nowSecond)
-                .expirationType(ExpirationType.NEVER)
-                .expirationFrom(null)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationFrom(nowSecond)
                 .expirationPeriod(expirationPeriodSecond)
                 .build();
         assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
