@@ -50,22 +50,13 @@ public class NoteValidator {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
-        exceptions.addAll(validateTitleForNotNull(title));
-
-        if(exceptions.isEmpty()){
-            exceptions.addAll(validateTitleByContent(title));
-        }
-
-        return exceptions;
-    }
-
-    private List<ValidationException> validateTitleForNotNull(String title){
-
-        List<ValidationException> exceptions = new LinkedList<>();
-
         if (title == null) {
             String exceptionDescription = "Title is not set";
             exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
+        }
+
+        if(exceptions.isEmpty()){
+            exceptions.addAll(validateTitleByContent(title));
         }
 
         return exceptions;
