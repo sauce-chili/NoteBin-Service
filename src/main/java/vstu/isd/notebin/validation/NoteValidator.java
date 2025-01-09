@@ -135,9 +135,9 @@ public class NoteValidator {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
-        exceptions.addAll(validateUpdateNoteRequestDtoForAllFieldsNotNull(updateNoteRequestDto));
-        boolean allFieldsAreNull = !exceptions.isEmpty();
-        if (allFieldsAreNull){
+        if (updateNoteRequestDto.isEmpty()) {
+            String exceptionDescription = "All fields in update request are not set.";
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.EMPTY_UPDATE_REQUEST));
             return Optional.of(new GroupValidationException(exceptions));
         }
 
@@ -160,20 +160,5 @@ public class NoteValidator {
         }
 
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
-    }
-
-    private List<ValidationException> validateUpdateNoteRequestDtoForAllFieldsNotNull(UpdateNoteRequestDto updateNoteRequestDto){
-
-        if     (updateNoteRequestDto.getTitle()            == null &&
-                updateNoteRequestDto.getContent()          == null &&
-                updateNoteRequestDto.getExpirationType()   == null &&
-                updateNoteRequestDto.getExpirationPeriod() == null &&
-                updateNoteRequestDto.getIsAvailable()      == null) {
-
-            String exceptionDescription = "All fields in update request are not set.";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.EMPTY_UPDATE_REQUEST));
-        }
-
-        return List.of();
     }
 }
