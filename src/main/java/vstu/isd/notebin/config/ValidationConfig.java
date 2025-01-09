@@ -7,18 +7,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ValidationConfig {
 
-    @Value("${spring.validationRule.title-regexp}")
-    private String titleRegexp;
+    @Value("${spring.validationRule.title.regex}")
+    private String titleRegex;
 
-    @Value("${spring.validationRule.title-length}")
+    @Value("${spring.validationRule.title.max-length}")
     private int titleLength;
 
-    @Value("${spring.validationRule.content-length}")
+    @Value("${spring.validationRule.content.length}")
     private int contentLength;
 
     @Bean
     public String titleRegexp() {
-        return titleRegexp;
+        return titleRegex;
     }
 
     @Bean
