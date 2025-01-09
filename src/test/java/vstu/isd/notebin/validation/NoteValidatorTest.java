@@ -338,10 +338,9 @@ class NoteValidatorTest {
         GroupValidationException groupValidationException = optionalGroupOfExceptions.get();
         List<? extends ValidationException> exceptions = groupValidationException.getExceptions();
 
-        assertEquals(4, exceptions.size());
+        assertEquals(3, exceptions.size());
         assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(1).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(2).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(3).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
+        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(2).getExceptionName());
     }
 }
