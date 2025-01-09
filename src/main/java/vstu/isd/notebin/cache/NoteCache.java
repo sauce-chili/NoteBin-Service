@@ -174,15 +174,4 @@ public class NoteCache {
     public NoteCacheable deleteNote(String url) {
         return redisTemplate.opsForValue().getAndDelete(url);
     }
-
-    /**
-     * Counts values in cache.
-     *
-     * @return count of values in cache
-     */
-    public int size() {
-
-        Set<String> keys = redisTemplate.keys("*");
-        return keys.size();
-    }
 }
