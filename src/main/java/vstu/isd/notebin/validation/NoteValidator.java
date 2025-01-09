@@ -92,12 +92,12 @@ public class NoteValidator {
             return exceptions;
         }
 
-        exceptions.addAll(validateContentByContent(content));
+        exceptions.addAll(validateContentContent(content));
 
         return exceptions;
     }
 
-    private List<ValidationException> validateContentByContent(String content){
+    private List<ValidationException> validateContentContent(String content){
 
         if (!Pattern.matches(contentRegexp, content)) {
             String exceptionDescription = "Content must contain at least one digit or letter.";
@@ -181,7 +181,7 @@ public class NoteValidator {
         }
 
         if (updateNoteRequestDto.getContent() != null){
-            exceptions.addAll(validateContentByContent(updateNoteRequestDto.getContent()));
+            exceptions.addAll(validateContentContent(updateNoteRequestDto.getContent()));
         }
 
         if (updateNoteRequestDto.getExpirationType() != null){
