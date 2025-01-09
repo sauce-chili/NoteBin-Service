@@ -17,7 +17,6 @@ public class UrlGeneratorImpl implements UrlGenerator {
     @Override
     public String generateUrl() {
 
-        int AMOUNT = 1;
         return hashCache.getHash();
     }
 }
