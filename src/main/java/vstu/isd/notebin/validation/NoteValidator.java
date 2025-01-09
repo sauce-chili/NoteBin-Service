@@ -67,13 +67,7 @@ public class NoteValidator {
 
         if (!Pattern.matches(titleRegexp, title)) {
             String exceptionDescription = "Title mustn't contain only white delimiters. " +
-                    "At the same time, the first symbol must be a digit or letter.";
-
-            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
-        }
-
-        if (title.length() > titleLength) {
-            String exceptionDescription = "Title length is too long. " +
+                    "At the same time, the first symbol must be a digit or letter." +
                     "Max length is " + titleLength + " symbols.";
 
             exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
