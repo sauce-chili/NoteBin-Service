@@ -319,7 +319,7 @@ class NoteValidatorTest {
 
     // GroupValidationException ----------------------------------------------------------------------------------------
     @Test
-    void exceptionsForEveryField(){
+    void everyFieldExceptions(){
 
         Duration expirationPeriod = null;
         String title = ",snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
