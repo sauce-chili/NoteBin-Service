@@ -86,23 +86,15 @@ public class NoteValidator {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
-        exceptions.addAll(validateContentForNotNull(content));
-
-        if(exceptions.isEmpty()){
-            exceptions.addAll(validateContentByContent(content));
-        }
-
-        return exceptions;
-    }
-
-    private List<ValidationException> validateContentForNotNull(String content){
-
         if (content == null) {
             String exceptionDescription = "Content is not set";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
+            return exceptions;
         }
 
-        return List.of();
+        exceptions.addAll(validateContentByContent(content));
+
+        return exceptions;
     }
 
     private List<ValidationException> validateContentByContent(String content){
