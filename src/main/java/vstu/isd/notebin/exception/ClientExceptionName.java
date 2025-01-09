@@ -28,7 +28,7 @@ public enum ClientExceptionName {
     INVALID_EXPIRATION_PERIOD(
             805
     ),
-    INVALID_UPDATE_NOTE_REQUEST_DTO(
+    EMPTY_UPDATE_REQUEST(
         806
     );
 

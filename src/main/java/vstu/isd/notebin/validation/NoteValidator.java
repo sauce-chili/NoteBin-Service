@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
-import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.ClientExceptionName;
 import vstu.isd.notebin.exception.GroupValidationException;
@@ -172,7 +171,7 @@ public class NoteValidator {
                 updateNoteRequestDto.getIsAvailable()      == null) {
 
             String exceptionDescription = "All fields in update request are not set.";
-            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO));
+            return List.of(new ValidationException(exceptionDescription, ClientExceptionName.EMPTY_UPDATE_REQUEST));
         }
 
         return List.of();

@@ -728,7 +728,7 @@ public class NoteServiceUpdateNoteTest {
 
 
         List<ClientExceptionName> expected = List.of(
-                ClientExceptionName.INVALID_UPDATE_NOTE_REQUEST_DTO
+                ClientExceptionName.EMPTY_UPDATE_REQUEST
         );
         List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
                 .map(ValidationException::getExceptionName)
