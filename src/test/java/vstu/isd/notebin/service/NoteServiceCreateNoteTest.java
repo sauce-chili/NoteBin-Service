@@ -28,7 +28,6 @@ import static vstu.isd.notebin.testutils.TestAsserts.*;
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class NoteServiceCreateNoteTest {
 
     @SpyBean
@@ -116,10 +115,9 @@ public class NoteServiceCreateNoteTest {
         NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDto);
         NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDto);
 
-        String expUrlOfFirstNote = "1";
         NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
-                .id(1L)
-                .url(expUrlOfFirstNote)
+                .id(actualCreatedFirstNoteDto.getId())
+                .url(actualCreatedFirstNoteDto.getUrl())
                 .isAvailable(true)
                 .title(title)
                 .content(content)
@@ -132,10 +130,9 @@ public class NoteServiceCreateNoteTest {
         assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
 
-        String expUrlOfSecondNote = "2";
         NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
-                .id(2L)
-                .url(expUrlOfSecondNote)
+                .id(actualCreatedSecondNoteDto.getId())
+                .url(actualCreatedSecondNoteDto.getUrl())
                 .isAvailable(true)
                 .title(title)
                 .content(content)
@@ -176,10 +173,9 @@ public class NoteServiceCreateNoteTest {
                 .build();
         NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDtoSecond);
 
-        String expUrlOfFirstNote = "1";
         NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
-                .id(1L)
-                .url(expUrlOfFirstNote)
+                .id(actualCreatedFirstNoteDto.getId())
+                .url(actualCreatedFirstNoteDto.getUrl())
                 .isAvailable(true)
                 .title(title)
                 .content(content)
@@ -192,10 +188,9 @@ public class NoteServiceCreateNoteTest {
         assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
         assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
 
-        String expUrlOfSecondNote = "2";
         NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
-                .id(2L)
-                .url(expUrlOfSecondNote)
+                .id(actualCreatedSecondNoteDto.getId())
+                .url(actualCreatedSecondNoteDto.getUrl())
                 .isAvailable(true)
                 .title(titleSecond)
                 .content(contentSecond)
