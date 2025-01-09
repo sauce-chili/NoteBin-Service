@@ -66,7 +66,7 @@ public class NoteValidator {
         List<ValidationException> exceptions = new LinkedList<>();
 
         if (!Pattern.matches(titleRegexp, title)) {
-            String exceptionDescription = "Title must contain only white delimiters. " +
+            String exceptionDescription = "Title mustn't contain only white delimiters. " +
                     "At the same time, the first symbol must be a digit or letter.";
 
             exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_TITLE));
