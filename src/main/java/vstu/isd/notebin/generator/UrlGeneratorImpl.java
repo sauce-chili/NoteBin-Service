@@ -12,8 +12,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class UrlGeneratorImpl implements UrlGenerator {
 
-    private String URL_PREFIX = "https://urlShortenerProject/";
-
     private final HashCache hashCache;
 
     @Override
