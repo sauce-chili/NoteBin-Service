@@ -26,7 +26,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static vstu.isd.notebin.testutils.TestAsserts.*;
@@ -136,11 +135,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInRepos();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
         Duration expirationPeriod = Duration.ofMinutes(37);
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
@@ -175,11 +169,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInReposWithExpTypeBurnByPeriod();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
         Duration expirationPeriod = Duration.ofMinutes(37);
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
@@ -213,11 +202,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInRepos();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
@@ -248,11 +232,6 @@ public class NoteServiceUpdateNoteTest {
     void changeExpTypeFromNeverToBurnByPeriod(){
 
         addNoteInRepos();
-
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
 
         String url = "1";
         Duration expirationPeriod = Duration.ofMinutes(37);
@@ -288,11 +267,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInReposWithExpTypeBurnAfterRead();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
@@ -323,11 +297,6 @@ public class NoteServiceUpdateNoteTest {
     void changeExpTypeFromBurnAfterReadToBurnByPeriod(){
 
         addNoteInReposWithExpTypeBurnAfterRead();
-
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
 
         String url = "1";
         Duration expirationPeriod = Duration.ofMinutes(37);
@@ -363,11 +332,6 @@ public class NoteServiceUpdateNoteTest {
 
         addNoteInReposWithExpTypeBurnByPeriod();
 
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
-
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
@@ -400,11 +364,6 @@ public class NoteServiceUpdateNoteTest {
     void changeExpTypeFromBurnByPeriodToBurnAfterRead(){
 
         addNoteInReposWithExpTypeBurnByPeriod();
-
-        try {
-            sleep(2000);
-        } catch (InterruptedException ignored) {
-        }
 
         String url = "1";
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
