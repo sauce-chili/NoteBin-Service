@@ -53,10 +53,6 @@ public interface NoteMapper {
             persisted.setExpirationFrom(
                     updateRequest.getExpirationType() == ExpirationType.BURN_BY_PERIOD ? expirationFrom : null
             );
-        } else if (persisted.getExpirationType() == ExpirationType.BURN_BY_PERIOD &&
-                   persisted.getExpirationPeriod() != null) {
-
-            persisted.setExpirationPeriod(updateRequest.getExpirationPeriod());
         }
 
         if (updateRequest.getIsAvailable() != null) {
