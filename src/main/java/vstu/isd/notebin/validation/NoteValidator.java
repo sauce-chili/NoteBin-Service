@@ -46,7 +46,7 @@ public class NoteValidator {
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
     }
 
-    protected List<ValidationException> validateTitle(String title){
+    public List<ValidationException> validateTitle(String title){
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -83,7 +83,7 @@ public class NoteValidator {
         return exceptions;
     }
 
-    protected List<ValidationException> validateContent(String content){
+    public List<ValidationException> validateContent(String content){
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -116,7 +116,7 @@ public class NoteValidator {
         return List.of();
     }
 
-    protected List<ValidationException> validateExpirationType(ExpirationType expirationType){
+    public List<ValidationException> validateExpirationType(ExpirationType expirationType){
 
         if (expirationType == null) {
             String exceptionDescription = "Expiration type not set";
@@ -126,7 +126,7 @@ public class NoteValidator {
         return List.of();
     }
 
-    protected List<ValidationException> validateExpirationPeriod(Duration expirationPeriod, ExpirationType expirationType){
+    public List<ValidationException> validateExpirationPeriod(Duration expirationPeriod, ExpirationType expirationType){
 
         if (expirationType == ExpirationType.NEVER && expirationPeriod != null) {
             String exceptionDescription = "Expiration period must be not set when expiration type is NEVER";
