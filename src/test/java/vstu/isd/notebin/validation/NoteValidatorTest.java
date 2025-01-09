@@ -20,9 +20,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class NoteValidatorTest {
 
+    /**
+     * Generates string specified length.
+     *
+     * @param length length
+     * @return string specified length.
+     */
+    String stringLength(int length){
+
+        return "a".repeat(Math.max(0, length));
+    }
+
+    int titleLength = 128;
+    int contentLength = 16384;
+
     @Autowired
     private NoteValidator noteValidator;
 
+    // tests -----------------------------------------------------------------------------------------------------------
     // title -----------------------------------------------------------------------------------------------------------
     @Test
     void titleIsNull() {
@@ -92,7 +107,7 @@ class NoteValidatorTest {
 
     @Test
     void titleLengthIsHigherThanMax() {
-        String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
+        String title = stringLength(titleLength + 2);
 
         List<ValidationException> actual = noteValidator.validateTitle(title);
 
@@ -102,7 +117,7 @@ class NoteValidatorTest {
 
     @Test
     void titleLengthIsMax() {
-        String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFb";
+        String title = stringLength(titleLength);
 
         List<ValidationException> actual = noteValidator.validateTitle(title);
 
@@ -189,13 +204,30 @@ class NoteValidatorTest {
 
         List<ValidationException> actual = noteValidator.validateContent(content);
 
-        assertEquals(1, actual.size());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, actual.get(0).getExceptionName());
+        assertEquals(0, actual.size());
     }
 
     @Test
     void contentDoesNotContainDigitsOrLetters() {
         String content = ",.,.+= //.,., +--_";
+
+        List<ValidationException> actual = noteValidator.validateContent(content);
+
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    void contentLengthIsMax() {
+        String content = stringLength(contentLength);
+
+        List<ValidationException> actual = noteValidator.validateContent(content);
+
+        assertEquals(0, actual.size());
+    }
+
+    @Test
+    void contentLengthIsHigherThanMax() {
+        String content = stringLength(contentLength + 2);
 
         List<ValidationException> actual = noteValidator.validateContent(content);
 
@@ -291,7 +323,7 @@ class NoteValidatorTest {
 
         Duration expirationPeriod = null;
         String title = ",snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
-        String content = "  ., ";
+        String content = stringLength(contentLength + 1);
         CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
