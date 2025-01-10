@@ -29,6 +29,10 @@ public interface NoteMapper {
     @Mapping(source = "available", target = "isAvailable")
     NoteDto toDto(Note note);
 
+    @Mapping(target = "isAvailable", source = "isAvailable")
+    NoteDto toDto(BaseNote note);
+
+
     @Mapping(source = "available", target = "isAvailable")
     Note toEntity(NoteCacheable noteCacheable);
 
