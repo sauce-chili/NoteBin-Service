@@ -155,8 +155,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -196,8 +198,10 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(noteInReposBeforeUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, actualNoteInCache);
 
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
@@ -226,8 +230,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -258,8 +264,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -287,8 +295,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -319,8 +329,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -350,8 +362,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -381,8 +395,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -413,8 +429,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -452,8 +470,10 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -518,12 +538,16 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
 
         assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteAfterUpdate1);
-        assertNoteDtoEquals(expNoteAfterUpdate1, noteMapper.toDto(noteRepository.findByUrl(url1).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate1, noteMapper.toDto(noteCache.get(url1).get()));
+        NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url1).get());
+        NoteDto actualFirstNoteInCache = noteMapper.toDto(noteCache.get(url1).get());
+        assertNoteDtoEquals(expNoteAfterUpdate1, actualFirstNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate1, actualFirstNoteInCache);
 
         assertNoteDtoEquals(expNoteAfterUpdate2, actualNoteAfterUpdate2);
-        assertNoteDtoEquals(expNoteAfterUpdate2, noteMapper.toDto(noteRepository.findByUrl(url2).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate2, noteMapper.toDto(noteCache.get(url2).get()));
+        NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url2).get());
+        NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(url2).get());
+        assertNoteDtoEquals(expNoteAfterUpdate2, actualSecondNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate2, actualSecondNoteInCache);
     }
 
     @Test
@@ -578,8 +602,10 @@ public class NoteServiceUpdateNoteTest {
         // ----------------------------------------------------------------------------
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
-        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+        assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
@@ -643,17 +669,23 @@ public class NoteServiceUpdateNoteTest {
 
 
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
         NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
 
         boolean firstPassed = false;
         try {
             assertNoteDtoEquals(expNoteAfterUpdate1, updatedNoteInRep);
+            assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteInRepos);
+            assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteInCache);
             firstPassed = true;
         } catch (AssertionError ignored) {
         }
 
         if (!firstPassed) {
             assertNoteDtoEquals(expNoteAfterUpdate2, updatedNoteInRep);
+            assertNoteDtoEquals(expNoteAfterUpdate2, actualNoteInRepos);
+            assertNoteDtoEquals(expNoteAfterUpdate2, actualNoteInCache);
         }
     }
 
