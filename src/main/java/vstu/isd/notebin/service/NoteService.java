@@ -221,19 +221,12 @@ public class NoteService {
     )
     public Boolean deleteNote(String url) {
 
-        Optional<NoteCacheable> noteCacheableOptional = noteCache.get(url);
-        Optional<Note> noteInRepositoryOptional = noteCacheableOptional.isEmpty()
-                ? noteRepository.findByUrl(url)
-                : Optional.empty();
-
-        if (noteCacheableOptional.isEmpty() && noteInRepositoryOptional.isEmpty()) {
-            throw new NoteNonExistsException(url);
-        }
-
-        NoteDto note = noteCacheableOptional
+        NoteDto note = noteCache.get(url)
                 .map(noteMapper::toDto)
-                .orElseGet(() -> noteMapper.toDto(
-                        noteInRepositoryOptional.orElseThrow(() -> new NoteNonExistsException(url)))
+                .orElseGet(
+                        () -> noteRepository.findByUrl(url)
+                                .map(noteMapper::toDto)
+                                .orElseThrow(() -> new NoteNonExistsException(url))
                 );
 
         if (!note.isAvailable()) {
