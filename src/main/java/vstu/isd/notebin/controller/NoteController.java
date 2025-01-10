@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
-import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.service.NoteService;
 
 @RestController
@@ -30,7 +29,7 @@ public class NoteController {
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
-    @PatchMapping("/{url}")
+    @PutMapping("/{url}")
     public GetNoteResponseDto updateNote(
             @PathVariable String url,
             @RequestBody UpdateNoteRequestDto requestDto
