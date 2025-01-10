@@ -2,6 +2,7 @@ package vstu.isd.notebin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import vstu.isd.notebin.api.AuthApi;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.service.NoteService;
@@ -11,6 +12,7 @@ import vstu.isd.notebin.service.NoteService;
 @RequiredArgsConstructor
 public class NoteController {
 
+    private final AuthApi authApi;
     private final NoteService noteService;
     private final NoteMapper noteMapper;
 
@@ -36,5 +38,10 @@ public class NoteController {
         NoteDto noteDto = noteService.updateNote(url, requestDto);
 
         return noteMapper.toGetNoteResponseDto(noteDto);
+    }
+
+    @GetMapping("/v/{t}")
+    public void foo(@PathVariable String t) {
+        var res = authApi.verifyAccessToken(new VerifyAccessTokenRequestDto(t));
     }
 }

@@ -1,4 +1,4 @@
-package vstu.isd.notebin.client;
+package vstu.isd.notebin.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import vstu.isd.notebin.dto.VerifyAccessTokenRequestDto;
 
 @FeignClient(name = "auth-service", url = "http://localhost:8081/api/v1/auth")
-public interface AuthClient {
+public interface AuthApi {
     @PatchMapping("/verify-access")
     Boolean verifyAccessToken(@RequestBody VerifyAccessTokenRequestDto request);
 }
