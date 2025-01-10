@@ -103,8 +103,11 @@ public class NoteService {
         return updatedNote;
     }
 
-    private void updateNoteInCache(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
-
+    private void updateNoteInCache(
+            String url,
+            UpdateNoteRequestDto updateNoteRequest,
+            LocalDateTime expirationFrom
+    ) {
         try {
             noteCache.update(url, cached -> {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
@@ -114,7 +117,11 @@ public class NoteService {
         }
     }
 
-    private NoteDto updateNoteInRepository(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
+    private NoteDto updateNoteInRepository(
+            String url,
+            UpdateNoteRequestDto updateNoteRequest,
+            LocalDateTime expirationFrom
+    ) {
 
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
