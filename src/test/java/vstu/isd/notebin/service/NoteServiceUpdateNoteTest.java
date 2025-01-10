@@ -591,8 +591,8 @@ public class NoteServiceUpdateNoteTest {
         String url = noteInReposBeforeUpdate.getUrl();
         String title1 = "Updated note";
         String content1 = "My updated content";
-        ExpirationType expirationType1 = ExpirationType.BURN_BY_PERIOD;
-        Duration expirationPeriod1 = Duration.ofMinutes(37);
+        ExpirationType expirationType1 = ExpirationType.NEVER;
+        Duration expirationPeriod1 = null;
         Boolean isAvailable1 = Boolean.FALSE;
         UpdateNoteRequestDto updateNoteRequestDto1 = UpdateNoteRequestDto.builder()
                 .title(title1)
@@ -604,8 +604,8 @@ public class NoteServiceUpdateNoteTest {
 
         String title2 = "Updated note second time";
         String content2 = "My second time updated content";
-        ExpirationType expirationType2 = ExpirationType.BURN_BY_PERIOD;
-        Duration expirationPeriod2 = Duration.ofMinutes(39);
+        ExpirationType expirationType2 = ExpirationType.NEVER;
+        Duration expirationPeriod2 = null;
         Boolean isAvailable2 = Boolean.FALSE;
         UpdateNoteRequestDto updateNoteRequestDto2 = UpdateNoteRequestDto.builder()
                 .title(title2)
@@ -637,8 +637,6 @@ public class NoteServiceUpdateNoteTest {
                 () -> noteService.updateNote(url, updateNoteRequestDto2), executors);
 
         CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(futureNoteFirst, futureNoteSecond);
-        expNoteAfterUpdate1.setExpirationFrom(null);
-        expNoteAfterUpdate2.setExpirationFrom(null);
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         combinedFuture.join();
         long countOfNotesInReposAfterUpdate = noteRepository.count();
@@ -646,7 +644,6 @@ public class NoteServiceUpdateNoteTest {
 
         assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
         NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        updatedNoteInRep.setExpirationFrom(null);
 
         boolean firstPassed = false;
         try {
