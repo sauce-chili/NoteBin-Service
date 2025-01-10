@@ -21,10 +21,10 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Lock(LockModeType.PESSIMISTIC_READ)
     default Note updateWithLock(String url, UnaryOperator<Note> modifier) {
-        return __update(url, true, modifier);
+        return update(url, true, modifier);
     }
 
-    private Note __update(String url, boolean updateIfUnmodified, UnaryOperator<Note> modifier) {
+    private Note update(String url, boolean updateIfUnmodified, UnaryOperator<Note> modifier) {
 
         Note note = findByUrl(url).orElseThrow(NoSuchElementException::new);
 

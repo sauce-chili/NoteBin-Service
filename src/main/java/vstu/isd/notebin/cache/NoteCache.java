@@ -98,18 +98,18 @@ public class NoteCache {
      * @return {@code true} if the note was successfully saved, {@code false} if it already exists
      */
     public boolean save(NoteCacheable note) {
-        return Boolean.TRUE.equals(DEFAULT_TTL != null ?
-                redisTemplate.opsForValue().setIfAbsent(
-                        note.getUrl(),
-                        note,
-                        DEFAULT_TTL
-                )
-                :
-                redisTemplate.opsForValue().setIfAbsent(
-                        note.getUrl(),
-                        note
-
-                )
+        return Boolean.TRUE.equals(
+                DEFAULT_TTL != null ?
+                        redisTemplate.opsForValue().setIfAbsent(
+                                note.getUrl(),
+                                note,
+                                DEFAULT_TTL
+                        )
+                        :
+                        redisTemplate.opsForValue().setIfAbsent(
+                                note.getUrl(),
+                                note
+                        )
         );
     }
 
