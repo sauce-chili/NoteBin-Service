@@ -26,6 +26,14 @@ dependencies {
     implementation("org.springframework.retry:spring-retry:2.0.2")
 
     /**
+     * JWT
+     * */
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.2")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
+
+
+    /**
      * Database
      */
     implementation("org.liquibase:liquibase-core")
