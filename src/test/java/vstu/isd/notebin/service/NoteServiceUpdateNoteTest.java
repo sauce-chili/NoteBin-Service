@@ -21,20 +21,19 @@ import vstu.isd.notebin.repository.NoteRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static vstu.isd.notebin.testutils.TestAsserts.*;
 
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class NoteServiceUpdateNoteTest {
 
     @SpyBean
@@ -66,7 +65,7 @@ public class NoteServiceUpdateNoteTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    NoteDto addNoteInRepos(){
+    NoteDto generateNoteToRepos(){
 
         String title = "New note";
         String content = "My content";
@@ -80,7 +79,7 @@ public class NoteServiceUpdateNoteTest {
         return noteService.createNote(createNoteRequestDto);
     }
 
-    void addNoteInReposWithExpTypeBurnAfterRead(){
+    NoteDto generateNoteToReposWithExpTypeBurnAfterRead(){
 
         String title = "New note";
         String content = "My content";
@@ -91,10 +90,10 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .build();
 
-        noteService.createNote(createNoteRequestDto);
+        return noteService.createNote(createNoteRequestDto);
     }
 
-    void addNoteInReposWithExpTypeBurnByPeriod(){
+    NoteDto generateNoteToReposWithExpTypeBurnByPeriod(){
 
         String title = "New note";
         String content = "My content";
@@ -106,18 +105,17 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
-        noteService.createNote(createNoteRequestDto);
+        return noteService.createNote(createNoteRequestDto);
     }
 
-    void addNotesInRepos(int count){
+    List<NoteDto> generateNotesToRepos(int count){
 
         String defaultTitle = "My title";
         String defaultContent = "My content";
         ExpirationType expirationType = ExpirationType.NEVER;
-
+        List<NoteDto> notes = new LinkedList<>();
         for (int i = 0; i < count; i++) {
 
-            LocalDateTime now = LocalDateTime.now();
             CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
                     .title(defaultTitle + " " + i)
                     .content(defaultContent + " " + i)
@@ -125,8 +123,10 @@ public class NoteServiceUpdateNoteTest {
                     .expirationPeriod(null)
                     .build();
 
-            noteService.createNote(createNoteRequestDto);
+            notes.add(noteService.createNote(createNoteRequestDto));
         }
+
+        return notes;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -134,10 +134,10 @@ public class NoteServiceUpdateNoteTest {
     @Test
     void updateNote(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
         Duration expirationPeriod = Duration.ofMinutes(37);
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -145,33 +145,31 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
-        long countOfNotesInReposBeforeUpdate = noteRepository.count();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
-
-
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
+
+
+        long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void expirationPeriodNotNullWhenExpTypeNull(){
 
-        addNoteInReposWithExpTypeBurnByPeriod();
+        NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
         Duration expirationPeriod = Duration.ofMinutes(37);
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -179,14 +177,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
-
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
-        expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -196,6 +186,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -208,18 +199,18 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromNeverToBurnAfterRead(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -227,30 +218,28 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_AFTER_READ);
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromNeverToBurnByPeriod(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         Duration expirationPeriod = Duration.ofMinutes(37);
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
@@ -259,11 +248,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
 
@@ -271,20 +257,21 @@ public class NoteServiceUpdateNoteTest {
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromBurnAfterReadToNever(){
 
-        addNoteInReposWithExpTypeBurnAfterRead();
+        NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -292,30 +279,28 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_AFTER_READ);
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromBurnAfterReadToBurnByPeriod(){
 
-        addNoteInReposWithExpTypeBurnAfterRead();
+        NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         Duration expirationPeriod = Duration.ofMinutes(37);
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
@@ -324,11 +309,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
         expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
 
@@ -336,20 +318,21 @@ public class NoteServiceUpdateNoteTest {
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromBurnByPeriodToNever(){
 
-        addNoteInReposWithExpTypeBurnByPeriod();
+        NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -357,11 +340,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.NEVER);
         expNoteAfterUpdate.setExpirationPeriod(null);
         expNoteAfterUpdate.setExpirationFrom(null);
@@ -369,20 +349,21 @@ public class NoteServiceUpdateNoteTest {
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changeExpTypeFromBurnByPeriodToBurnAfterRead(){
 
-        addNoteInReposWithExpTypeBurnByPeriod();
+        NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -390,11 +371,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_AFTER_READ);
         expNoteAfterUpdate.setExpirationPeriod(null);
         expNoteAfterUpdate.setExpirationFrom(null);
@@ -402,22 +380,23 @@ public class NoteServiceUpdateNoteTest {
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void updateWithNoSeeingDifference(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
         String title = "New note";
         String content = "My content";
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(title)
                 .content(content)
@@ -425,32 +404,29 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setTitle(title);
         expNoteAfterUpdate.setContent(content);
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void changesAllFields(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
-
+        String url = noteInReposBeforeUpdate.getUrl();
         String title = "Updated note";
         String content = "My updated content";
         ExpirationType expirationType = ExpirationType.BURN_BY_PERIOD;
@@ -463,11 +439,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(isAvailable)
                 .build();
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
 
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setTitle(title);
         expNoteAfterUpdate.setContent(content);
         expNoteAfterUpdate.setExpirationType(expirationType);
@@ -478,21 +451,21 @@ public class NoteServiceUpdateNoteTest {
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void updateTwoNotes() {
 
-        addNotesInRepos(2);
+        List<NoteDto> noteInReposBeforeUpdate = generateNotesToRepos(2);
 
-        String url1 = "1";
-
+        String url1 = noteInReposBeforeUpdate.get(0).getUrl();
         String title1 = "Updated note";
         String content1 = "My updated content";
         ExpirationType expirationType1 = ExpirationType.BURN_BY_PERIOD;
@@ -505,20 +478,15 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod1)
                 .isAvailable(isAvailable1)
                 .build();
-        GetNoteRequestDto getNoteRequestDto1 = GetNoteRequestDto.builder()
-                .url(url1)
-                .build();
 
-        NoteDto expNoteAfterUpdate1 = noteService.getNote(getNoteRequestDto1);
+        NoteDto expNoteAfterUpdate1 = noteMapper.toDto(noteRepository.findByUrl(url1).get());
         expNoteAfterUpdate1.setTitle(title1);
         expNoteAfterUpdate1.setContent(content1);
         expNoteAfterUpdate1.setExpirationType(expirationType1);
         expNoteAfterUpdate1.setExpirationPeriod(expirationPeriod1);
         expNoteAfterUpdate1.setAvailable(isAvailable1);
-        expNoteAfterUpdate1.setExpirationFrom(LocalDateTime.now());
 
-        String url2 = "2";
-
+        String url2 = noteInReposBeforeUpdate.get(1).getUrl();
         String title2 = "Updated second note";
         String content2 = "My second updated content";
         ExpirationType expirationType2 = ExpirationType.BURN_BY_PERIOD;
@@ -531,11 +499,8 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod2)
                 .isAvailable(isAvailable2)
                 .build();
-        GetNoteRequestDto getNoteRequestDto2 = GetNoteRequestDto.builder()
-                .url(url2)
-                .build();
 
-        NoteDto expNoteAfterUpdate2 = noteService.getNote(getNoteRequestDto2);
+        NoteDto expNoteAfterUpdate2 = noteMapper.toDto(noteRepository.findByUrl(url2).get());
         expNoteAfterUpdate2.setTitle(title2);
         expNoteAfterUpdate2.setContent(content2);
         expNoteAfterUpdate2.setExpirationType(expirationType2);
@@ -549,27 +514,27 @@ public class NoteServiceUpdateNoteTest {
         NoteDto actualNoteAfterUpdate1 = noteService.updateNote(url1, updateNoteRequestDto1);
         expNoteAfterUpdate2.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate2 = noteService.updateNote(url2, updateNoteRequestDto2);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
         // ----------------------------------------------------------------------------
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
 
         assertNoteDtoEquals(expNoteAfterUpdate1, actualNoteAfterUpdate1);
-        assertNoteExistsInRepository(actualNoteAfterUpdate1, noteRepository);
-        assertNoteExistsInCache(actualNoteAfterUpdate1, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate1, noteMapper.toDto(noteRepository.findByUrl(url1).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate1, noteMapper.toDto(noteCache.get(url1).get()));
 
         assertNoteDtoEquals(expNoteAfterUpdate2, actualNoteAfterUpdate2);
-        assertNoteExistsInRepository(actualNoteAfterUpdate2, noteRepository);
-        assertNoteExistsInCache(actualNoteAfterUpdate2, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate2, noteMapper.toDto(noteRepository.findByUrl(url2).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate2, noteMapper.toDto(noteCache.get(url2).get()));
     }
 
     @Test
     void updateNoteTwoTimes() {
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
-
+        String url = noteInReposBeforeUpdate.getUrl();
         String title1 = "Updated note";
         String content1 = "My updated content";
         ExpirationType expirationType1 = ExpirationType.BURN_AFTER_READ;
@@ -596,10 +561,7 @@ public class NoteServiceUpdateNoteTest {
                 .isAvailable(isAvailable2)
                 .build();
 
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
-        NoteDto expNoteAfterUpdate = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate.setTitle(title2);
         expNoteAfterUpdate.setContent(content2);
         expNoteAfterUpdate.setExpirationType(expirationType2);
@@ -609,29 +571,27 @@ public class NoteServiceUpdateNoteTest {
 
         // ----------------------------------------------------------------------------
 
-
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         noteService.updateNote(url, updateNoteRequestDto1);
 
         expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
         NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto2);
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
         // ----------------------------------------------------------------------------
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
-
         assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-        assertNoteExistsInRepository(actualNoteAfterUpdate, noteRepository);
-        assertNoteExistsInCache(actualNoteAfterUpdate, noteCache);
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(expNoteAfterUpdate, noteMapper.toDto(noteCache.get(url).get()));
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     public void concurrentUpdateOfNote() {
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
-
+        String url = noteInReposBeforeUpdate.getUrl();
         String title1 = "Updated note";
         String content1 = "My updated content";
         ExpirationType expirationType1 = ExpirationType.BURN_BY_PERIOD;
@@ -658,17 +618,14 @@ public class NoteServiceUpdateNoteTest {
                 .isAvailable(isAvailable2)
                 .build();
 
-        GetNoteRequestDto getNoteRequestDto = GetNoteRequestDto.builder()
-                .url(url)
-                .build();
-        NoteDto expNoteAfterUpdate1 = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate1 = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate1.setTitle(title1);
         expNoteAfterUpdate1.setContent(content1);
         expNoteAfterUpdate1.setExpirationType(expirationType1);
         expNoteAfterUpdate1.setExpirationPeriod(expirationPeriod1);
         expNoteAfterUpdate1.setAvailable(isAvailable1);
 
-        NoteDto expNoteAfterUpdate2 = noteService.getNote(getNoteRequestDto);
+        NoteDto expNoteAfterUpdate2 = noteMapper.toDto(noteRepository.findByUrl(url).get());
         expNoteAfterUpdate2.setTitle(title2);
         expNoteAfterUpdate2.setContent(content2);
         expNoteAfterUpdate2.setExpirationType(expirationType2);
@@ -683,18 +640,27 @@ public class NoteServiceUpdateNoteTest {
                 () -> noteService.updateNote(url, updateNoteRequestDto2), executors);
 
         CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(futureNoteFirst, futureNoteSecond);
-        LocalDateTime expTimeOfExpirationFrom = LocalDateTime.now().plusSeconds(1);
-        expNoteAfterUpdate1.setExpirationFrom(expTimeOfExpirationFrom);
-        expNoteAfterUpdate2.setExpirationFrom(expTimeOfExpirationFrom);
+        expNoteAfterUpdate1.setExpirationFrom(null);
+        expNoteAfterUpdate2.setExpirationFrom(null);
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
         combinedFuture.join();
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
-        Optional<Note> updatedOptionalNoteInRep = noteRepository.findByUrl(url);
-        NoteDto updatedNoteInRep = noteMapper.toDto(updatedOptionalNoteInRep.get());
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
+        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
+        updatedNoteInRep.setExpirationFrom(null);
 
-        assertOneOfTwoNoteDto(updatedNoteInRep, expNoteAfterUpdate1, expNoteAfterUpdate2);
+        boolean firstPassed = false;
+        try {
+            assertNoteDtoEquals(expNoteAfterUpdate1, updatedNoteInRep);
+            firstPassed = true;
+        } catch (AssertionError ignored) {
+        }
+
+        if (!firstPassed) {
+            assertNoteDtoEquals(expNoteAfterUpdate2, updatedNoteInRep);
+        }
     }
 
     // validation ------------------------------------------------------------------------------------------------------
@@ -702,9 +668,9 @@ public class NoteServiceUpdateNoteTest {
     @Test
     void allFieldsAreNull(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -712,9 +678,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -724,7 +687,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -737,18 +700,18 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void invalidTitle(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(".Hello")
                 .content(null)
@@ -756,9 +719,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -768,6 +728,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -780,18 +741,18 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void invalidContent(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(stringOfLength(contentLength + 1))
@@ -799,9 +760,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(null)
                 .isAvailable(null)
                 .build();
-
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -811,6 +769,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -823,19 +782,19 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void invalidExpirationPeriod(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
         Duration expirationPeriod = null;
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(null)
                 .content(null)
@@ -843,9 +802,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -855,6 +811,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -867,19 +824,19 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 
     @Test
     void allFieldsInvalid(){
 
-        addNoteInRepos();
+        NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
         Duration expirationPeriod = null;
-        String url = "1";
+        String url = noteInReposBeforeUpdate.getUrl();
         UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
                 .title(".Hello")
                 .content(stringOfLength(contentLength + 1))
@@ -887,9 +844,6 @@ public class NoteServiceUpdateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .isAvailable(null)
                 .build();
-
-        Optional<Note> optionalNoteBeforeUpdateInRep = noteRepository.findByUrl(url);
-        NoteDto noteBeforeUpdateInRep = noteMapper.toDto(optionalNoteBeforeUpdateInRep.get());
 
 
         long countOfNotesInReposBeforeUpdate = noteRepository.count();
@@ -899,6 +853,7 @@ public class NoteServiceUpdateNoteTest {
                     noteService.updateNote(url, updateNoteRequestDto);
                 }
         );
+        long countOfNotesInReposAfterUpdate = noteRepository.count();
 
 
         List<ClientExceptionName> expected = List.of(
@@ -913,9 +868,9 @@ public class NoteServiceUpdateNoteTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected, actual);
 
-        NoteDto updatedNoteInRep = noteMapper.toDto(noteRepository.findByUrl(url).get());
-        assertNoteDtoEquals(noteBeforeUpdateInRep, updatedNoteInRep);
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteRepository.findByUrl(url).get()));
+        assertNoteDtoEquals(noteInReposBeforeUpdate, noteMapper.toDto(noteCache.get(url).get()));
 
-        assertEquals(countOfNotesInReposBeforeUpdate, noteRepository.count());
+        assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
     }
 }
