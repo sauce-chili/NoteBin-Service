@@ -44,14 +44,4 @@ public class TestAsserts {
             fail();
         }
     }
-
-    public static void assertNoteExistsInRepository(NoteDto noteDto, NoteRepository noteRepository) {
-        Optional<Note> noteInRepository = noteRepository.findByUrl(noteDto.getUrl());
-        assertTrue(noteInRepository.isPresent());
-    }
-
-    public static void assertNoteExistsInCache(NoteDto noteDto, NoteCache noteCache) {
-        Optional<NoteCacheable> noteInCache = noteCache.get(noteDto.getUrl());
-        assertTrue(noteInCache.isPresent());
-    }
 }
