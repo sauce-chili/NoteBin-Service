@@ -170,6 +170,8 @@ public class NoteServiceTest {
             NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedSecondNoteDto.getUrl()).get());
             assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInRepos);
             assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInCache);
+            assertNotEquals(actualFirstNoteInRepos.getId(), actualSecondNoteInRepos.getId());
+            assertNotEquals(actualFirstNoteInRepos.getUrl(), actualSecondNoteInRepos.getUrl());
         }
 
         @Test
@@ -232,6 +234,8 @@ public class NoteServiceTest {
             NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedSecondNoteDto.getUrl()).get());
             assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInRepos);
             assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInCache);
+            assertNotEquals(actualFirstNoteInRepos.getId(), actualSecondNoteInRepos.getId());
+            assertNotEquals(actualFirstNoteInRepos.getUrl(), actualSecondNoteInRepos.getUrl());
         }
 
         @Test
