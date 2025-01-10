@@ -33,6 +33,25 @@ spring:
     cache-capacity: 2048
     page-size: 20
 
+  hashes:
+    hash-pool-size: 2000 # must be equals `batch_size`
+    pool-exhaustion-percentage: 40 # in percent !!!
+    generation-cron: 0 0 */6 * * * # every 6 hours
+    generation-thread-pool-size: 4
+    hash-cache-size: 500
+    cache-exhaustion-percentage: 20 # in percent !!!
+
+  validationRule:
+    title:
+      max-length: 128
+      regex: ^[a-zA-Z0-9][a-zA-Z0-9 .,!?;:()\[\]{}\"']{${spring.validationRule.title.min-length-in-regex},${spring.validationRule.title.max-length-in-regex}}$
+      min-length-in-regex: 0
+      max-length-in-regex: 127
+    content:
+      length: 16384
+
+
+
 server:
   port: 8080
 

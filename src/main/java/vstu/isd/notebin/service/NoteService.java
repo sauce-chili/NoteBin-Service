@@ -5,13 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
@@ -20,6 +18,7 @@ import vstu.isd.notebin.exception.NoteUnavailableException;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -31,7 +30,11 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
     private final NoteCache noteCache;
+
     private final NoteMapper noteMapper;
+
+    private final UrlGenerator urlGenerator;
+    private final NoteValidator noteValidator;
 
     private final RecalculateNoteAvailability recalculateNoteAvailabilityCommand;
 
@@ -75,6 +78,62 @@ public class NoteService {
         }
 
         return Optional.empty();
+    }
+
+    @Retryable(
+            retryFor = {OptimisticLockException.class}
+    )
+    public NoteDto updateNote(String url, UpdateNoteRequestDto updateNoteRequest) {
+
+        noteValidator.validateUpdateNoteRequestDto(updateNoteRequest).ifPresent( e -> {
+            throw e;
+        });
+
+        LocalDateTime expirationFrom = LocalDateTime.now();
+        updateNoteInCache(url, updateNoteRequest, expirationFrom);
+        NoteDto updatedNote = updateNoteInRepository(url, updateNoteRequest, expirationFrom);
+
+        return updatedNote;
+    }
+
+    private void updateNoteInCache(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
+
+        try {
+            noteCache.update(url, cached -> {
+                cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
+                return cached;
+            });
+        } catch (NoSuchElementException ignored) {
+        }
+    }
+
+    private NoteDto updateNoteInRepository(String url, UpdateNoteRequestDto updateNoteRequest, LocalDateTime expirationFrom) {
+
+        try {
+            Note updated = noteRepository.updateWithLock(url, persisted -> {
+                persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest, expirationFrom);
+                return persisted;
+            });
+
+            return noteMapper.toDto(updated);
+        } catch (NoSuchElementException e) {
+            throw new NoteNonExistsException(url);
+        }
+    }
+
+    @Transactional
+    public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
+
+        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent( e -> {
+            throw e;
+        });
+
+        String url = urlGenerator.generateUrl();
+        Note noteWithoutId = noteMapper.toNote(createNoteRequest, url);
+        Note savedNote = noteRepository.save(noteWithoutId);
+        noteCache.save(noteMapper.toCacheable(savedNote));
+
+        return noteMapper.toDto(savedNote);
     }
 }
 

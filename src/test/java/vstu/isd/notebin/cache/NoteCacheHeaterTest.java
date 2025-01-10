@@ -39,32 +39,30 @@ public class NoteCacheHeaterTest {
     @Test
     void getMostUsedNotes() {
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
 
-        LocalDateTime nowForFirstNote = LocalDateTime.now();
         Note firstNote = Note.builder()
                 .id(1L)
                 .title("Title of first note")
                 .content("Content of first note")
-                .createdAt(nowForFirstNote)
+                .createdAt(LocalDateTime.now())
                 .url("1")
                 .expirationType(ExpirationType.NEVER)
                 .expirationPeriod(expirationPeriod)
-                .expirationFrom(nowForFirstNote)
+                .expirationFrom(null)
                 .isAvailable(true)
                 .build();
         noteRepository.save(firstNote);
 
-        LocalDateTime nowForSecondNote = LocalDateTime.now();
         Note secondNote = Note.builder()
                 .id(2L)
                 .title("Title of second note")
                 .content("Content of second note")
-                .createdAt(nowForSecondNote)
+                .createdAt(LocalDateTime.now())
                 .url("2")
                 .expirationType(ExpirationType.NEVER)
                 .expirationPeriod(expirationPeriod)
-                .expirationFrom(nowForSecondNote)
+                .expirationFrom(null)
                 .isAvailable(true)
                 .build();
         noteRepository.save(secondNote);
@@ -83,7 +81,7 @@ public class NoteCacheHeaterTest {
     @Test
     void fewPagesWhileGetMostUsedNotes() {
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
 
         int TOTAL_COUNT_OF_NOTES = PAGE_SIZE * 2;
         List<Note> notesInRep = new LinkedList<>();
@@ -97,7 +95,7 @@ public class NoteCacheHeaterTest {
                     .url(String.valueOf(i))
                     .expirationType(ExpirationType.NEVER)
                     .expirationPeriod(expirationPeriod)
-                    .expirationFrom(createdAt)
+                    .expirationFrom(null)
                     .isAvailable(true)
                     .build();
             notesInRep.add(note);
@@ -115,7 +113,7 @@ public class NoteCacheHeaterTest {
     @Test
     void heaterReturnLessThanRequired() {
 
-        Duration expirationPeriod = Duration.ofMinutes(15);
+        Duration expirationPeriod = null;
 
         int TOTAL_COUNT_OF_NOTES = PAGE_SIZE * 2;
         List<Note> notesInRep = new LinkedList<>();
@@ -129,7 +127,7 @@ public class NoteCacheHeaterTest {
                     .url(String.valueOf(i))
                     .expirationType(ExpirationType.NEVER)
                     .expirationPeriod(expirationPeriod)
-                    .expirationFrom(createdAt)
+                    .expirationFrom(null)
                     .isAvailable(true)
                     .build();
             notesInRep.add(note);
