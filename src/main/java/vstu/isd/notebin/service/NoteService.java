@@ -165,8 +165,7 @@ class RecalculateNoteAvailability {
             throw new OptimisticLockException();
         }
 
-        Note updated = noteRepository.updateWithLock(url, n -> (Note) noteModifier.apply(n));
-        return updated;
+        return noteRepository.updateWithLock(url, n -> (Note) noteModifier.apply(n));
     }
 }
 
