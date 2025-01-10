@@ -1,8 +1,17 @@
-FROM openjdk:17-jdk-slim-buster
+FROM gradle:8.3-jdk17 AS buildr
+
 WORKDIR /app
 
-COPY /build/libs/service.jar build/
+COPY . .
 
-WORKDIR /app/build
+RUN gradle build
+
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+COPY --from=buildr /app/build/libs/*.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT java -jar service.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
