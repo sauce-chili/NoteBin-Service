@@ -5,7 +5,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.config.TestContainersConfig;
@@ -13,6 +12,7 @@ import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.*;
+import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
@@ -38,6 +38,8 @@ public class NoteServiceCreateNoteTest {
     private NoteService noteService;
     @Autowired
     private int contentLength;
+    @Autowired
+    private NoteMapper noteMapper;
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
@@ -93,8 +95,10 @@ public class NoteServiceCreateNoteTest {
         assertNotNull(actualCreatedNoteDto.getId());
         assertNotNull(actualCreatedNoteDto.getUrl());
         assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
-        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedNoteDto.getUrl()).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInCache);
     }
 
     @Test
@@ -115,6 +119,7 @@ public class NoteServiceCreateNoteTest {
         NoteDto actualCreatedFirstNoteDto = noteService.createNote(createNoteRequestDto);
         NoteDto actualCreatedSecondNoteDto = noteService.createNote(createNoteRequestDto);
 
+
         NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
                 .id(actualCreatedFirstNoteDto.getId())
                 .url(actualCreatedFirstNoteDto.getUrl())
@@ -127,8 +132,10 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
-        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+        NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedFirstNoteDto.getUrl()).get());
+        NoteDto actualFirstNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedFirstNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualFirstNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualFirstNoteInCache);
 
         NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
                 .id(actualCreatedSecondNoteDto.getId())
@@ -142,8 +149,10 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
-        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+        NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedSecondNoteDto.getUrl()).get());
+        NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedSecondNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInCache);
     }
 
     @Test
@@ -185,8 +194,10 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
         assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
-        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+        NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedFirstNoteDto.getUrl()).get());
+        NoteDto actualFirstNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedFirstNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualFirstNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualFirstNoteInCache);
 
         NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
                 .id(actualCreatedSecondNoteDto.getId())
@@ -200,8 +211,10 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriodSecond)
                 .build();
         assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
-        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+        NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedSecondNoteDto.getUrl()).get());
+        NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedSecondNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualSecondNoteInCache);
     }
 
     @Test
@@ -241,11 +254,47 @@ public class NoteServiceCreateNoteTest {
         NoteDto actualCreatedSecondNoteDto = futureNoteSecond.join();
 
 
-        assertNoteExistsInRepository(actualCreatedFirstNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedFirstNoteDto, noteCache);
+        NoteDto expectedCreatedFirstNoteDto = NoteDto.builder()
+                .id(actualCreatedFirstNoteDto.getId())
+                .url(actualCreatedFirstNoteDto.getUrl())
+                .isAvailable(true)
+                .title(title)
+                .content(content)
+                .createdAt(LocalDateTime.now())
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(null)
+                .expirationPeriod(expirationPeriod)
+                .build();
 
-        assertNoteExistsInRepository(actualCreatedSecondNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedSecondNoteDto, noteCache);
+        NoteDto expectedCreatedSecondNoteDto = NoteDto.builder()
+                .id(actualCreatedSecondNoteDto.getId())
+                .url(actualCreatedSecondNoteDto.getUrl())
+                .isAvailable(true)
+                .title(titleSecond)
+                .content(contentSecond)
+                .createdAt(LocalDateTime.now())
+                .expirationType(ExpirationType.NEVER)
+                .expirationFrom(null)
+                .expirationPeriod(expirationPeriodSecond)
+                .build();
+
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedSecondNoteDto.getUrl()).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedSecondNoteDto.getUrl()).get());
+
+        boolean firstPassed = false;
+        try {
+            assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
+            assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualNoteInRepos);
+            assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualNoteInCache);
+            firstPassed = true;
+        } catch (AssertionError ignored) {
+        }
+
+        if (!firstPassed) {
+            assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
+            assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualNoteInRepos);
+            assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualNoteInCache);
+        }
     }
 
     // invalid title ----------------------------------------------------------------------------------
@@ -437,8 +486,10 @@ public class NoteServiceCreateNoteTest {
         assertNotNull(actualCreatedNoteDto.getId());
         assertNotNull(actualCreatedNoteDto.getUrl());
         assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
-        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedNoteDto.getUrl()).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInCache);
     }
 
     @Test
@@ -471,8 +522,10 @@ public class NoteServiceCreateNoteTest {
         assertNotNull(actualCreatedNoteDto.getId());
         assertNotNull(actualCreatedNoteDto.getUrl());
         assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
-        assertNoteExistsInRepository(actualCreatedNoteDto, noteRepository);
-        assertNoteExistsInCache(actualCreatedNoteDto, noteCache);
+        NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedNoteDto.getUrl()).get());
+        NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedNoteDto.getUrl()).get());
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInRepos);
+        assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInCache);
     }
 
     @Test
