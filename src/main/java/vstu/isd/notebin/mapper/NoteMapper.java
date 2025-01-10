@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
-import vstu.isd.notebin.dto.GetNoteResponseDto;
+import vstu.isd.notebin.dto.NoteResponseDto;
 import vstu.isd.notebin.dto.NoteDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
@@ -66,7 +66,7 @@ public interface NoteMapper {
     }
 
     @Mapping(source = "available", target = "isAvailable")
-    GetNoteResponseDto toGetNoteResponseDto(NoteDto note);
+    NoteResponseDto toGetNoteResponseDto(NoteDto note);
 
     default Note toNote(CreateNoteRequestDto createNoteRequestDto, String url) {
         LocalDateTime now = LocalDateTime.now();

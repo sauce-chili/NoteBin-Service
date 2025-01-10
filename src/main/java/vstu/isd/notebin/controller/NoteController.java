@@ -15,21 +15,21 @@ public class NoteController {
     private final NoteMapper noteMapper;
 
     @GetMapping("/{url}")
-    public GetNoteResponseDto getNote(@PathVariable String url) {
+    public NoteResponseDto getNote(@PathVariable String url) {
         NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url));
 
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
     @PostMapping
-    public GetNoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
+    public NoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
         NoteDto noteDto = noteService.createNote(requestDto);
 
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
     @PatchMapping("/{url}")
-    public GetNoteResponseDto updateNote(
+    public NoteResponseDto updateNote(
             @PathVariable String url,
             @RequestBody UpdateNoteRequestDto requestDto
     ) {
