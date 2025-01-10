@@ -212,4 +212,40 @@ public class NoteService {
 
         return noteMapper.toDto(savedNote);
     }
+
+    @Transactional
+    @Retryable(
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 200, multiplier = 1),
+            retryFor = {OptimisticLockException.class}
+    )
+    public Boolean deleteNote(String url) {
+
+        Optional<NoteCacheable> noteCacheableOptional = noteCache.get(url);
+        Optional<Note> noteInRepositoryOptional = noteCacheableOptional.isEmpty()
+                ? noteRepository.findByUrl(url)
+                : Optional.empty();
+
+        if (noteCacheableOptional.isEmpty() && noteInRepositoryOptional.isEmpty()) {
+            throw new NoteNonExistsException(url);
+        }
+
+        NoteDto note = noteCacheableOptional
+                .map(noteMapper::toDto)
+                .orElseGet(() -> noteMapper.toDto(
+                        noteInRepositoryOptional.orElseThrow(() -> new NoteNonExistsException(url)))
+                );
+
+        if (!note.isAvailable()) {
+            return Boolean.TRUE;
+        }
+
+        UpdateNoteRequestDto deleteNoteUpdate = UpdateNoteRequestDto.builder()
+                .isAvailable(false)
+                .build();
+
+        updateNote(url, deleteNoteUpdate);
+
+        return Boolean.TRUE;
+    }
 }
