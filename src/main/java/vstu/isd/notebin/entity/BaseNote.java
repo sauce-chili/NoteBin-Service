@@ -34,6 +34,10 @@ public abstract class BaseNote {
 
     abstract public boolean isAvailable();
 
+    public boolean isNotAvailable() {
+        return !isAvailable();
+    }
+
     abstract public void setAvailable(boolean available);
 
     public boolean isExpired() {
