@@ -2048,4 +2048,17 @@ public class NoteServiceTest {
             verify(noteCache, times(2)).getAndExpire(REQUESTED_NOTE_URL);
         }
     }
+
+    @Nested
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+    class DeleteNoteTest {
+
+        @Test
+        void deleteNote() {
+
+            NoteDto noteDto = generateNoteToRepos();
+
+
+        }
+    }
 }
