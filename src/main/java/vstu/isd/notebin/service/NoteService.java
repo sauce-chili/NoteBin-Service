@@ -162,12 +162,11 @@ public class NoteService {
     )
     public NoteDto updateNote(String url, UpdateNoteRequestDto updateNoteRequest) {
 
-        LocalDateTime expirationFrom = LocalDateTime.now();
-
         noteValidator.validateUpdateNoteRequestDto(updateNoteRequest).ifPresent( e -> {
             throw e;
         });
 
+        LocalDateTime expirationFrom = LocalDateTime.now();
         updateNoteInCache(url, updateNoteRequest, expirationFrom);
         NoteDto updatedNote = updateNoteInRepository(url, updateNoteRequest, expirationFrom);
 
