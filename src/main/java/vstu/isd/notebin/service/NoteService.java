@@ -5,18 +5,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
+import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.GetNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
+import vstu.isd.notebin.dto.UpdateNoteRequestDto;
+import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
+import vstu.isd.notebin.generator.UrlGenerator;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.validation.NoteValidator;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -80,6 +86,7 @@ public class NoteService {
         return Optional.empty();
     }
 
+    @Transactional
     @Retryable(
             retryFor = {OptimisticLockException.class}
     )
