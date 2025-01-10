@@ -27,4 +27,12 @@ public class NoteController {
 
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
+
+    @PutMapping("/{url}")
+    public GetNoteResponseDto updateNote(@PathVariable String url,
+                                         @RequestBody UpdateNoteRequestDto requestDto) {
+        NoteDto noteDto = noteService.updateNote(url, requestDto);
+
+        return noteMapper.toGetNoteResponseDto(noteDto);
+    }
 }
