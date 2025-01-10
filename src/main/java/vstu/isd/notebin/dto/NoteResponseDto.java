@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class GetNoteResponseDto {
+public class NoteResponseDto {
     private String title;
     private String content;
     private LocalDateTime createdAt;
