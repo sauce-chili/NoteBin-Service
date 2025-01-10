@@ -1988,9 +1988,17 @@ public class NoteServiceTest {
         @Test
         void deleteNote() {
 
-            NoteDto noteDto = generateNoteToRepos();
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
 
+            Boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
 
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
         }
     }
 }
