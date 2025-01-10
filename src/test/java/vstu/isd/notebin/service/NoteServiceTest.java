@@ -2000,5 +2000,123 @@ public class NoteServiceTest {
             assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
             assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
         }
+
+        @Test
+        void noteIsAlreadyUnavailable() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder().isAvailable(false).build();
+            noteService.updateNote(noteBeforeDelete.getUrl(), setUnavailable);
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+            Boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
+
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
+        }
+
+        @Test
+        void noteNonExist() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            String urlOfNonexistent = noteBeforeDelete.getUrl() + 1;
+
+            NoteNonExistsException noteNonExistsException = assertThrows(NoteNonExistsException.class, () -> noteService.deleteNote(urlOfNonexistent));
+
+            ClientExceptionName expected = ClientExceptionName.NOTE_NOT_FOUND;
+            ClientExceptionName actual = noteNonExistsException.getExceptionName();
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void deleteTwoNotes() {
+
+            List<NoteDto> notesBeforeDelete = generateNotesToRepos(2);
+            NoteDto firstNoteBeforeDelete = notesBeforeDelete.get(0);
+            NoteDto secondNoteBeforeDelete = notesBeforeDelete.get(1);
+            NoteDto expectedFirstDeletedNote = noteMapper.toDto(noteRepository.findByUrl(firstNoteBeforeDelete.getUrl()).get());
+            expectedFirstDeletedNote.setAvailable(false);
+            NoteDto expectedSecondDeletedNote = noteMapper.toDto(noteRepository.findByUrl(secondNoteBeforeDelete.getUrl()).get());
+            expectedSecondDeletedNote.setAvailable(false);
+
+
+            Boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl());
+            Boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl());
+
+
+            assertTrue(firstWasDeleted);
+            NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(firstNoteBeforeDelete.getUrl()).get());
+            NoteDto actualFirstNoteInCache = noteMapper.toDto(noteCache.get(firstNoteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedFirstDeletedNote, actualFirstNoteInRepos);
+            assertNoteDtoEquals(expectedFirstDeletedNote, actualFirstNoteInCache);
+
+            assertTrue(secondWasDeleted);
+            NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(secondNoteBeforeDelete.getUrl()).get());
+            NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(secondNoteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedSecondDeletedNote, actualSecondNoteInRepos);
+            assertNoteDtoEquals(expectedSecondDeletedNote, actualSecondNoteInCache);
+        }
+
+        @Test
+        public void concurrentDeleteOfNote() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+
+            CompletableFuture<Boolean> futureNoteFirst = CompletableFuture.supplyAsync(
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
+
+            CompletableFuture<Boolean> futureNoteSecond = CompletableFuture.supplyAsync(
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
+
+            CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(futureNoteFirst, futureNoteSecond);
+            combinedFuture.join();
+
+
+            Boolean wasDeletedInFirstThread = Boolean.FALSE;
+            Boolean wasDeletedInSecondThread = Boolean.FALSE;;
+            try {
+                wasDeletedInFirstThread = futureNoteFirst.get();
+                wasDeletedInSecondThread = futureNoteFirst.get();
+            } catch (Exception ignored) {};
+
+            assertTrue(wasDeletedInFirstThread);
+            assertTrue(wasDeletedInSecondThread);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+        void deleteNotePersistedOnlyInRepos() {
+
+            String REQUESTED_NOTE_URL = "1";
+            Note persistedRepoNote = Note.builder()
+                    .url(REQUESTED_NOTE_URL)
+                    .isAvailable(true)
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .build();
+            persistedRepoNote = noteRepository.save(persistedRepoNote);
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+            Boolean wasDeleted = noteService.deleteNote(persistedRepoNote.getUrl());
+
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+        }
     }
 }
