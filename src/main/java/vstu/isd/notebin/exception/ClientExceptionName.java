@@ -21,6 +21,15 @@ public enum ClientExceptionName {
     ),
     INVALID_CONTENT(
             803
+    ),
+    INVALID_EXPIRATION_TYPE(
+           804
+    ),
+    INVALID_EXPIRATION_PERIOD(
+            805
+    ),
+    EMPTY_UPDATE_REQUEST(
+        806
     );
 
     private final int apiErrorCode;

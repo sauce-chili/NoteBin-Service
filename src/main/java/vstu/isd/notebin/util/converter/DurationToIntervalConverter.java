@@ -1,9 +1,11 @@
 package vstu.isd.notebin.util.converter;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 import java.time.Duration;
 
+@Converter
 public class DurationToIntervalConverter implements AttributeConverter<Duration, String> {
 
     @Override

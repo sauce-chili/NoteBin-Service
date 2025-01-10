@@ -130,4 +130,10 @@ public class NoteCacheable extends BaseNote {
     public LocalDateTime expireAt() {
         return super.expireAt();
     }
+
+    @Override
+    @JsonIgnore
+    public boolean isNotAvailable() {
+        return super.isNotAvailable();
+    }
 }
