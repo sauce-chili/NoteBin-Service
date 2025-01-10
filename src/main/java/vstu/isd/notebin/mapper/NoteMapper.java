@@ -6,12 +6,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import vstu.isd.notebin.dto.GetNoteResponseDto;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.NoteCacheable;
-
-import java.time.LocalDateTime;
 
 @Mapper(
         componentModel = "spring",
@@ -25,6 +22,9 @@ public interface NoteMapper {
 
     @Mapping(source = "available", target = "isAvailable")
     NoteDto toDto(Note note);
+
+    @Mapping(source = "available", target = "isAvailable")
+    NoteDto toDto(BaseNote baseNote);
 
     @Mapping(source = "available", target = "isAvailable")
     Note toEntity(NoteCacheable noteCacheable);
