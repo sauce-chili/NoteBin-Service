@@ -41,7 +41,7 @@ spring:
     hash-cache-size: 500
     cache-exhaustion-percentage: 20 # in percent !!!
 
-  validationRule:
+  validation-rule:
     title:
       max-length: 128
       regex: ^[a-zA-Z0-9][a-zA-Z0-9 .,!?;:()\[\]{}\"']{${spring.validationRule.title.min-length-in-regex},${spring.validationRule.title.max-length-in-regex}}$
