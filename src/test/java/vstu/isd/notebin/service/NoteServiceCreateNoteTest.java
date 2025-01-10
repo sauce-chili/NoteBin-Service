@@ -17,6 +17,7 @@ import vstu.isd.notebin.repository.NoteRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -310,6 +311,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -317,10 +319,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -336,6 +344,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -343,10 +352,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -362,6 +377,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -369,10 +385,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     // invalid content --------------------------------------------------------------------------------
@@ -389,6 +411,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -396,10 +419,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_CONTENT
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -415,6 +444,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -422,10 +452,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_CONTENT
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     // invalid expiration type ------------------------------------------------------------------------
@@ -442,6 +478,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -449,10 +486,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_TYPE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     // invalid expiration period ----------------------------------------------------------------------
@@ -470,7 +513,9 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(null)
                 .build();
 
+
         NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
 
         NoteDto expectedCreatedNoteDto = NoteDto.builder()
                 .id(actualCreatedNoteDto.getId())
@@ -506,7 +551,9 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
 
         NoteDto expectedCreatedNoteDto = NoteDto.builder()
                 .id(actualCreatedNoteDto.getId())
@@ -541,6 +588,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -548,10 +596,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -567,6 +621,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -574,10 +629,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -593,6 +654,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -600,10 +662,16 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(1, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_PERIOD, exceptions.get(0).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_EXPIRATION_PERIOD
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 
     // invalid all fields ----------------------------------------------------------------------------
@@ -620,6 +688,7 @@ public class NoteServiceCreateNoteTest {
                 .expirationPeriod(expirationPeriod)
                 .build();
 
+
         GroupValidationException groupOfExceptions = assertThrows(
                 GroupValidationException.class,
                 () -> {
@@ -627,11 +696,17 @@ public class NoteServiceCreateNoteTest {
                 }
         );
 
-        List<? extends ValidationException> exceptions = groupOfExceptions.getExceptions();
 
-        assertEquals(3, exceptions.size());
-        assertEquals(ClientExceptionName.INVALID_TITLE, exceptions.get(0).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_CONTENT, exceptions.get(1).getExceptionName());
-        assertEquals(ClientExceptionName.INVALID_EXPIRATION_TYPE, exceptions.get(2).getExceptionName());
+        List<ClientExceptionName> expected = List.of(
+                ClientExceptionName.INVALID_TITLE,
+                ClientExceptionName.INVALID_CONTENT,
+                ClientExceptionName.INVALID_EXPIRATION_TYPE
+        );
+        List<ClientExceptionName> actual = groupOfExceptions.getExceptions().stream()
+                .map(ValidationException::getExceptionName)
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .toList();
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected, actual);
     }
 }
