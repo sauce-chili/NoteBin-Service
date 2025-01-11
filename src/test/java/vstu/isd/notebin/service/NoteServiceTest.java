@@ -320,7 +320,7 @@ public class NoteServiceTest {
 
         // invalid title ----------------------------------------------------------------------------------
         @Test
-        void titleIsNull(){
+        void titleIsNull() {
 
             Duration expirationPeriod = null;
             String content = "My content";
@@ -352,7 +352,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void titleIsInvalid(){
+        void titleIsInvalid() {
 
             Duration expirationPeriod = null;
             String title = ",Title";
@@ -385,7 +385,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void titleLengthIsLargerThanMaxLength(){
+        void titleLengthIsLargerThanMaxLength() {
 
             Duration expirationPeriod = null;
             String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
@@ -419,7 +419,7 @@ public class NoteServiceTest {
 
         // invalid content --------------------------------------------------------------------------------
         @Test
-        void contentIsNull(){
+        void contentIsNull() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -452,7 +452,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void contentIsInvalid(){
+        void contentIsInvalid() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -486,7 +486,7 @@ public class NoteServiceTest {
 
         // invalid expiration type ------------------------------------------------------------------------
         @Test
-        void expirationTypeIsNull(){
+        void expirationTypeIsNull() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -521,7 +521,7 @@ public class NoteServiceTest {
         // invalid expiration period ----------------------------------------------------------------------
 
         @Test
-        void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead(){
+        void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead() {
 
             LocalDateTime now = LocalDateTime.now();
             String title = "New note";
@@ -558,7 +558,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod(){
+        void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod() {
 
             LocalDateTime now = LocalDateTime.now();
             String title = "New note";
@@ -596,7 +596,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod(){
+        void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod() {
 
             String title = "New note";
             String content = "My content";
@@ -629,7 +629,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhenExpirationTypeIsNever(){
+        void expirationPeriodSetWhenExpirationTypeIsNever() {
 
             String title = "New note";
             String content = "My content";
@@ -662,7 +662,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead(){
+        void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead() {
 
             String title = "New note";
             String content = "My content";
@@ -696,7 +696,7 @@ public class NoteServiceTest {
 
         // invalid all fields ----------------------------------------------------------------------------
         @Test
-        void allFieldsAreInvalid(){
+        void allFieldsAreInvalid() {
 
             Duration expirationPeriod = null;
             String title = ",Title";
@@ -731,80 +731,80 @@ public class NoteServiceTest {
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    NoteDto generateNoteToRepos() {
+
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.NEVER)
+                .expirationPeriod(null)
+                .build();
+
+        return noteService.createNote(createNoteRequestDto);
+    }
+
+    NoteDto generateNoteToReposWithExpTypeBurnAfterRead() {
+
+        String title = "New note";
+        String content = "My content";
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.BURN_AFTER_READ)
+                .expirationPeriod(null)
+                .build();
+
+        return noteService.createNote(createNoteRequestDto);
+    }
+
+    NoteDto generateNoteToReposWithExpTypeBurnByPeriod() {
+
+        String title = "New note";
+        String content = "My content";
+        Duration expirationPeriod = Duration.ofMinutes(15);
+        CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                .title(title)
+                .content(content)
+                .expirationType(ExpirationType.BURN_BY_PERIOD)
+                .expirationPeriod(expirationPeriod)
+                .build();
+
+        return noteService.createNote(createNoteRequestDto);
+    }
+
+    List<NoteDto> generateNotesToRepos(int count) {
+
+        String defaultTitle = "My title";
+        String defaultContent = "My content";
+        ExpirationType expirationType = ExpirationType.NEVER;
+        List<NoteDto> notes = new LinkedList<>();
+        for (int i = 0; i < count; i++) {
+
+            CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                    .title(defaultTitle + " " + i)
+                    .content(defaultContent + " " + i)
+                    .expirationType(expirationType)
+                    .expirationPeriod(null)
+                    .build();
+
+            notes.add(noteService.createNote(createNoteRequestDto));
+        }
+
+        return notes;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Nested
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
     class UpdateNoteTest {
 
-        // -----------------------------------------------------------------------------------------------------------------
-
-        NoteDto generateNoteToRepos(){
-
-            String title = "New note";
-            String content = "My content";
-            CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .expirationType(ExpirationType.NEVER)
-                    .expirationPeriod(null)
-                    .build();
-
-            return noteService.createNote(createNoteRequestDto);
-        }
-
-        NoteDto generateNoteToReposWithExpTypeBurnAfterRead(){
-
-            String title = "New note";
-            String content = "My content";
-            CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .expirationType(ExpirationType.BURN_AFTER_READ)
-                    .expirationPeriod(null)
-                    .build();
-
-            return noteService.createNote(createNoteRequestDto);
-        }
-
-        NoteDto generateNoteToReposWithExpTypeBurnByPeriod(){
-
-            String title = "New note";
-            String content = "My content";
-            Duration expirationPeriod = Duration.ofMinutes(15);
-            CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .expirationType(ExpirationType.BURN_BY_PERIOD)
-                    .expirationPeriod(expirationPeriod)
-                    .build();
-
-            return noteService.createNote(createNoteRequestDto);
-        }
-
-        List<NoteDto> generateNotesToRepos(int count){
-
-            String defaultTitle = "My title";
-            String defaultContent = "My content";
-            ExpirationType expirationType = ExpirationType.NEVER;
-            List<NoteDto> notes = new LinkedList<>();
-            for (int i = 0; i < count; i++) {
-
-                CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
-                        .title(defaultTitle + " " + i)
-                        .content(defaultContent + " " + i)
-                        .expirationType(expirationType)
-                        .expirationPeriod(null)
-                        .build();
-
-                notes.add(noteService.createNote(createNoteRequestDto));
-            }
-
-            return notes;
-        }
-
-        // -----------------------------------------------------------------------------------------------------------------
-
         @Test
-        void updateNote(){
+        void updateNote() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -838,7 +838,84 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodNotNullWhenExpTypeNull(){
+        void updateNotePersistedOnlyInRepos() {
+
+            NoteDto note = generateNoteToRepos();
+
+            String REQUESTED_NOTE_URL = note.getUrl() + 1;
+            Note persistedRepoNote = Note.builder()
+                    .url(REQUESTED_NOTE_URL)
+                    .isAvailable(true)
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .build();
+            persistedRepoNote = noteRepository.save(persistedRepoNote);
+            NoteDto noteInReposBeforeUpdate = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
+
+            Duration expirationPeriod = Duration.ofMinutes(37);
+            String url = noteInReposBeforeUpdate.getUrl();
+            UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                    .title(null)
+                    .content(null)
+                    .expirationType(ExpirationType.BURN_BY_PERIOD)
+                    .expirationPeriod(expirationPeriod)
+                    .isAvailable(null)
+                    .build();
+
+            NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
+            expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
+            expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
+            expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
+
+
+            long countOfNotesInReposBeforeUpdate = noteRepository.count();
+            NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
+            long countOfNotesInReposAfterUpdate = noteRepository.count();
+
+
+            assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
+            assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
+            assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
+        }
+
+        @Test
+        void updatingNonExistingNote() {
+
+            NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
+
+            Duration expirationPeriod = Duration.ofMinutes(37);
+            String nonExistingUrl = noteInReposBeforeUpdate.getUrl() + 1;
+            UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
+                    .title(null)
+                    .content(null)
+                    .expirationType(ExpirationType.BURN_BY_PERIOD)
+                    .expirationPeriod(expirationPeriod)
+                    .isAvailable(null)
+                    .build();
+
+
+            long countOfNotesInReposBeforeUpdate = noteRepository.count();
+            NoteNonExistsException noteNonExistsException = assertThrows(
+                    NoteNonExistsException.class,
+                    () -> {
+                        noteService.updateNote(nonExistingUrl, updateNoteRequestDto);
+                    }
+            );
+            long countOfNotesInReposAfterUpdate = noteRepository.count();
+
+
+            ClientExceptionName expected = ClientExceptionName.NOTE_NOT_FOUND;
+            ClientExceptionName actual = noteNonExistsException.getExceptionName();
+            assertEquals(expected, actual);
+            assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
+        }
+
+        @Test
+        void expirationPeriodNotNullWhenExpTypeNull() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -882,7 +959,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromNeverToBurnAfterRead(){
+        void changeExpTypeFromNeverToBurnAfterRead() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -913,7 +990,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromNeverToBurnByPeriod(){
+        void changeExpTypeFromNeverToBurnByPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -947,7 +1024,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnAfterReadToNever(){
+        void changeExpTypeFromBurnAfterReadToNever() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
@@ -978,7 +1055,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnAfterReadToBurnByPeriod(){
+        void changeExpTypeFromBurnAfterReadToBurnByPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
@@ -1012,7 +1089,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnByPeriodToNever(){
+        void changeExpTypeFromBurnByPeriodToNever() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -1045,7 +1122,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnByPeriodToBurnAfterRead(){
+        void changeExpTypeFromBurnByPeriodToBurnAfterRead() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -1078,7 +1155,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updateWithNoSeeingDifference(){
+        void updateWithNoSeeingDifference() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1112,7 +1189,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changesAllFields(){
+        void changesAllFields() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1367,7 +1444,7 @@ public class NoteServiceTest {
         // validation ------------------------------------------------------------------------------------------------------
 
         @Test
-        void allFieldsAreNull(){
+        void allFieldsAreNull() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1408,7 +1485,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidTitle(){
+        void invalidTitle() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1449,7 +1526,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidContent(){
+        void invalidContent() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1490,7 +1567,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidExpirationPeriod(){
+        void invalidExpirationPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1532,7 +1609,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void allFieldsInvalid(){
+        void allFieldsInvalid() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1982,6 +2059,139 @@ public class NoteServiceTest {
             // only first time
             verify(noteRepository, times(1)).findByUrl(REQUESTED_NOTE_URL);
             verify(noteCache, times(2)).getAndExpire(REQUESTED_NOTE_URL);
+        }
+    }
+
+    @Nested
+    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+    class DeleteNoteTest {
+
+        @Test
+        void deleteNote() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
+
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
+        }
+
+        @Test
+        void alreadySoftDeleted() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder().isAvailable(false).build();
+            noteService.updateNote(noteBeforeDelete.getUrl(), setUnavailable);
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
+
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
+        }
+
+        @Test
+        void noteNonExist() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            String urlOfNonexistent = noteBeforeDelete.getUrl() + 1;
+
+            NoteNonExistsException noteNonExistsException = assertThrows(NoteNonExistsException.class, () -> noteService.deleteNote(urlOfNonexistent));
+
+            ClientExceptionName expected = ClientExceptionName.NOTE_NOT_FOUND;
+            ClientExceptionName actual = noteNonExistsException.getExceptionName();
+            assertEquals(expected, actual);
+        }
+
+        @Test
+        void deleteTwoNotes() {
+
+            List<NoteDto> notesBeforeDelete = generateNotesToRepos(2);
+            NoteDto firstNoteBeforeDelete = notesBeforeDelete.get(0);
+            NoteDto secondNoteBeforeDelete = notesBeforeDelete.get(1);
+            NoteDto expectedFirstDeletedNote = noteMapper.toDto(noteRepository.findByUrl(firstNoteBeforeDelete.getUrl()).get());
+            expectedFirstDeletedNote.setAvailable(false);
+            NoteDto expectedSecondDeletedNote = noteMapper.toDto(noteRepository.findByUrl(secondNoteBeforeDelete.getUrl()).get());
+            expectedSecondDeletedNote.setAvailable(false);
+
+
+            boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl());
+            boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl());
+
+
+            assertTrue(firstWasDeleted);
+            NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(firstNoteBeforeDelete.getUrl()).get());
+            NoteDto actualFirstNoteInCache = noteMapper.toDto(noteCache.get(firstNoteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedFirstDeletedNote, actualFirstNoteInRepos);
+            assertNoteDtoEquals(expectedFirstDeletedNote, actualFirstNoteInCache);
+
+            assertTrue(secondWasDeleted);
+            NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(secondNoteBeforeDelete.getUrl()).get());
+            NoteDto actualSecondNoteInCache = noteMapper.toDto(noteCache.get(secondNoteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedSecondDeletedNote, actualSecondNoteInRepos);
+            assertNoteDtoEquals(expectedSecondDeletedNote, actualSecondNoteInCache);
+        }
+
+        @Test
+        public void concurrentDeleteOfNote() {
+
+            NoteDto noteBeforeDelete = generateNoteToRepos();
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+
+            CompletableFuture<Boolean> futureNoteFirst = CompletableFuture.supplyAsync(
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
+
+            CompletableFuture<Boolean> futureNoteSecond = CompletableFuture.supplyAsync(
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
+
+            CompletableFuture.allOf(futureNoteFirst, futureNoteSecond).join();
+
+            Boolean wasDeletedInFirstThread = futureNoteFirst.join();
+            Boolean wasDeletedInSecondThread = futureNoteSecond.join();
+
+            assertTrue(wasDeletedInFirstThread);
+            assertTrue(wasDeletedInSecondThread);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
+        }
+
+        @Test
+        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+        void deleteNotePersistedOnlyInRepos() {
+
+            String REQUESTED_NOTE_URL = "1";
+            Note persistedRepoNote = Note.builder()
+                    .url(REQUESTED_NOTE_URL)
+                    .isAvailable(true)
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .build();
+            persistedRepoNote = noteRepository.save(persistedRepoNote);
+            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
+            expectedDeletedNote.setAvailable(false);
+
+            boolean wasDeleted = noteService.deleteNote(persistedRepoNote.getUrl());
+
+            assertTrue(wasDeleted);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
+            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
         }
     }
 }

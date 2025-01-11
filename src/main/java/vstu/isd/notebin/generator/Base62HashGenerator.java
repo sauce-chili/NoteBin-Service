@@ -20,21 +20,21 @@ public class Base62HashGenerator implements HashGenerator {
             throw new IllegalArgumentException("amount must be greater than 0");
         }
 
-        List<Long> allUniqueRanges = uniqueRangeRepository.getNextUniqueRange(amount);
+        List<Long> uniqueRange = uniqueRangeRepository.getNextUniqueRange(amount);
 
         Stream<Long> uniqueNumStream = amount <= 3_000 ?
-                allUniqueRanges.stream() : allUniqueRanges.parallelStream();
+                uniqueRange.stream() : uniqueRange.parallelStream();
 
         return uniqueNumStream
-                .map(this::convertToBase62);
+                .map(this::applyBase62Encode);
     }
 
-    public String convertToBase62(long number) {
+    private String applyBase62Encode(long num) {
         StringBuilder base62 = new StringBuilder();
-        while (number > 0) {
-            int remainder = (int)(number % BASE_62_CHARS.length());
+        while (num > 0) {
+            int remainder = (int)(num % BASE_62_CHARS.length());
             base62.insert(0, BASE_62_CHARS.charAt(remainder));
-            number /= BASE_62_CHARS.length();
+            num /= BASE_62_CHARS.length();
         }
 
         return base62.toString();

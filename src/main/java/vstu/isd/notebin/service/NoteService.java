@@ -149,6 +149,35 @@ public class NoteService {
 
         return noteMapper.toDto(savedNote);
     }
+
+    @Transactional
+    @Retryable(
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 50, multiplier = 1),
+            retryFor = {OptimisticLockException.class}
+    )
+    public boolean deleteNote(String url) {
+
+        NoteDto note = noteCache.get(url)
+                .map(noteMapper::toDto)
+                .orElseGet(
+                        () -> noteRepository.findByUrl(url)
+                                .map(noteMapper::toDto)
+                                .orElseThrow(() -> new NoteNonExistsException(url))
+                );
+
+        if (!note.isAvailable()) {
+            return true;
+        }
+
+        UpdateNoteRequestDto deleteNoteUpdate = UpdateNoteRequestDto.builder()
+                .isAvailable(false)
+                .build();
+
+        updateNote(url, deleteNoteUpdate);
+
+        return true;
+    }
 }
 
 @Component

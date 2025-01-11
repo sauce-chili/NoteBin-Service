@@ -1,6 +1,7 @@
 package vstu.isd.notebin.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.api.auth.AuthApi;
 import vstu.isd.notebin.api.auth.VerifyAccessTokenRequest;
@@ -44,5 +45,13 @@ public class NoteController {
     @GetMapping("/v/{t}")
     public void foo(@PathVariable String t) {
         var res = authApi.verifyAccessToken(new VerifyAccessTokenRequest(t));
+    }
+
+    @PatchMapping("/{url}")
+    public ResponseEntity<Object> deactivateNote(@PathVariable String url) {
+
+        noteService.deleteNote(url);
+
+        return ResponseEntity.noContent().build();
     }
 }
