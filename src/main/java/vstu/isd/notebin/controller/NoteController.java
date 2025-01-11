@@ -29,7 +29,7 @@ public class NoteController {
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
-    @PutMapping("/{url}")
+    @PatchMapping("/{url}")
     public GetNoteResponseDto updateNote(
             @PathVariable String url,
             @RequestBody UpdateNoteRequestDto requestDto
