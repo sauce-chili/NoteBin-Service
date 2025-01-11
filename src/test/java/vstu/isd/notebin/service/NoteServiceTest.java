@@ -320,7 +320,7 @@ public class NoteServiceTest {
 
         // invalid title ----------------------------------------------------------------------------------
         @Test
-        void titleIsNull(){
+        void titleIsNull() {
 
             Duration expirationPeriod = null;
             String content = "My content";
@@ -352,7 +352,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void titleIsInvalid(){
+        void titleIsInvalid() {
 
             Duration expirationPeriod = null;
             String title = ",Title";
@@ -385,7 +385,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void titleLengthIsLargerThanMaxLength(){
+        void titleLengthIsLargerThanMaxLength() {
 
             Duration expirationPeriod = null;
             String title = "snBkSFkghmcmCBvWDksdGfnIJdxvkqEergXjqfbsDhiAgUjMKVjXOXSgpaqkkWLlMFREzvkPgRXvVnDKvixysCCUGMhHzwqBnxqZkkDMKDnhaltnKyXgLuQagrZxNSFbhM";
@@ -419,7 +419,7 @@ public class NoteServiceTest {
 
         // invalid content --------------------------------------------------------------------------------
         @Test
-        void contentIsNull(){
+        void contentIsNull() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -452,7 +452,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void contentIsInvalid(){
+        void contentIsInvalid() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -486,7 +486,7 @@ public class NoteServiceTest {
 
         // invalid expiration type ------------------------------------------------------------------------
         @Test
-        void expirationTypeIsNull(){
+        void expirationTypeIsNull() {
 
             Duration expirationPeriod = null;
             String title = "Title";
@@ -521,7 +521,7 @@ public class NoteServiceTest {
         // invalid expiration period ----------------------------------------------------------------------
 
         @Test
-        void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead(){
+        void expirationPeriodNotSetWhileExpirationTypeIsBurnAfterRead() {
 
             LocalDateTime now = LocalDateTime.now();
             String title = "New note";
@@ -558,7 +558,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod(){
+        void expirationPeriodSetWhileExpirationTypeIsBurnByPeriod() {
 
             LocalDateTime now = LocalDateTime.now();
             String title = "New note";
@@ -596,7 +596,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod(){
+        void expirationPeriodNotSetWhenExpirationTypeIsBurnByPeriod() {
 
             String title = "New note";
             String content = "My content";
@@ -629,7 +629,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhenExpirationTypeIsNever(){
+        void expirationPeriodSetWhenExpirationTypeIsNever() {
 
             String title = "New note";
             String content = "My content";
@@ -662,7 +662,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead(){
+        void expirationPeriodSetWhenExpirationTypeIsBurnAfterRead() {
 
             String title = "New note";
             String content = "My content";
@@ -696,7 +696,7 @@ public class NoteServiceTest {
 
         // invalid all fields ----------------------------------------------------------------------------
         @Test
-        void allFieldsAreInvalid(){
+        void allFieldsAreInvalid() {
 
             Duration expirationPeriod = null;
             String title = ",Title";
@@ -733,7 +733,7 @@ public class NoteServiceTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    NoteDto generateNoteToRepos(){
+    NoteDto generateNoteToRepos() {
 
         String title = "New note";
         String content = "My content";
@@ -747,7 +747,7 @@ public class NoteServiceTest {
         return noteService.createNote(createNoteRequestDto);
     }
 
-    NoteDto generateNoteToReposWithExpTypeBurnAfterRead(){
+    NoteDto generateNoteToReposWithExpTypeBurnAfterRead() {
 
         String title = "New note";
         String content = "My content";
@@ -761,7 +761,7 @@ public class NoteServiceTest {
         return noteService.createNote(createNoteRequestDto);
     }
 
-    NoteDto generateNoteToReposWithExpTypeBurnByPeriod(){
+    NoteDto generateNoteToReposWithExpTypeBurnByPeriod() {
 
         String title = "New note";
         String content = "My content";
@@ -776,7 +776,7 @@ public class NoteServiceTest {
         return noteService.createNote(createNoteRequestDto);
     }
 
-    List<NoteDto> generateNotesToRepos(int count){
+    List<NoteDto> generateNotesToRepos(int count) {
 
         String defaultTitle = "My title";
         String defaultContent = "My content";
@@ -804,7 +804,7 @@ public class NoteServiceTest {
     class UpdateNoteTest {
 
         @Test
-        void updateNote(){
+        void updateNote() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -838,7 +838,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updateNotePersistedOnlyInRepos(){
+        void updateNotePersistedOnlyInRepos() {
 
             NoteDto note = generateNoteToRepos();
 
@@ -883,7 +883,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updatingNonExistingNote(){
+        void updatingNonExistingNote() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -915,7 +915,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void expirationPeriodNotNullWhenExpTypeNull(){
+        void expirationPeriodNotNullWhenExpTypeNull() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -959,7 +959,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromNeverToBurnAfterRead(){
+        void changeExpTypeFromNeverToBurnAfterRead() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -990,7 +990,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromNeverToBurnByPeriod(){
+        void changeExpTypeFromNeverToBurnByPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1024,7 +1024,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnAfterReadToNever(){
+        void changeExpTypeFromBurnAfterReadToNever() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
@@ -1055,7 +1055,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnAfterReadToBurnByPeriod(){
+        void changeExpTypeFromBurnAfterReadToBurnByPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnAfterRead();
 
@@ -1089,7 +1089,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnByPeriodToNever(){
+        void changeExpTypeFromBurnByPeriodToNever() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -1122,7 +1122,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changeExpTypeFromBurnByPeriodToBurnAfterRead(){
+        void changeExpTypeFromBurnByPeriodToBurnAfterRead() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod();
 
@@ -1155,7 +1155,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updateWithNoSeeingDifference(){
+        void updateWithNoSeeingDifference() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1189,7 +1189,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void changesAllFields(){
+        void changesAllFields() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1444,7 +1444,7 @@ public class NoteServiceTest {
         // validation ------------------------------------------------------------------------------------------------------
 
         @Test
-        void allFieldsAreNull(){
+        void allFieldsAreNull() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1485,7 +1485,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidTitle(){
+        void invalidTitle() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1526,7 +1526,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidContent(){
+        void invalidContent() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1567,7 +1567,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void invalidExpirationPeriod(){
+        void invalidExpirationPeriod() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -1609,7 +1609,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void allFieldsInvalid(){
+        void allFieldsInvalid() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToRepos();
 
@@ -2083,7 +2083,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void alreadySoftDeleted () {
+        void alreadySoftDeleted() {
 
             NoteDto noteBeforeDelete = generateNoteToRepos();
             UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder().isAvailable(false).build();
@@ -2156,6 +2156,7 @@ public class NoteServiceTest {
             CompletableFuture<Boolean> futureNoteSecond = CompletableFuture.supplyAsync(
                     () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
 
+            CompletableFuture.allOf(futureNoteFirst, futureNoteSecond).join();
 
             Boolean wasDeletedInFirstThread = futureNoteFirst.join();
             Boolean wasDeletedInSecondThread = futureNoteSecond.join();
