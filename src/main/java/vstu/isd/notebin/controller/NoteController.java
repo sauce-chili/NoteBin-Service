@@ -1,6 +1,7 @@
 package vstu.isd.notebin.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
@@ -36,5 +37,13 @@ public class NoteController {
         NoteDto noteDto = noteService.updateNote(url, requestDto);
 
         return noteMapper.toGetNoteResponseDto(noteDto);
+    }
+
+    @PatchMapping("/{url}")
+    public ResponseEntity<Object> deactivateNote(@PathVariable String url) {
+
+        noteService.deleteNote(url);
+
+        return ResponseEntity.noContent().build();
     }
 }
