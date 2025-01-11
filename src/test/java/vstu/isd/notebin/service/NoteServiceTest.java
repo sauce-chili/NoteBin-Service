@@ -2156,8 +2156,7 @@ public class NoteServiceTest {
             CompletableFuture<Boolean> futureNoteSecond = CompletableFuture.supplyAsync(
                     () -> noteService.deleteNote(noteBeforeDelete.getUrl()), executors);
 
-            CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(futureNoteFirst, futureNoteSecond);
-            combinedFuture.join();
+            CompletableFuture.allOf(futureNoteFirst, futureNoteSecond).join();
 
 
             Boolean wasDeletedInFirstThread = Boolean.FALSE;
