@@ -146,7 +146,7 @@ public class NoteService {
     @Transactional
     @Retryable(
             maxAttempts = 5,
-            backoff = @Backoff(delay = 200, multiplier = 1),
+            backoff = @Backoff(delay = 50, multiplier = 1),
             retryFor = {OptimisticLockException.class}
     )
     public boolean deleteNote(String url) {
