@@ -2083,7 +2083,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void noteIsAlreadyUnavailable() {
+        void alreadySoftDeleted () {
 
             NoteDto noteBeforeDelete = generateNoteToRepos();
             UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder().isAvailable(false).build();
