@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class NoteResponseDto {
+    private String url;
     private String title;
     private String content;
     private LocalDateTime createdAt;
