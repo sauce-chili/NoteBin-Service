@@ -2073,7 +2073,7 @@ public class NoteServiceTest {
             NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
             expectedDeletedNote.setAvailable(false);
 
-            Boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
+            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
 
             assertTrue(wasDeleted);
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
@@ -2091,7 +2091,7 @@ public class NoteServiceTest {
             NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
             expectedDeletedNote.setAvailable(false);
 
-            Boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
+            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl());
 
             assertTrue(wasDeleted);
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
@@ -2125,8 +2125,8 @@ public class NoteServiceTest {
             expectedSecondDeletedNote.setAvailable(false);
 
 
-            Boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl());
-            Boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl());
+            boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl());
+            boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl());
 
 
             assertTrue(firstWasDeleted);
@@ -2193,7 +2193,7 @@ public class NoteServiceTest {
             NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());
             expectedDeletedNote.setAvailable(false);
 
-            Boolean wasDeleted = noteService.deleteNote(persistedRepoNote.getUrl());
+            boolean wasDeleted = noteService.deleteNote(persistedRepoNote.getUrl());
 
             assertTrue(wasDeleted);
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(persistedRepoNote.getUrl()).get());

@@ -149,7 +149,7 @@ public class NoteService {
             backoff = @Backoff(delay = 200, multiplier = 1),
             retryFor = {OptimisticLockException.class}
     )
-    public Boolean deleteNote(String url) {
+    public boolean deleteNote(String url) {
 
         NoteDto note = noteCache.get(url)
                 .map(noteMapper::toDto)
@@ -160,7 +160,7 @@ public class NoteService {
                 );
 
         if (!note.isAvailable()) {
-            return Boolean.TRUE;
+            return true;
         }
 
         UpdateNoteRequestDto deleteNoteUpdate = UpdateNoteRequestDto.builder()
@@ -169,7 +169,7 @@ public class NoteService {
 
         updateNote(url, deleteNoteUpdate);
 
-        return Boolean.TRUE;
+        return true;
     }
 }
 
