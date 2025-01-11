@@ -8,6 +8,7 @@ import java.time.Duration;
 
 @Configuration
 public class NoteConfig {
+
     @Value("${spring.note.cache-capacity}")
     private int cacheCapacity;
     @Value("${spring.note.default-ttl}")
@@ -28,5 +29,10 @@ public class NoteConfig {
     @Bean
     public int pageSize() {
         return pageSize;
+    }
+
+    @Bean
+    public String userIdHeaderAttribute() {
+        return "x-user-id";
     }
 }
