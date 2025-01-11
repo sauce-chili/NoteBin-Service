@@ -32,7 +32,7 @@ public class NoteController {
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
-    @PatchMapping("/{url}")
+    @PutMapping("/{url}")
     public NoteResponseDto updateNote(
             @PathVariable String url,
             @RequestBody UpdateNoteRequestDto requestDto
@@ -42,16 +42,16 @@ public class NoteController {
         return noteMapper.toGetNoteResponseDto(noteDto);
     }
 
-    @GetMapping("/v/{t}")
-    public void foo(@PathVariable String t) {
-        var res = authApi.verifyAccessToken(new VerifyAccessTokenRequest(t));
-    }
-
     @PatchMapping("/{url}")
     public ResponseEntity<Object> deactivateNote(@PathVariable String url) {
 
         noteService.deleteNote(url);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/v/{t}")
+    public void foo(@PathVariable String t) {
+        var res = authApi.verifyAccessToken(new VerifyAccessTokenRequest(t));
     }
 }
