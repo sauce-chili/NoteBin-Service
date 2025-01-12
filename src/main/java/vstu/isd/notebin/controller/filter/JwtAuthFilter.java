@@ -94,13 +94,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
-    public static boolean claimsContainsMandatoryFields(Claims claims) {
+    private boolean claimsContainsMandatoryFields(Claims claims) {
         return claims.containsKey(USER_ID_TOKEN_KEY) &&
                 claims.getSubject() != null && // login
                 claims.getIssuedAt() != null;
     }
 
-    public static String getUserId(Claims claims) {
+    private String getUserId(Claims claims) {
         if (!claims.containsKey(USER_ID_TOKEN_KEY)) {
             throw new IllegalArgumentException("user_id is not present in token");
         }
