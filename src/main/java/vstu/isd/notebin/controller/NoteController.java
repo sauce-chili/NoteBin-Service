@@ -22,14 +22,14 @@ public class NoteController {
     public NoteResponseDto getNote(@PathVariable String url) {
         NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url));
 
-        return noteMapper.toGetNoteResponseDto(noteDto);
+        return noteMapper.toNoteResponseDto(noteDto);
     }
 
     @PostMapping
     public NoteResponseDto createNote(@RequestBody CreateNoteRequestDto requestDto) {
         NoteDto noteDto = noteService.createNote(requestDto);
 
-        return noteMapper.toGetNoteResponseDto(noteDto);
+        return noteMapper.toNoteResponseDto(noteDto);
     }
 
     @PutMapping("/{url}")
@@ -39,7 +39,7 @@ public class NoteController {
     ) {
         NoteDto noteDto = noteService.updateNote(url, requestDto);
 
-        return noteMapper.toGetNoteResponseDto(noteDto);
+        return noteMapper.toNoteResponseDto(noteDto);
     }
 
     @PatchMapping("/{url}")
