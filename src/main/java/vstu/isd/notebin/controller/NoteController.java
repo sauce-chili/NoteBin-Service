@@ -10,7 +10,7 @@ import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.service.NoteService;
 
 @RestController
-@RequestMapping("/note")
+@RequestMapping("/api/v1/note")
 @RequiredArgsConstructor
 public class NoteController {
 
