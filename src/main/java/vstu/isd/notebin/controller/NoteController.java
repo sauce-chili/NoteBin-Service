@@ -20,7 +20,7 @@ public class NoteController {
             @PathVariable String url,
             @RequestAttribute(value = "x-user-id", required = false) Long userId
     ) {
-        NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url));
+        NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url, userId));
 
         return noteMapper.toNoteResponseDto(noteDto);
     }
@@ -30,6 +30,7 @@ public class NoteController {
             @RequestBody CreateNoteRequestDto requestDto,
             @RequestAttribute(value = "x-user-id", required = false) Long userId
     ) {
+        requestDto.setUserId(userId);
         NoteDto noteDto = noteService.createNote(requestDto);
 
         return noteMapper.toNoteResponseDto(noteDto);
@@ -41,6 +42,7 @@ public class NoteController {
             @RequestBody UpdateNoteRequestDto requestDto,
             @RequestAttribute("x-user-id") Long userId
     ) {
+        requestDto.setUserId(userId);
         NoteDto noteDto = noteService.updateNote(url, requestDto);
 
         return noteMapper.toNoteResponseDto(noteDto);
@@ -51,8 +53,7 @@ public class NoteController {
             @PathVariable String url,
             @RequestAttribute("x-user-id") Long userId
     ) {
-
-        noteService.deleteNote(url);
+        noteService.deleteNote(url, userId);
 
         return ResponseEntity.noContent().build();
     }
