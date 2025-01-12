@@ -9,12 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vstu.isd.notebin.api.auth.AuthApi;
 import vstu.isd.notebin.api.auth.VerifyAccessTokenRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -45,6 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         boolean isTokenValid = userId != null;
 
         if (isTokenValid) {
+            saveAuthentication(userId);
             request.setAttribute(userIdHeaderAttribute, userId);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -105,5 +109,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new IllegalArgumentException("user_id is not present in token");
         }
         return claims.get(USER_ID_TOKEN_KEY, String.class);
+    }
+
+    private void saveAuthentication(String userId) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        userId,
+                        null, // no password due to JWT
+                        List.of()
+                )
+        );
     }
 }
