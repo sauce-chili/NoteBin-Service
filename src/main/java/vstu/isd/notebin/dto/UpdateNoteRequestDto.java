@@ -18,6 +18,7 @@ public class UpdateNoteRequestDto {
     private ExpirationType expirationType;
     private Duration expirationPeriod;
     private Boolean isAvailable;
+    private Long userId;
 
     public boolean isEmpty(){
         return title == null && content == null && expirationType==null && expirationPeriod == null && isAvailable == null;
