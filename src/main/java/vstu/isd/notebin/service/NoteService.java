@@ -17,6 +17,7 @@ import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
+import vstu.isd.notebin.exception.NotAllowedException;
 import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.exception.NoteUnavailableException;
 import vstu.isd.notebin.generator.UrlGenerator;
@@ -26,6 +27,7 @@ import vstu.isd.notebin.validation.NoteValidator;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
@@ -111,6 +113,11 @@ public class NoteService {
         try {
             noteCache.update(url, cached -> {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
+                if (!Objects.equals(cached.getUserId(), updateNoteRequest.getUserId())) {
+                    throw new NotAllowedException("Can't update note with url : "
+                                    + cached.getUrl()
+                                    + ". This note belongs to other user.");
+                }
                 return cached;
             });
         } catch (NoSuchElementException ignored) {
@@ -126,6 +133,11 @@ public class NoteService {
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
                 persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest, expirationFrom);
+                if (!Objects.equals(persisted.getUserId(), updateNoteRequest.getUserId())) {
+                    throw new NotAllowedException("Can't update note with url : "
+                            + persisted.getUrl()
+                            + ". This note belongs to other user.");
+                }
                 return persisted;
             });
 
@@ -156,7 +168,7 @@ public class NoteService {
             backoff = @Backoff(delay = 50, multiplier = 1),
             retryFor = {OptimisticLockException.class}
     )
-    public boolean deleteNote(String url) {
+    public boolean deleteNote(String url, Long userId) {
 
         NoteDto note = noteCache.get(url)
                 .map(noteMapper::toDto)
@@ -165,6 +177,12 @@ public class NoteService {
                                 .map(noteMapper::toDto)
                                 .orElseThrow(() -> new NoteNonExistsException(url))
                 );
+
+        if (!Objects.equals(userId, note.getUserId())) {
+            throw new NotAllowedException("Can't delete note with url : "
+                    + note.getUrl()
+                    + ". This note belongs to other user.");
+        }
 
         if (!note.isAvailable()) {
             return true;
