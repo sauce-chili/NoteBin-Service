@@ -1,13 +1,15 @@
 package vstu.isd.notebin.controller.filter;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,9 +29,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final AuthApi authApi;
     private final String userIdHeaderAttribute;
 
-    private final static String TOKEN_PREFIX = "Bearer ";
+    private final String TOKEN_PREFIX = "Bearer ";
 
-    private final static String USER_ID_TOKEN_KEY = "user_id";
+    private final String USER_ID_TOKEN_KEY = "user_id";
+
+    private final JwtConsumer jwtParser = new JwtConsumerBuilder()
+            .setSkipSignatureVerification()
+            .build();
 
     @Override
     protected void doFilterInternal(
@@ -75,7 +81,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private String verifyTokenAndGetUserId(String token) {
         try {
-            Claims claims = getClaims(token); // also throw exception if token is expired or in invalid format
+
+            JwtClaims claims = getClaims(token); // also throw exception if token is expired or in invalid format
 
             if (!claimsContainsMandatoryFields(claims)) {
                 return null;
@@ -90,25 +97,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
-    private Claims getClaims(String token) {
+    private JwtClaims getClaims(String token) {
         try {
-            return Jwts.parserBuilder().build().parseClaimsJwt(token).getBody();
+            return jwtParser.processToClaims(token);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid token", e);
         }
     }
 
-    private boolean claimsContainsMandatoryFields(Claims claims) {
-        return claims.containsKey(USER_ID_TOKEN_KEY) &&
+    private boolean claimsContainsMandatoryFields(JwtClaims claims) throws MalformedClaimException {
+        return claims.hasClaim(USER_ID_TOKEN_KEY) &&
                 claims.getSubject() != null && // login
                 claims.getIssuedAt() != null;
     }
 
-    private String getUserId(Claims claims) {
-        if (!claims.containsKey(USER_ID_TOKEN_KEY)) {
+    private String getUserId(JwtClaims claims) {
+        if (!claims.hasClaim(USER_ID_TOKEN_KEY)) {
             throw new IllegalArgumentException("user_id is not present in token");
         }
-        return claims.get(USER_ID_TOKEN_KEY, String.class);
+        return claims.getClaimValueAsString(USER_ID_TOKEN_KEY);
     }
 
     private void saveAuthentication(String userId) {
