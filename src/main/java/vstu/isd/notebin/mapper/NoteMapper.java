@@ -66,7 +66,7 @@ public interface NoteMapper {
     }
 
     @Mapping(source = "available", target = "isAvailable")
-    NoteResponseDto toGetNoteResponseDto(NoteDto note);
+    NoteResponseDto toNoteResponseDto(NoteDto note);
 
     default Note toNote(CreateNoteRequestDto createNoteRequestDto, String url) {
         LocalDateTime now = LocalDateTime.now();
