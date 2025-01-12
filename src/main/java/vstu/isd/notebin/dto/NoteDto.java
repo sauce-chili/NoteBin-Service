@@ -23,4 +23,5 @@ public class NoteDto {
     private ExpirationType expirationType;
     private Duration expirationPeriod;
     private LocalDateTime expirationFrom;
+    private Long userId;
 }
