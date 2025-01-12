@@ -29,9 +29,7 @@ dependencies {
     /**
      * JWT
      * */
-    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
-    implementation("io.jsonwebtoken:jjwt-impl:0.11.2")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
+    implementation("org.bitbucket.b_c:jose4j:0.9.6")
 
     /**
      * Database
