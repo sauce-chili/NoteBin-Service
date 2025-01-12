@@ -28,6 +28,7 @@ public class NoteCacheable extends BaseNote {
     private ExpirationType expirationType;
     private Duration expirationPeriod;
     private LocalDateTime expirationFrom;
+    private Long userId;
 
     @Override
     public Long getId() {
@@ -135,5 +136,15 @@ public class NoteCacheable extends BaseNote {
     @JsonIgnore
     public boolean isNotAvailable() {
         return super.isNotAvailable();
+    }
+
+    @Override
+    public Long getUserId(){
+        return userId;
+    }
+
+    @Override
+    public void setUserId(Long userId){
+        this.userId = userId;
     }
 }
