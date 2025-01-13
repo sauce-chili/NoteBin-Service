@@ -81,6 +81,7 @@ public interface NoteMapper {
                 .expirationPeriod(createNoteRequestDto.getExpirationPeriod())
                 .expirationFrom(null)
                 .isAvailable(true)
+                .userId(createNoteRequestDto.getUserId())
                 .build();
 
         if (note.getExpirationType() == ExpirationType.BURN_BY_PERIOD){
