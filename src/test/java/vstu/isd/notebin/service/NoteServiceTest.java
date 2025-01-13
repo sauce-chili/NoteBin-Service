@@ -903,13 +903,6 @@ public class NoteServiceTest {
         return notes;
     }
 
-    private Long userId = 0L;
-
-    private Long getNextUserId() {
-
-        return userId++;
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
 
     @Nested
