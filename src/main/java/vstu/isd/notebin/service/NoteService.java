@@ -188,6 +188,10 @@ public class NoteService {
     @Transactional
     public GetUserNotesResponseDto<NoteDto> getUserNotes(GetUserNotesRequestDto getNoteRequest) {
 
+        noteValidator.validateGetUserNotesRequestDto(getNoteRequest).ifPresent(e -> {
+            throw e;
+        });
+
         Page<Note> page = getNotePageByUserId(getNoteRequest.getUserId(), getNoteRequest.getPage());
 
         List<NoteDto> notes = page
