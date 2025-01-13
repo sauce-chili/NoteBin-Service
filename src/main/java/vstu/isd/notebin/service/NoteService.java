@@ -48,6 +48,8 @@ public class NoteService {
 
     private final RecalculateNoteAvailability recalculateNoteAvailabilityCommand;
 
+    private final int notePageSize;
+
     @Transactional
     @Retryable(
             maxAttempts = 5,
@@ -210,7 +212,7 @@ public class NoteService {
                         .userId(userId)
                         .build()
         );
-        return getNotePageByExample(example, PageRequest.of(page, 10));
+        return getNotePageByExample(example, PageRequest.of(page, notePageSize));
     }
 
     private Page<Note> getNotePageByExample(
