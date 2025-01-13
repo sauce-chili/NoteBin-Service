@@ -57,6 +57,34 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
+    // added auth method; requires user to be authenticated
+    @GetMapping("/my-notes")
+    public GetUserNotesResponseDto<NoteResponseDto> getMyNotes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestAttribute("x-user-id") Long userId
+    ) {
+        GetUserNotesResponseDto<NoteDto> userNotesDto = noteService.getUserNotes(
+                new GetUserNotesRequestDto(userId, page)
+        );
+
+        PageResponseDto<NoteResponseDto> pageResponse = PageResponseDto.<NoteResponseDto>builder()
+                .content(
+                        userNotesDto.getPage().getContent().stream()
+                                .map(noteMapper::toNoteResponseDto)
+                                .toList()
+                )
+                .page(userNotesDto.getPage().getPage())
+                .pageSize(userNotesDto.getPage().getPageSize())
+                .totalPages(userNotesDto.getPage().getTotalPages())
+                .totalElements(userNotesDto.getPage().getTotalElements())
+                .build();
+
+        return GetUserNotesResponseDto.<NoteResponseDto>builder()
+                .userId(userNotesDto.getUserId())
+                .page(pageResponse)
+                .build();
+    }
+
     @GetMapping("/v/{t}")
     public void testAuth(@PathVariable String t, @RequestAttribute("x-user-id") Long userId) {
         System.out.println("t = " + t);
