@@ -2403,7 +2403,7 @@ public class NoteServiceTest {
                     .expirationType(ExpirationType.BURN_AFTER_READ)
                     .createdAt(now)
                     .expirationFrom(null)
-                    .userId(getNextUserId())
+                    .userId(persistedRepoNote.getUserId())
                     .build();
 
             assertNoteDtoEquals(expectedNote, actualNote);
