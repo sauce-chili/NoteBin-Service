@@ -67,6 +67,14 @@ public class NoteServiceTest {
         return "a".repeat(Math.max(0, length));
     }
 
+    private AtomicLong userId = new AtomicLong(0);
+
+    private Long getNextUserId() {
+
+        return userId.getAndAdd(1);
+    }
+
+
     @Nested
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
     class CreateNoteTest {
