@@ -366,6 +366,7 @@ public class NoteServiceTest {
         @Test
         void createTwoNotesOwnedByOneUser(){
 
+            AtomicLong userId = new AtomicLong(2);
             LocalDateTime now = LocalDateTime.now();
             Duration expirationPeriod = null;
             String title = "New note";
@@ -375,7 +376,7 @@ public class NoteServiceTest {
                     .content(content)
                     .expirationType(ExpirationType.NEVER)
                     .expirationPeriod(expirationPeriod)
-                    .userId(2L)
+                    .userId(userId.get())
                     .build();
 
 
@@ -393,6 +394,7 @@ public class NoteServiceTest {
                     .expirationType(ExpirationType.NEVER)
                     .expirationFrom(null)
                     .expirationPeriod(expirationPeriod)
+                    .userId(userId.get())
                     .build();
             assertNoteDtoEquals(expectedCreatedFirstNoteDto, actualCreatedFirstNoteDto);
             NoteDto actualFirstNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedFirstNoteDto.getUrl()).get());
@@ -410,6 +412,7 @@ public class NoteServiceTest {
                     .expirationType(ExpirationType.NEVER)
                     .expirationFrom(null)
                     .expirationPeriod(expirationPeriod)
+                    .userId(userId.get())
                     .build();
             assertNoteDtoEquals(expectedCreatedSecondNoteDto, actualCreatedSecondNoteDto);
             NoteDto actualSecondNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedSecondNoteDto.getUrl()).get());
