@@ -67,17 +67,10 @@ public class NoteController {
                 new GetUserNotesRequestDto(userId, page)
         );
 
-        PageResponseDto<NoteResponseDto> pageResponse = PageResponseDto.<NoteResponseDto>builder()
-                .content(
-                        userNotesDto.getPage().getContent().stream()
-                                .map(noteMapper::toNoteResponseDto)
-                                .toList()
-                )
-                .page(userNotesDto.getPage().getPage())
-                .pageSize(userNotesDto.getPage().getPageSize())
-                .totalPages(userNotesDto.getPage().getTotalPages())
-                .totalElements(userNotesDto.getPage().getTotalElements())
-                .build();
+        PageResponseDto<NoteResponseDto> pageResponse = noteMapper.fromPageResponseDto(
+                userNotesDto.getPage(),
+                noteMapper::toNoteResponseDto
+        );
 
         return GetUserNotesResponseDto.<NoteResponseDto>builder()
                 .userId(userNotesDto.getUserId())
