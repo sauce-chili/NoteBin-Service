@@ -1018,7 +1018,7 @@ public class NoteServiceTest {
                     .expirationType(ExpirationType.BURN_BY_PERIOD)
                     .expirationPeriod(expirationPeriod)
                     .isAvailable(null)
-                    .userId(persistedRepoNote.getUserId() - 1)
+                    .userId(getNextUserId())
                     .build();
 
 
@@ -1087,7 +1087,7 @@ public class NoteServiceTest {
                     .expirationType(null)
                     .expirationPeriod(null)
                     .isAvailable(null)
-                    .userId(noteInReposBeforeUpdate.getUserId() - 1)
+                    .userId(getNextUserId())
                     .build();
 
 
@@ -2485,7 +2485,7 @@ public class NoteServiceTest {
 
             NotAllowedException notAllowedException = assertThrows(
                     NotAllowedException.class,
-                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), noteBeforeDelete.getUserId() - 1)
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), getNextUserId())
             );
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
@@ -2689,7 +2689,7 @@ public class NoteServiceTest {
 
             NotAllowedException notAllowedException = assertThrows(
                     NotAllowedException.class,
-                    () -> noteService.deleteNote(expectedDeletedNote.getUrl(), note.getUserId() - 1)
+                    () -> noteService.deleteNote(expectedDeletedNote.getUrl(), getNextUserId())
             );
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
