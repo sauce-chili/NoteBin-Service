@@ -190,6 +190,7 @@ public class NoteService {
 
         UpdateNoteRequestDto deleteNoteUpdate = UpdateNoteRequestDto.builder()
                 .isAvailable(false)
+                .userId(userId)
                 .build();
 
         updateNote(url, deleteNoteUpdate);
