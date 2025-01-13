@@ -27,12 +27,17 @@ public class NoteConfig {
     }
 
     @Bean
-    public int pageSize() {
+    public int heaterPageSize() {
         return pageSize;
     }
 
     @Bean
     public String userIdHeaderAttribute() {
         return "x-user-id";
+    }
+
+    @Bean
+    public int notePageSize() {
+        return 10;
     }
 }
