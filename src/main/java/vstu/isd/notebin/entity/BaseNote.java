@@ -34,6 +34,9 @@ public abstract class BaseNote {
 
     abstract public boolean isAvailable();
 
+    abstract public Long getUserId();
+    abstract public void setUserId(Long userId);
+
     public boolean isNotAvailable() {
         return !isAvailable();
     }
