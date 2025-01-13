@@ -127,6 +127,43 @@ public class NoteServiceTest {
         }
 
         @Test
+        public void createNoteByNonAuthUser() {
+
+            LocalDateTime now = LocalDateTime.now();
+            String title = "New note";
+            String content = "My content";
+            CreateNoteRequestDto createNoteRequestDto = CreateNoteRequestDto.builder()
+                    .title(title)
+                    .content(content)
+                    .expirationType(ExpirationType.NEVER)
+                    .expirationPeriod(null)
+                    .userId(null)
+                    .build();
+
+            NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
+
+            NoteDto expectedCreatedNoteDto = NoteDto.builder()
+                    .id(actualCreatedNoteDto.getId())
+                    .url(actualCreatedNoteDto.getUrl())
+                    .isAvailable(true)
+                    .title(title)
+                    .content(content)
+                    .createdAt(now)
+                    .expirationType(ExpirationType.NEVER)
+                    .expirationFrom(null)
+                    .expirationPeriod(null)
+                    .userId(null)
+                    .build();
+            assertNotNull(actualCreatedNoteDto.getId());
+            assertNotNull(actualCreatedNoteDto.getUrl());
+            assertNoteDtoEquals(expectedCreatedNoteDto, actualCreatedNoteDto);
+            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(actualCreatedNoteDto.getUrl()).get());
+            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(actualCreatedNoteDto.getUrl()).get());
+            assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInRepos);
+            assertNoteDtoEquals(expectedCreatedNoteDto, actualNoteInCache);
+        }
+
+        @Test
         public void createTwoSameNotes() {
 
             LocalDateTime now = LocalDateTime.now();
