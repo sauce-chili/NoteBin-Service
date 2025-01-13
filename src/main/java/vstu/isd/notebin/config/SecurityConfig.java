@@ -22,7 +22,8 @@ public class SecurityConfig {
         http.csrf().disable() // TODO fix this
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/note/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/note/my-notes").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
 
