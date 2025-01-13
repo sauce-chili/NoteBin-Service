@@ -90,7 +90,7 @@ public class NoteServiceTest {
          * - concurrency while creating
          * */
         @Test
-        public void createNote() {
+        public void createNoteByAuthUser() {
 
             LocalDateTime now = LocalDateTime.now();
             String title = "New note";
@@ -100,6 +100,7 @@ public class NoteServiceTest {
                     .content(content)
                     .expirationType(ExpirationType.NEVER)
                     .expirationPeriod(null)
+                    .userId(getNextUserId())
                     .build();
 
             NoteDto actualCreatedNoteDto = noteService.createNote(createNoteRequestDto);
@@ -114,6 +115,7 @@ public class NoteServiceTest {
                     .expirationType(ExpirationType.NEVER)
                     .expirationFrom(null)
                     .expirationPeriod(null)
+                    .userId(actualCreatedNoteDto.getUserId())
                     .build();
             assertNotNull(actualCreatedNoteDto.getId());
             assertNotNull(actualCreatedNoteDto.getUrl());
