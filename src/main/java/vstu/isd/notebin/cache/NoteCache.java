@@ -147,7 +147,7 @@ public class NoteCache {
     }
 
     private NoteCacheable updateWithOLE(
-            String lockKey,
+            String key,
             Function<RedisOperations<String, NoteCacheable>, NoteCacheable> provider,
             BiFunction<NoteCacheable, RedisOperations<String, NoteCacheable>, NoteCacheable> modifier
     ) {
@@ -157,7 +157,7 @@ public class NoteCache {
         };
 
         return redisTemplate.execute(new CASUpdate<>(
-                lockKey,
+                key,
                 provider,
                 modifier,
                 doIfUpdateFailed
