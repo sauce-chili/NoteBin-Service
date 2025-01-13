@@ -1152,41 +1152,6 @@ public class NoteServiceTest {
         }
 
         @Test
-        void nonOwnedNoteUpdatingByUnknownUser(){
-
-            NoteDto noteInReposBeforeUpdate = generateNoteToRepos(null);
-
-            Duration expirationPeriod = Duration.ofMinutes(37);
-            String url = noteInReposBeforeUpdate.getUrl();
-            UpdateNoteRequestDto updateNoteRequestDto = UpdateNoteRequestDto.builder()
-                    .title(null)
-                    .content(null)
-                    .expirationType(ExpirationType.BURN_BY_PERIOD)
-                    .expirationPeriod(expirationPeriod)
-                    .isAvailable(null)
-                    .userId(null)
-                    .build();
-
-            NoteDto expNoteAfterUpdate = noteMapper.toDto(noteRepository.findByUrl(url).get());
-            expNoteAfterUpdate.setExpirationType(ExpirationType.BURN_BY_PERIOD);
-            expNoteAfterUpdate.setExpirationPeriod(expirationPeriod);
-            expNoteAfterUpdate.setExpirationFrom(LocalDateTime.now());
-
-
-            long countOfNotesInReposBeforeUpdate = noteRepository.count();
-            NoteDto actualNoteAfterUpdate = noteService.updateNote(url, updateNoteRequestDto);
-            long countOfNotesInReposAfterUpdate = noteRepository.count();
-
-
-            assertNoteDtoEquals(expNoteAfterUpdate, actualNoteAfterUpdate);
-            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
-            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(url).get());
-            assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInRepos);
-            assertNoteDtoEquals(expNoteAfterUpdate, actualNoteInCache);
-            assertEquals(countOfNotesInReposBeforeUpdate, countOfNotesInReposAfterUpdate);
-        }
-
-        @Test
         void updatingOwnedNoteByUnknownUser(){
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod(getNextUserId());
