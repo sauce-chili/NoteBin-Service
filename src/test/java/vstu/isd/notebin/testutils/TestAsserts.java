@@ -1,14 +1,10 @@
 package vstu.isd.notebin.testutils;
 
-import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.entity.Note;
-import vstu.isd.notebin.entity.NoteCacheable;
-import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.dto.ViewAnalyticsDto;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,5 +40,10 @@ public class TestAsserts {
         } else {
             fail();
         }
+    }
+
+    public static void assertViewAnalyticsDtoEquals(ViewAnalyticsDto expected, ViewAnalyticsDto actual) {
+        assertEquals(expected.getViewsFromAuthorized(), actual.getViewsFromAuthorized());
+        assertEquals(expected.getViewsFromNonAuthorized(), actual.getViewsFromNonAuthorized());
     }
 }
