@@ -4,14 +4,8 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import vstu.isd.notebin.dto.CreateNoteRequestDto;
-import vstu.isd.notebin.dto.NoteResponseDto;
-import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.dto.UpdateNoteRequestDto;
-import vstu.isd.notebin.entity.ExpirationType;
-import vstu.isd.notebin.entity.Note;
-import vstu.isd.notebin.entity.BaseNote;
-import vstu.isd.notebin.entity.NoteCacheable;
+import vstu.isd.notebin.dto.*;
+import vstu.isd.notebin.entity.*;
 
 import java.time.LocalDateTime;
 
@@ -90,4 +84,21 @@ public interface NoteMapper {
 
         return note;
     }
+
+    default ViewNote toViewNote(NoteViewRequestDto noteViewRequestDto) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        ViewNote viewNote = ViewNote.builder()
+                .id(null)
+                .noteId(noteViewRequestDto.getNoteId())
+                .userId(noteViewRequestDto.getUserId())
+                .viewedAt(now)
+                .build();
+
+        return viewNote;
+    }
+
+    @Mapping(source = "noteId", target = "noteId")
+    NoteViewResponseDto toNoteViewResponseDto(ViewNote viewNote);
 }
