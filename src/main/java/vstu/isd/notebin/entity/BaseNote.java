@@ -5,6 +5,7 @@ import lombok.ToString;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @ToString
 public abstract class BaseNote {
@@ -31,6 +32,9 @@ public abstract class BaseNote {
 
     abstract public LocalDateTime getExpirationFrom();
     abstract public void setExpirationFrom(LocalDateTime expirationFrom);
+
+    abstract public Long getUserId();
+    abstract public void setUserId(Long userId);
 
     abstract public boolean isAvailable();
 
@@ -70,6 +74,7 @@ public abstract class BaseNote {
         if (getExpirationType() != other.getExpirationType()) return false;
         if (!durationAreEquals(getExpirationPeriod(), other.getExpirationPeriod())) return false;
         if (!localDateTimeAreEquals(getExpirationFrom(), other.getExpirationFrom())) return false;
+        if (!Objects.equals(getUserId(), other.getUserId())) return false;
         return isAvailable() == other.isAvailable();
     }
 

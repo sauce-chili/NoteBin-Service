@@ -139,12 +139,12 @@ public class NoteCacheable extends BaseNote {
     }
 
     @Override
-    public Long getUserId() {
+    public Long getUserId(){
         return userId;
     }
 
     @Override
-    public void setUserId(Long userId) {
+    public void setUserId(Long userId){
         this.userId = userId;
     }
 }
