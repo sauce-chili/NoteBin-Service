@@ -58,7 +58,6 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
-    // added auth method; requires user to be authenticated
     @GetMapping("/list/me")
     public GetUserNotesResponseDto<NoteResponseDto> getMyNotes(
             @RequestParam(defaultValue = "0") int page,
