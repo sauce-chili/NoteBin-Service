@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/changeset/V007.sql
   - include:
       file: db/changelog/changeset/V008.sql
+  - include:
+      file: db/changelog/changeset/V009.sql
