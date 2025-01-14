@@ -17,4 +17,5 @@ public class CreateNoteRequestDto {
     private String content;
     private ExpirationType expirationType;
     private Duration expirationPeriod;
+    private Long userId;
 }

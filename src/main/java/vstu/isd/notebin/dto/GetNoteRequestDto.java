@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class GetNoteRequestDto {
     private String url;
+    private Long userId;
 }

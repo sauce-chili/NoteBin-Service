@@ -142,17 +142,17 @@ public class Note extends BaseNote {
     }
 
     @Override
-    public Long getUserId() {
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    @Override
+    public Long getUserId(){
         return userId;
     }
 
     @Override
-    public void setUserId(Long userId) {
+    public void setUserId(Long userId){
         this.userId = userId;
-    }
-
-    @Override
-    public void setAvailable(boolean available) {
-        isAvailable = available;
     }
 }

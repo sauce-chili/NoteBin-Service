@@ -23,6 +23,7 @@ public class TestAsserts {
         assertLocalDateTimeEquals(expected.getCreatedAt(), actual.getCreatedAt());
         assertLocalDateTimeEquals(expected.getExpirationFrom(), actual.getExpirationFrom());
         assertDurationEquals(expected.getExpirationPeriod(), actual.getExpirationPeriod());
+        assertEquals(expected.getUserId(), actual.getUserId());
     }
 
     private static void assertLocalDateTimeEquals(LocalDateTime expected, LocalDateTime actual) {
