@@ -32,10 +32,10 @@ public abstract class BaseNote {
     abstract public LocalDateTime getExpirationFrom();
     abstract public void setExpirationFrom(LocalDateTime expirationFrom);
 
-    abstract public boolean isAvailable();
-
     abstract public Long getUserId();
     abstract public void setUserId(Long userId);
+
+    abstract public boolean isAvailable();
 
     public boolean isNotAvailable() {
         return !isAvailable();

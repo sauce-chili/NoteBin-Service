@@ -58,7 +58,7 @@ public class NoteController {
     }
 
     // added auth method; requires user to be authenticated
-    @GetMapping("/my-notes")
+    @GetMapping("/list/me")
     public GetUserNotesResponseDto<NoteResponseDto> getMyNotes(
             @RequestParam(defaultValue = "0") int page,
             @RequestAttribute("x-user-id") Long userId

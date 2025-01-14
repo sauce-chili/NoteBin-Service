@@ -10,13 +10,11 @@ public class GlobalCorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                System.out.println("CORS configuration applied");
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "PATCH")
                         .allowedHeaders("*")
                         .exposedHeaders("Authorization", "Content-Length")
