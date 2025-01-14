@@ -223,6 +223,7 @@ public class NoteService {
                 .page(PageResponseDto.<NoteDto>builder()
                         .content(notes)
                         .page(page.getNumber())
+                        .pageSize(notes.size())
                         .totalElements(page.getTotalElements())
                         .totalPages(page.getTotalPages())
                         .build()
@@ -230,29 +231,24 @@ public class NoteService {
     }
 
     private Page<Note> getNotePageByUserId(long userId, int page) {
-        Example<Note> example = Example.of(
-                Note.builder()
-                        .userId(userId)
-                        .build()
-        );
-        return getNotePageByExample(example, PageRequest.of(page, notePageSize));
+        return noteRepository.findByUserId(userId, PageRequest.of(page, notePageSize));
     }
 
-    private Page<Note> getNotePageByExample(
-            Example<Note> example,
-            Pageable pageable
-    ) {
-        return getPageByExample(noteRepository, example, pageable);
-    }
-
-    // TODO: mb move in core/util module
-    private <E> Page<E> getPageByExample(
-            QueryByExampleExecutor<E> executor,
-            Example<E> example,
-            Pageable pageable
-    ) {
-        return executor.findAll(example, pageable);
-    }
+//    private Page<Note> getNotePageByExample(
+//            Example<Note> example,
+//            Pageable pageable
+//    ) {
+//        return getPageByExample(noteRepository, example, pageable);
+//    }
+//
+//    // TODO: mb move in core/util module
+//    private <E> Page<E> getPageByExample(
+//            QueryByExampleExecutor<E> executor,
+//            Example<E> example,
+//            Pageable pageable
+//    ) {
+//        return executor.findAll(example, pageable);
+//    }
 }
 
 @Component

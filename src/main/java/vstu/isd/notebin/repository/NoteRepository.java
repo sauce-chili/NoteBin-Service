@@ -1,6 +1,8 @@
 package vstu.isd.notebin.repository;
 
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,4 +38,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
         return updated;
     }
+
+    Page<Note> findByUserId(Long userId, Pageable pageable);
 }
