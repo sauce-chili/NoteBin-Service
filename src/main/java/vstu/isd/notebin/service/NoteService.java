@@ -233,22 +233,6 @@ public class NoteService {
     private Page<Note> getNotePageByUserId(long userId, int page) {
         return noteRepository.findByUserId(userId, PageRequest.of(page, notePageSize));
     }
-
-//    private Page<Note> getNotePageByExample(
-//            Example<Note> example,
-//            Pageable pageable
-//    ) {
-//        return getPageByExample(noteRepository, example, pageable);
-//    }
-//
-//    // TODO: mb move in core/util module
-//    private <E> Page<E> getPageByExample(
-//            QueryByExampleExecutor<E> executor,
-//            Example<E> example,
-//            Pageable pageable
-//    ) {
-//        return executor.findAll(example, pageable);
-//    }
 }
 
 @Component
