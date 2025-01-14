@@ -3,6 +3,7 @@ package vstu.isd.notebin.validation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
+import vstu.isd.notebin.dto.GetUserNotesRequestDto;
 import vstu.isd.notebin.dto.UpdateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.ClientExceptionName;
@@ -32,7 +33,7 @@ public class NoteValidator {
         this.contentLength = contentLength;
     }
 
-    public Optional<GroupValidationException> validateCreateNoteRequestDto(CreateNoteRequestDto createNoteRequestDto){
+    public Optional<GroupValidationException> validateCreateNoteRequestDto(CreateNoteRequestDto createNoteRequestDto) {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -45,7 +46,7 @@ public class NoteValidator {
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
     }
 
-    public List<ValidationException> validateTitle(String title){
+    public List<ValidationException> validateTitle(String title) {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -60,7 +61,7 @@ public class NoteValidator {
         return exceptions;
     }
 
-    private List<ValidationException> validateTitleContent(String title){
+    private List<ValidationException> validateTitleContent(String title) {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -75,7 +76,7 @@ public class NoteValidator {
         return exceptions;
     }
 
-    public List<ValidationException> validateContent(String content){
+    public List<ValidationException> validateContent(String content) {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -90,18 +91,19 @@ public class NoteValidator {
         return exceptions;
     }
 
-    private List<ValidationException> validateContentContent(String content){
+    private List<ValidationException> validateContentContent(String content) {
 
         if (content.length() > contentLength) {
             String exceptionDescription = "Content is too long. " +
-                    "Max length is " + contentLength + " symbols.";;
+                    "Max length is " + contentLength + " symbols.";
+            ;
             return List.of(new ValidationException(exceptionDescription, ClientExceptionName.INVALID_CONTENT));
         }
 
         return List.of();
     }
 
-    public List<ValidationException> validateExpirationType(ExpirationType expirationType){
+    public List<ValidationException> validateExpirationType(ExpirationType expirationType) {
 
         if (expirationType == null) {
             String exceptionDescription = "Expiration type not set";
@@ -111,7 +113,7 @@ public class NoteValidator {
         return List.of();
     }
 
-    public List<ValidationException> validateExpirationPeriod(Duration expirationPeriod, ExpirationType expirationType){
+    public List<ValidationException> validateExpirationPeriod(Duration expirationPeriod, ExpirationType expirationType) {
 
         if (expirationType == ExpirationType.NEVER && expirationPeriod != null) {
             String exceptionDescription = "Expiration period must be not set when expiration type is NEVER";
@@ -131,7 +133,7 @@ public class NoteValidator {
         return List.of();
     }
 
-    public Optional<GroupValidationException> validateUpdateNoteRequestDto(UpdateNoteRequestDto updateNoteRequestDto){
+    public Optional<GroupValidationException> validateUpdateNoteRequestDto(UpdateNoteRequestDto updateNoteRequestDto) {
 
         List<ValidationException> exceptions = new LinkedList<>();
 
@@ -141,22 +143,39 @@ public class NoteValidator {
             return Optional.of(new GroupValidationException(exceptions));
         }
 
-        if (updateNoteRequestDto.getTitle() != null){
+        if (updateNoteRequestDto.getTitle() != null) {
             exceptions.addAll(validateTitleContent(updateNoteRequestDto.getTitle()));
         }
 
-        if (updateNoteRequestDto.getContent() != null){
+        if (updateNoteRequestDto.getContent() != null) {
             exceptions.addAll(validateContentContent(updateNoteRequestDto.getContent()));
         }
 
-        if (updateNoteRequestDto.getExpirationType() != null){
+        if (updateNoteRequestDto.getExpirationType() != null) {
             exceptions.addAll(validateExpirationPeriod(updateNoteRequestDto.getExpirationPeriod(),
                     updateNoteRequestDto.getExpirationType()));
-        } else if (updateNoteRequestDto.getExpirationPeriod() != null){
+        } else if (updateNoteRequestDto.getExpirationPeriod() != null) {
             String exceptionDescription = "Expiration period can be set only if expirationType set to BURN_AFTER_READ";
             exceptions.add(
                     new ValidationException(exceptionDescription, ClientExceptionName.INVALID_EXPIRATION_PERIOD)
             );
+        }
+
+        return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));
+    }
+
+    public Optional<GroupValidationException> validateGetUserNotesRequestDto(GetUserNotesRequestDto request) {
+
+        List<ValidationException> exceptions = new LinkedList<>();
+
+        if (request.getUserId() == null || request.getUserId() <= 0) {
+            String exceptionDescription = "User id must be present and positive";
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.VALIDATION_EXCEPTION));
+        }
+
+        if (request.getPage() < 0) {
+            String exceptionDescription = "Page must be non-negative";
+            exceptions.add(new ValidationException(exceptionDescription, ClientExceptionName.VALIDATION_EXCEPTION));
         }
 
         return exceptions.isEmpty() ? Optional.empty() : Optional.of(new GroupValidationException(exceptions));

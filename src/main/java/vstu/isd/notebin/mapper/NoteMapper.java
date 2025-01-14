@@ -4,10 +4,18 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import vstu.isd.notebin.dto.*;
-import vstu.isd.notebin.entity.*;
+import vstu.isd.notebin.dto.CreateNoteRequestDto;
+import vstu.isd.notebin.dto.NoteResponseDto;
+import vstu.isd.notebin.dto.NoteDto;
+import vstu.isd.notebin.dto.UpdateNoteRequestDto;
+import vstu.isd.notebin.entity.ExpirationType;
+import vstu.isd.notebin.entity.Note;
+import vstu.isd.notebin.entity.BaseNote;
+import vstu.isd.notebin.entity.NoteCacheable;
 
 import java.time.LocalDateTime;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Mapper(
         componentModel = "spring",
@@ -34,6 +42,20 @@ public interface NoteMapper {
 
     @Mapping(source = "available", target = "isAvailable")
     NoteCacheable toCacheable(NoteDto noteDto);
+
+    default <S, D> PageResponseDto<D> fromPageResponseDto(PageResponseDto<S> page, Function<S, D> map) {
+        return PageResponseDto.<D>builder()
+                .page(page.getPage())
+                .pageSize(page.getPageSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .content(
+                        page.getContent().stream()
+                                .map(map)
+                                .collect(Collectors.toList())
+                )
+                .build();
+    }
 
     default <T extends BaseNote> T fromUpdateRequest(T persisted, UpdateNoteRequestDto updateRequest, LocalDateTime expirationFrom) {
         if (updateRequest.getTitle() != null) {
@@ -78,7 +100,7 @@ public interface NoteMapper {
                 .userId(createNoteRequestDto.getUserId())
                 .build();
 
-        if (note.getExpirationType() == ExpirationType.BURN_BY_PERIOD){
+        if (note.getExpirationType() == ExpirationType.BURN_BY_PERIOD) {
             note.setExpirationFrom(now);
         }
 

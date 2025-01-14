@@ -48,6 +48,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (token == null) {
             nextFilter(request, response, filterChain);
+            return;
         }
 
         String userId = verifyTokenAndGetUserId(token);
@@ -56,11 +57,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (isTokenValid) {
             saveAuthentication(userId);
             request.setAttribute(userIdHeaderAttribute, userId);
+            nextFilter(request, response, filterChain);
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-
-        nextFilter(request, response, filterChain);
     }
 
     private String extractToken(HttpServletRequest request) {
@@ -88,11 +88,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return null;
             }
 
-            boolean isTokenValid = authApi.verifyAccessToken(new VerifyAccessTokenRequest(token));
+            boolean isTokenValid = false;
+            try {
+                isTokenValid = authApi.verifyAccessToken(new VerifyAccessTokenRequest(token));
+            } catch (Exception e) {
+                log.error("Failed to verify token", e);
+            }
 
             return isTokenValid ? getUserId(claims) : null;
         } catch (Exception e) {
-            log.error("Error while verifying token", e);
             return null;
         }
     }

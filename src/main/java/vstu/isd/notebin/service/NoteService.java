@@ -3,16 +3,18 @@ package vstu.isd.notebin.service;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vstu.isd.notebin.cache.NoteCache;
-import vstu.isd.notebin.dto.CreateNoteRequestDto;
-import vstu.isd.notebin.dto.GetNoteRequestDto;
-import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.dto.UpdateNoteRequestDto;
+import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.entity.BaseNote;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
@@ -26,10 +28,12 @@ import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.validation.NoteValidator;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +49,8 @@ public class NoteService {
     private final NoteValidator noteValidator;
 
     private final RecalculateNoteAvailability recalculateNoteAvailabilityCommand;
+
+    private final int notePageSize;
 
     @Transactional
     @Retryable(
@@ -94,7 +100,7 @@ public class NoteService {
     )
     public NoteDto updateNote(String url, UpdateNoteRequestDto updateNoteRequest) {
 
-        noteValidator.validateUpdateNoteRequestDto(updateNoteRequest).ifPresent( e -> {
+        noteValidator.validateUpdateNoteRequestDto(updateNoteRequest).ifPresent(e -> {
             throw e;
         });
 
@@ -197,6 +203,52 @@ public class NoteService {
 
         return true;
     }
+
+    @Transactional
+    public GetUserNotesResponseDto<NoteDto> getUserNotes(GetUserNotesRequestDto getNoteRequest) {
+
+        noteValidator.validateGetUserNotesRequestDto(getNoteRequest).ifPresent(e -> {
+            throw e;
+        });
+
+        Page<Note> page = getNotePageByUserId(getNoteRequest.getUserId(), getNoteRequest.getPage());
+
+        List<NoteDto> notes = page
+                .stream()
+                .map(noteMapper::toDto)
+                .collect(Collectors.toList());
+
+        return GetUserNotesResponseDto.<NoteDto>builder()
+                .userId(getNoteRequest.getUserId())
+                .page(PageResponseDto.<NoteDto>builder()
+                        .content(notes)
+                        .page(page.getNumber())
+                        .pageSize(notes.size())
+                        .totalElements(page.getTotalElements())
+                        .totalPages(page.getTotalPages())
+                        .build()
+                ).build();
+    }
+
+    private Page<Note> getNotePageByUserId(long userId, int page) {
+        return noteRepository.findByUserId(userId, PageRequest.of(page, notePageSize));
+    }
+
+//    private Page<Note> getNotePageByExample(
+//            Example<Note> example,
+//            Pageable pageable
+//    ) {
+//        return getPageByExample(noteRepository, example, pageable);
+//    }
+//
+//    // TODO: mb move in core/util module
+//    private <E> Page<E> getPageByExample(
+//            QueryByExampleExecutor<E> executor,
+//            Example<E> example,
+//            Pageable pageable
+//    ) {
+//        return executor.findAll(example, pageable);
+//    }
 }
 
 @Component

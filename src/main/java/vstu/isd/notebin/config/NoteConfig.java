@@ -13,8 +13,10 @@ public class NoteConfig {
     private int cacheCapacity;
     @Value("${spring.note.default-ttl}")
     private Duration defaultTTL;
-    @Value("${spring.note.page-size}")
-    private int pageSize;
+    @Value("${spring.note.heater-page-size}")
+    private int heaterPageSize;
+    @Value("${spring.note.note-page-size}")
+    private int notePageSize;
 
     @Bean
     public int cacheNoteCapacity() {
@@ -27,12 +29,17 @@ public class NoteConfig {
     }
 
     @Bean
-    public int pageSize() {
-        return pageSize;
+    public int heaterPageSize() {
+        return heaterPageSize;
     }
 
     @Bean
     public String userIdHeaderAttribute() {
         return "x-user-id";
+    }
+
+    @Bean
+    public int notePageSize() {
+        return notePageSize;
     }
 }

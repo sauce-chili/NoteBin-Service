@@ -10,6 +10,9 @@ public enum ClientExceptionName {
     NOTE_NOT_FOUND(
             101
     ),
+    NOT_ALLOWED(
+            300
+    ),
     VALIDATION_EXCEPTION(
             800
     ),
@@ -30,9 +33,6 @@ public enum ClientExceptionName {
     ),
     EMPTY_UPDATE_REQUEST(
         806
-    ),
-    NOT_ALLOWED(
-            807
     );
 
     private final int apiErrorCode;
