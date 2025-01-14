@@ -1,7 +1,9 @@
 package vstu.isd.notebin.testutils;
 
 import vstu.isd.notebin.dto.NoteDto;
+import vstu.isd.notebin.dto.NoteViewResponseDto;
 import vstu.isd.notebin.dto.ViewAnalyticsDto;
+import vstu.isd.notebin.entity.ViewNote;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -46,4 +48,17 @@ public class TestAsserts {
         assertEquals(expected.getViewsFromAuthorized(), actual.getViewsFromAuthorized());
         assertEquals(expected.getViewsFromNonAuthorized(), actual.getViewsFromNonAuthorized());
     }
+
+    public static void assertNoteViewResponseDtoEquals(NoteViewResponseDto expected, NoteViewResponseDto actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getNoteId(), actual.getNoteId());
+        assertEquals(expected.getUserId(), actual.getUserId());
+    }
+
+    public static void assertViewNoteEquals(ViewNote expected, ViewNote actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getNoteId(), actual.getNoteId());
+        assertEquals(expected.getUserId(), actual.getUserId());
+        assertLocalDateTimeEquals(expected.getViewedAt(), actual.getViewedAt());
+    };
 }
