@@ -33,9 +33,6 @@ public enum ClientExceptionName {
     ),
     EMPTY_UPDATE_REQUEST(
         806
-    ),
-    NOT_ALLOWED(
-            807
     );
 
     private final int apiErrorCode;
