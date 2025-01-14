@@ -13,6 +13,7 @@ import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,10 @@ public class AnalyticsService {
 
     @Transactional
     public NoteViewResponseDto createNoteView(NoteViewRequestDto noteViewRequestDto) {
+
+        if (noteViewRequestDto.getNoteId() == null) {
+            throw new InvalidParameterException("noteId in NoteViewRequest can't be null.");
+        }
 
         ViewNote viewNoteWithoutId = noteMapper.toViewNote(noteViewRequestDto);
         ViewNote viewNote = viewNoteRepository.save(viewNoteWithoutId);
