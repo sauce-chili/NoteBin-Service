@@ -53,7 +53,7 @@ public class Note extends BaseNote {
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
 
-    @Column(name = "user_id", nullable = true)
+    @Column(name = "user_id")
     private Long userId;
 
     @Override

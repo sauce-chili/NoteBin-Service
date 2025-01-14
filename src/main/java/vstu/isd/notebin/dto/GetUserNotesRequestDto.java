@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserNotesRequestDto {
-    private long userId;
+    private Long userId;
     private int page;
 }
