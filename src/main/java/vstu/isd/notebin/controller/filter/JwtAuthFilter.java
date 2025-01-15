@@ -46,21 +46,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = extractToken(request);
 
-        if (token == null) {
-            nextFilter(request, response, filterChain);
-            return;
+        if (token != null) {
+
+            String userId = verifyTokenAndGetUserId(token);
+            boolean isTokenValid = userId != null;
+
+            if (isTokenValid) {
+                saveAuthentication(userId);
+                request.setAttribute(userIdHeaderAttribute, userId);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
-        String userId = verifyTokenAndGetUserId(token);
-        boolean isTokenValid = userId != null;
-
-        if (isTokenValid) {
-            saveAuthentication(userId);
-            request.setAttribute(userIdHeaderAttribute, userId);
-            nextFilter(request, response, filterChain);
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        filterChain.doFilter(request, response);
     }
 
     private String extractToken(HttpServletRequest request) {
@@ -69,14 +69,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return null;
         }
         return header.substring(TOKEN_PREFIX.length());
-    }
-
-    private void nextFilter(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
-        filterChain.doFilter(request, response);
     }
 
     private String verifyTokenAndGetUserId(String token) {
