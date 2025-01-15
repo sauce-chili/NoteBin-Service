@@ -20,12 +20,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable()// TODO fix this
+        http
+                .cors().and()
+                .csrf().disable()// TODO fix this
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/note/*").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/note/my-notes").authenticated()
-                        .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/note/*").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
 
