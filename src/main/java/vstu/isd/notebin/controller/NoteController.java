@@ -5,7 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
+import vstu.isd.notebin.service.AnalyticsService;
 import vstu.isd.notebin.service.NoteService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/note")
@@ -14,6 +19,7 @@ public class NoteController {
 
     private final NoteService noteService;
     private final NoteMapper noteMapper;
+    private final AnalyticsService analyticsService;
 
     @GetMapping("/{url}")
     public NoteResponseDto getNote(
@@ -76,6 +82,21 @@ public class NoteController {
                 .userId(userNotesDto.getUserId())
                 .page(pageResponse)
                 .build();
+    }
+
+    @GetMapping("/analytics/me")
+    public Map<String, ViewAnalyticsDto> getMyNotesAnalytics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestAttribute("x-user-id") Long userId
+    ) {
+        GetUserNotesResponseDto<NoteDto> userNotesDto = noteService.getUserNotes(
+                new GetUserNotesRequestDto(userId, page)
+        );
+
+        List<NoteDto> notes = userNotesDto.getPage().getContent();
+        List<String> urls = notes.stream().map(NoteDto::getUrl).toList();
+
+        return analyticsService.getNotesViewAnalytics(urls);
     }
 
     @GetMapping("/v/{t}")
