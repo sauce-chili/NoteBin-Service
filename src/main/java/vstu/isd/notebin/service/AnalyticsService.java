@@ -42,12 +42,12 @@ public class AnalyticsService {
                 );
 
         NoteViewResponseDto viewNoteResponse;
-        if (viewNoteWithSameParameters.isPresent()) {
-            viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNoteWithSameParameters.get());
-        } else {
+        if (viewNoteWithSameParameters.isEmpty() || noteViewRequestDto.getUserId() == null) {
             ViewNote viewNoteWithoutId = noteMapper.toViewNote(noteViewRequestDto);
             ViewNote viewNote = viewNoteRepository.save(viewNoteWithoutId);
             viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNote);
+        } else {
+            viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNoteWithSameParameters.get());
         }
 
         return viewNoteResponse;
