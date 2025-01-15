@@ -8,7 +8,6 @@ import vstu.isd.notebin.dto.NoteViewRequestDto;
 import vstu.isd.notebin.dto.NoteViewResponseDto;
 import vstu.isd.notebin.dto.ViewAnalyticsDto;
 import vstu.isd.notebin.entity.ViewNote;
-import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
@@ -36,18 +35,33 @@ public class AnalyticsService {
             throw new InvalidParameterException("noteId in NoteViewRequest can't be null.");
         }
 
-        ViewNote viewNoteWithoutId = noteMapper.toViewNote(noteViewRequestDto);
-        ViewNote viewNote = viewNoteRepository.save(viewNoteWithoutId);
+        Optional<ViewNote> viewNoteWithSameParameters =
+                viewNoteRepository.findByNoteIdAndUserId(
+                        noteViewRequestDto.getNoteId(),
+                        noteViewRequestDto.getUserId()
+                );
 
-        return noteMapper.toNoteViewResponseDto(viewNote);
+        NoteViewResponseDto viewNoteResponse;
+        if (viewNoteWithSameParameters.isPresent()) {
+            viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNoteWithSameParameters.get());
+        } else {
+            ViewNote viewNoteWithoutId = noteMapper.toViewNote(noteViewRequestDto);
+            ViewNote viewNote = viewNoteRepository.save(viewNoteWithoutId);
+            viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNote);
+        }
+
+        return viewNoteResponse;
     }
 
-    public Map<String, ViewAnalyticsDto> getNotesViewAnalytics(List<String> urls) {
+    public Map<String, Optional<ViewAnalyticsDto>> getNotesViewAnalytics(List<String> urls) {
 
         return urls.stream()
                 .collect(Collectors.toMap(
                         url -> url,
-                        url -> getNoteViewAnalytics(getNoteId(url))
+                        url -> {
+                            Long idOfNote = getNoteId(url);
+                            return idOfNote == null ? Optional.empty() : Optional.ofNullable(getNoteViewAnalytics(idOfNote));
+                        }
                 ));
     }
 
@@ -56,24 +70,19 @@ public class AnalyticsService {
                 .map(noteMapper::toDto)
                 .orElseGet(() -> noteRepository.findByUrl(url)
                         .map(noteMapper::toDto)
-                        .orElseThrow(() -> new NoteNonExistsException(url))
+                        .orElse(null)
                 )
-                .getId();
+                != null ? noteCache.get(url).get().getId() : null;
     }
 
-    private ViewAnalyticsDto getNoteViewAnalytics(Long id) {
-        Set<ViewNote> viewsOfNote = viewNoteRepository.findByNoteId(id);
+    private ViewAnalyticsDto getNoteViewAnalytics(Long noteId) {
 
-        long viewsFromNonAuthorized = viewsOfNote.stream()
-                .filter(view -> view.getUserId() == null)
-                .count();
+        if (noteId == null) {
+            return null;
+        }
 
-        long viewsFromAuthorized = viewsOfNote.stream()
-                .map(ViewNote::getUserId)
-                .filter(Objects::nonNull)
-                .distinct()
-                .count();
-
-        return new ViewAnalyticsDto(viewsFromAuthorized, viewsFromNonAuthorized);
+        return new ViewAnalyticsDto(
+                viewNoteRepository.countOfAuthorizedViews(noteId),
+                viewNoteRepository.countOfNonAuthorizedViews(noteId));
     }
 }
