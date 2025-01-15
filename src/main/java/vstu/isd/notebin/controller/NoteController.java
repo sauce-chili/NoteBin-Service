@@ -100,15 +100,9 @@ public class NoteController {
         List<NoteDto> notes = userNotesDto.getPage().getContent();
         List<String> urls = notes.stream().map(NoteDto::getUrl).toList();
 
-        Map<String, ViewAnalyticsDto> viewAnalytics = new HashMap<>();
         Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOptional = analyticsService.getNotesViewAnalytics(urls);
-        viewAnalytics = viewAnalyticsOptional.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().orElse(null)
-                ));
 
-        return viewAnalytics;
+        return noteMapper.toMapStringToViewNote(viewAnalyticsOptional);
     }
 
     @GetMapping("/v/{t}")
