@@ -10,7 +10,6 @@ import vstu.isd.notebin.service.NoteService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/note")
