@@ -1,8 +1,10 @@
 package vstu.isd.notebin.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GroupValidationException.class)
@@ -66,11 +69,11 @@ public class GlobalExceptionHandler {
     }
 
     private Map<String, Object> buildBaseClientExceptionProblemDetailProperties(BaseClientException baseClientException) {
-        Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put("api_error_code", baseClientException.getExceptionName().getApiErrorCode());
-        properties.put("api_error_name", baseClientException.getExceptionName().name());
-        properties.put("properties", baseClientException.properties());
-        return properties;
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("api_error_code", baseClientException.getExceptionName().getApiErrorCode());
+        props.put("api_error_name", baseClientException.getExceptionName().name());
+        props.put("args", baseClientException.properties());
+        return props;
     }
 
     @ExceptionHandler(BaseClientException.class)
@@ -84,5 +87,20 @@ public class GlobalExceptionHandler {
                 problemDetail,
                 baseClientException
         );
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponseException handleException(Exception e) {
+        log.error("Unexpected exception: ", e);
+        return new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, e);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request body format");
+        problemDetail.setType(URI.create("error"));
+        problemDetail.setTitle("Bad Request");
+        return problemDetail;
     }
 }
