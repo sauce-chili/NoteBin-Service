@@ -97,10 +97,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponseException handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request body format");
         problemDetail.setType(URI.create("error"));
-        problemDetail.setTitle("Bad Request");
-        return problemDetail;
+        problemDetail.setTitle("Invalid request");
+        return new ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, ex);
     }
 }
