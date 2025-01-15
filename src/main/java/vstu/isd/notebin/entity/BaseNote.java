@@ -36,6 +36,15 @@ public abstract class BaseNote {
     abstract public Long getUserId();
     abstract public void setUserId(Long userId);
 
+    public boolean isNoteOwner(Long userId) {
+        if (getId() == null || userId == null) return false;
+        return Objects.equals(getUserId(), userId);
+    }
+
+    public boolean isNotNoteOwner(Long userId) {
+        return !isNoteOwner(userId);
+    }
+
     abstract public boolean isAvailable();
 
     public boolean isNotAvailable() {
