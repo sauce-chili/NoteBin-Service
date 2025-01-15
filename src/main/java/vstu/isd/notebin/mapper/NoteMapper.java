@@ -101,17 +101,9 @@ public interface NoteMapper {
         return note;
     }
 
-    default ViewNote toViewNote(NoteViewRequestDto noteViewRequestDto) {
-
-        LocalDateTime now = LocalDateTime.now();
-
-        return ViewNote.builder()
-                .id(null)
-                .noteId(noteViewRequestDto.getNoteId())
-                .userId(noteViewRequestDto.getUserId())
-                .viewedAt(now)
-                .build();
-    }
+    @Mapping(target = "viewedAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "id", expression = "java(null)")
+    ViewNote toViewNote(NoteViewRequestDto noteViewRequestDto);
 
     @Mapping(source = "noteId", target = "noteId")
     NoteViewResponseDto toNoteViewResponseDto(ViewNote viewNote);
