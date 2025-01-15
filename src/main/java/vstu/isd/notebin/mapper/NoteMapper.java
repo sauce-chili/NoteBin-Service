@@ -8,6 +8,8 @@ import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.entity.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -110,4 +112,13 @@ public interface NoteMapper {
 
     @Mapping(source = "available", target = "isAvailable")
     Note toNote(NoteDto noteDto);
+
+    default Map<String, ViewAnalyticsDto> toMapStringToViewNote(Map<String, Optional<ViewAnalyticsDto>> noteMap) {
+
+        return noteMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().orElse(null)
+                ));
+    }
 }
