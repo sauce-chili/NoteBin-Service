@@ -12,8 +12,6 @@ import vstu.isd.notebin.config.TestContainersConfig;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.ViewNote;
-import vstu.isd.notebin.exception.ClientExceptionName;
-import vstu.isd.notebin.exception.NoteNonExistsException;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
@@ -23,10 +21,10 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static vstu.isd.notebin.testutils.TestAsserts.*;
 
 @SpringBootTest
@@ -83,15 +81,14 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
-
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
                     .viewsFromAuthorized(2L)
                     .viewsFromNonAuthorized(3L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -106,7 +103,7 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -114,7 +111,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(3L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -129,7 +126,7 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -137,7 +134,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(0L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -152,7 +149,7 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -160,7 +157,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(0L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -178,7 +175,7 @@ class AnalyticsServiceTest {
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
             analyticsService.getNotesViewAnalytics(urls);
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -186,7 +183,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(3L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -207,7 +204,7 @@ class AnalyticsServiceTest {
             List<String> urls = new LinkedList<>();
             urls.add(noteDtoFirst.getUrl());
             urls.add(noteDtoSecond.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalyticsFirst = ViewAnalyticsDto.builder()
@@ -219,8 +216,8 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(2L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalyticsFirst, viewAnalyticsOfNotes.get(noteDtoFirst.getUrl()));
-            assertViewAnalyticsDtoEquals(expectedAnalyticsSecond, viewAnalyticsOfNotes.get(noteDtoSecond.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalyticsFirst, viewAnalyticsOfNotes.get(noteDtoFirst.getUrl()).get());
+            assertViewAnalyticsDtoEquals(expectedAnalyticsSecond, viewAnalyticsOfNotes.get(noteDtoSecond.getUrl()).get());
         }
 
         @Test
@@ -230,7 +227,7 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -238,7 +235,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(0L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -256,7 +253,7 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl());
-            Map<String, ViewAnalyticsDto> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
@@ -264,7 +261,7 @@ class AnalyticsServiceTest {
                     .viewsFromNonAuthorized(0L)
                     .build();
 
-            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()));
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
         }
 
         @Test
@@ -274,15 +271,9 @@ class AnalyticsServiceTest {
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDto.getUrl() + 1);
-            NoteNonExistsException exception = assertThrows(
-                    NoteNonExistsException.class,
-                    () -> analyticsService.getNotesViewAnalytics(urls)
-            );
-            ClientExceptionName actualNameOfException = exception.getExceptionName();
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
-
-            ClientExceptionName expected = ClientExceptionName.NOTE_NOT_FOUND;
-            assertEquals(expected, actualNameOfException);
+            assertTrue(viewAnalyticsOfNotes.get(urls.get(0)).isEmpty());
         }
 
         @Test
@@ -291,20 +282,31 @@ class AnalyticsServiceTest {
             NoteDto noteDtoFirst = addNextNoteToRepository();
             NoteDto noteDtoSecond = addNextNoteToRepository();
 
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoFirst.getId(), 1L));
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoFirst.getId(), 1L));
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoSecond.getId(), 2L));
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoSecond.getId(), null));
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoSecond.getId(), 1L));
+            analyticsService.createNoteView(new NoteViewRequestDto(noteDtoSecond.getId(), 2L));
 
             List<String> urls = new LinkedList<>();
             urls.add(noteDtoFirst.getUrl());
             urls.add("nonExist");
             urls.add(noteDtoSecond.getUrl());
-            NoteNonExistsException exception = assertThrows(
-                    NoteNonExistsException.class,
-                    () -> analyticsService.getNotesViewAnalytics(urls)
-            );
-            ClientExceptionName actualNameOfException = exception.getExceptionName();
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
 
-            ClientExceptionName expected = ClientExceptionName.NOTE_NOT_FOUND;
-            assertEquals(expected, actualNameOfException);
+            ViewAnalyticsDto expectedFirstAnalytics = ViewAnalyticsDto.builder()
+                    .viewsFromAuthorized(1L)
+                    .viewsFromNonAuthorized(0L)
+                    .build();
+            ViewAnalyticsDto expectedSecondAnalytics = ViewAnalyticsDto.builder()
+                    .viewsFromAuthorized(2L)
+                    .viewsFromNonAuthorized(1L)
+                    .build();
+            assertViewAnalyticsDtoEquals(expectedFirstAnalytics, viewAnalyticsOfNotes.get(noteDtoFirst.getUrl()).get());
+            assertViewAnalyticsDtoEquals(expectedSecondAnalytics, viewAnalyticsOfNotes.get(noteDtoSecond.getUrl()).get());
+            assertTrue(viewAnalyticsOfNotes.get("nonExist").isEmpty());
         }
     }
 
@@ -442,15 +444,15 @@ class AnalyticsServiceTest {
         @Test
         void createTwoNoteViewForOneNoteFromDifferentUsers() {
 
-            Long noteIdFirst = 1L;
-            Long userIdFirst = 3L;
+            Long noteIdFirst = 64L;
+            Long userIdFirst = 87L;
             NoteViewRequestDto noteViewRequest = NoteViewRequestDto.builder()
                     .noteId(noteIdFirst)
                     .userId(userIdFirst)
                     .build();
 
-            Long noteIdSecond = 5L;
-            Long userIdSecond = 6L;
+            Long noteIdSecond = 90L;
+            Long userIdSecond = 56L;
             NoteViewRequestDto noteViewRequestSecond = NoteViewRequestDto.builder()
                     .noteId(noteIdSecond)
                     .userId(userIdSecond)
