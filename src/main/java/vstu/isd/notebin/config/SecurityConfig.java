@@ -1,5 +1,6 @@
 package vstu.isd.notebin.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +20,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable() // TODO fix this
+        http.csrf().disable()// TODO fix this
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/note/my-notes").authenticated()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/v1/note/*").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/note/my-notes").authenticated()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
 
         return http.build();
