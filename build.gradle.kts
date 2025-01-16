@@ -27,6 +27,11 @@ dependencies {
     implementation("org.springframework.retry:spring-retry:2.0.2")
 
     /**
+     * Swagger
+     */
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
+
+    /**
      * JWT
      * */
     implementation("org.bitbucket.b_c:jose4j:0.9.6")

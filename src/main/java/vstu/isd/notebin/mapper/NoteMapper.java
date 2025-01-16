@@ -31,13 +31,7 @@ public interface NoteMapper {
     NoteDto toDto(BaseNote baseNote);
 
     @Mapping(source = "available", target = "isAvailable")
-    Note toEntity(NoteCacheable noteCacheable);
-
-    @Mapping(source = "available", target = "isAvailable")
     NoteCacheable toCacheable(Note note);
-
-    @Mapping(source = "available", target = "isAvailable")
-    NoteCacheable toCacheable(NoteDto noteDto);
 
     default <S, D> PageResponseDto<D> fromPageResponseDto(PageResponseDto<S> page, Function<S, D> map) {
         return PageResponseDto.<D>builder()
