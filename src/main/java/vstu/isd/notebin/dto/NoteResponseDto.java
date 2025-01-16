@@ -13,15 +13,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class NoteDto {
-    private Long id;
+public class NoteResponseDto {
+    private String url;
     private String title;
     private String content;
-    private String url;
     private LocalDateTime createdAt;
     private boolean isAvailable;
     private ExpirationType expirationType;
     private Duration expirationPeriod;
-    private LocalDateTime expirationFrom;
-    private Long userId;
 }

@@ -7,21 +7,20 @@ import lombok.NoArgsConstructor;
 import vstu.isd.notebin.entity.ExpirationType;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class NoteDto {
-    private Long id;
+public class UpdateNoteRequestDto {
     private String title;
     private String content;
-    private String url;
-    private LocalDateTime createdAt;
-    private boolean isAvailable;
     private ExpirationType expirationType;
     private Duration expirationPeriod;
-    private LocalDateTime expirationFrom;
+    private Boolean isAvailable;
     private Long userId;
+
+    public boolean isEmpty(){
+        return title == null && content == null && expirationType==null && expirationPeriod == null && isAvailable == null;
+    }
 }
