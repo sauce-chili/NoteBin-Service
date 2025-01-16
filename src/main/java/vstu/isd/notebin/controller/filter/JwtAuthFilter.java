@@ -44,13 +44,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
-
-        if (isSwaggerPath(requestUri)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String token = extractToken(request);
 
         if (token != null) {
@@ -68,11 +61,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean isSwaggerPath(String requestUri) {
-        return requestUri.startsWith("/swagger-ui") ||
-                requestUri.startsWith("/v3/api-docs");
     }
 
     private String extractToken(HttpServletRequest request) {
