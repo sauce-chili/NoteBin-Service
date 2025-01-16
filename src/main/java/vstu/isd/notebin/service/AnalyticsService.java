@@ -69,12 +69,11 @@ public class AnalyticsService {
 
     private Long getNoteId(String url) {
         return noteCache.get(url)
-                .map(noteMapper::toDto)
+                .map(NoteCacheable::getId)
                 .orElseGet(() -> noteRepository.findByUrl(url)
-                        .map(noteMapper::toDto)
+                        .map(Note::getId)
                         .orElse(null)
-                )
-                != null ? noteCache.get(url).get().getId() : null;
+                );
     }
 
     private ViewAnalyticsDto getNoteViewAnalytics(Long noteId) {
