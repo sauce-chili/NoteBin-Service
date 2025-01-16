@@ -1,14 +1,12 @@
 package vstu.isd.notebin.testutils;
 
-import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.NoteDto;
-import vstu.isd.notebin.entity.Note;
-import vstu.isd.notebin.entity.NoteCacheable;
-import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.dto.NoteViewResponseDto;
+import vstu.isd.notebin.dto.ViewAnalyticsDto;
+import vstu.isd.notebin.entity.ViewNote;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,4 +43,22 @@ public class TestAsserts {
             fail();
         }
     }
+
+    public static void assertViewAnalyticsDtoEquals(ViewAnalyticsDto expected, ViewAnalyticsDto actual) {
+        assertEquals(expected.getUserViews(), actual.getUserViews());
+        assertEquals(expected.getAnonymousViews(), actual.getAnonymousViews());
+    }
+
+    public static void assertNoteViewResponseDtoEquals(NoteViewResponseDto expected, NoteViewResponseDto actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getNoteId(), actual.getNoteId());
+        assertEquals(expected.getUserId(), actual.getUserId());
+    }
+
+    public static void assertViewNoteEquals(ViewNote expected, ViewNote actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getNoteId(), actual.getNoteId());
+        assertEquals(expected.getUserId(), actual.getUserId());
+        assertLocalDateTimeEquals(expected.getViewedAt(), actual.getViewedAt());
+    };
 }

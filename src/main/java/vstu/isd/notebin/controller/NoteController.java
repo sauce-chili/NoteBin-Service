@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vstu.isd.notebin.dto.*;
 import vstu.isd.notebin.mapper.NoteMapper;
+import vstu.isd.notebin.service.AnalyticsService;
 import vstu.isd.notebin.service.NoteService;
 
 @RestController
@@ -14,6 +15,7 @@ public class NoteController {
 
     private final NoteService noteService;
     private final NoteMapper noteMapper;
+    private final AnalyticsService analyticsService;
 
     @GetMapping("/{url}")
     public NoteResponseDto getNote(
@@ -21,6 +23,8 @@ public class NoteController {
             @RequestAttribute(value = "x-user-id", required = false) Long userId
     ) {
         NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url, userId));
+
+        analyticsService.createNoteView(new NoteViewRequestDto(noteDto.getId(), userId));
 
         return noteMapper.toNoteResponseDto(noteDto);
     }

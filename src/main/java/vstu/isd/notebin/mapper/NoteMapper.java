@@ -1,13 +1,15 @@
 package vstu.isd.notebin.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import vstu.isd.notebin.dto.*;
-import vstu.isd.notebin.entity.ExpirationType;
-import vstu.isd.notebin.entity.Note;
-import vstu.isd.notebin.entity.BaseNote;
-import vstu.isd.notebin.entity.NoteCacheable;
+import vstu.isd.notebin.entity.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -99,5 +101,24 @@ public interface NoteMapper {
         }
 
         return note;
+    }
+
+    @Mapping(target = "viewedAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "id", expression = "java(null)")
+    ViewNote toViewNote(NoteViewRequestDto noteViewRequestDto);
+
+    @Mapping(source = "noteId", target = "noteId")
+    NoteViewResponseDto toNoteViewResponseDto(ViewNote viewNote);
+
+    @Mapping(source = "available", target = "isAvailable")
+    Note toNote(NoteDto noteDto);
+
+    default Map<String, ViewAnalyticsDto> toMapStringToViewNote(Map<String, Optional<ViewAnalyticsDto>> noteMap) {
+
+        return noteMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().orElse(null)
+                ));
     }
 }
