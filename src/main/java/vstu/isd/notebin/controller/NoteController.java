@@ -36,9 +36,7 @@ public class NoteController {
             description = "Allows to get a note at a specified url.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
-                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.")
+                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true)
             }
     )
     @ApiResponses(value = {
@@ -124,9 +122,7 @@ public class NoteController {
             description = "Allows to create note.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
-                    @Parameter(name = "requestDto", description = "Parameters of note.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.")
+                    @Parameter(name = "requestDto", description = "Parameters of note.", required = true)
             }
     )
     @ApiResponses(value = {
@@ -227,9 +223,7 @@ public class NoteController {
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
                     @Parameter(name = "requestDto", description = "Parameters of note for update. " +
-                            "Fields that will not be changed are not set. At least one field must be changed.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.", required = true)
+                            "Fields that will not be changed are not set. At least one field must be changed.", required = true)
             }
     )
     @ApiResponses(value = {
@@ -332,9 +326,7 @@ public class NoteController {
             description = "Allows to deactivate note with specified url.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
-                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.", required = true)
+                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true)
             }
     )
     @ApiResponses(value = {
@@ -400,9 +392,7 @@ public class NoteController {
             description = "Allows get all user's notes.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
-                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.", required = true)
+                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true)
             }
     )
     @ApiResponses(value = {
@@ -515,9 +505,7 @@ public class NoteController {
             description = "Allows check auth token.",
             security = @SecurityRequirement(name = "bearerAuth"),
             parameters = {
-                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true),
-                    @Parameter(name = "userId", description = "Unique identifier of user who requires an action to note. " +
-                            "Gets automatically from bearer token.", required = true)
+                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true)
             }
     )
     @ApiResponses(value = {
