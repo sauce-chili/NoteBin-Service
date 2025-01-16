@@ -40,13 +40,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NoteService {
 
+    private final AnalyticsService analyticsService;
+
     private final NoteRepository noteRepository;
     private final NoteCache noteCache;
 
-    private final NoteMapper noteMapper;
-
     private final UrlGenerator urlGenerator;
+
     private final NoteValidator noteValidator;
+    private final NoteMapper noteMapper;
 
     private final RecalculateNoteAvailability recalculateNoteAvailabilityCommand;
 
@@ -75,7 +77,11 @@ public class NoteService {
             throw new NoteUnavailableException(recalculatedResult.note().getUrl());
         }
 
-        return recalculatedResult.note();
+        NoteDto dto = recalculatedResult.note();
+
+        analyticsService.createNoteView(new NoteViewRequestDto(dto.getId(), getNoteRequestDto.getUserId()));
+
+        return dto;
     }
 
     private Optional<NoteCacheable> getNoteAndCachingIfNecessary(String url) {
@@ -121,8 +127,8 @@ public class NoteService {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
                 if (!Objects.equals(cached.getUserId(), updateNoteRequest.getUserId())) {
                     throw new NotAllowedException("Can't update note with url : "
-                                    + cached.getUrl()
-                                    + ". This note belongs to other user.");
+                            + cached.getUrl()
+                            + ". This note belongs to other user.");
                 }
                 return cached;
             });
@@ -156,7 +162,7 @@ public class NoteService {
     @Transactional
     public NoteDto createNote(CreateNoteRequestDto createNoteRequest) {
 
-        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent( e -> {
+        noteValidator.validateCreateNoteRequestDto(createNoteRequest).ifPresent(e -> {
             throw e;
         });
 
