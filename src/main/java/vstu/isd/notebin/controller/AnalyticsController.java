@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/analytics/view-notes/me")
+@RequestMapping("/api/v1/analytics")
 @RequiredArgsConstructor
 public class AnalyticsController {
 
@@ -23,7 +23,7 @@ public class AnalyticsController {
     private final NoteService noteService;
     private final NoteMapper noteMapper;
 
-    @GetMapping("/analytics")
+    @GetMapping("/view-notes/me")
     public Map<String, ViewAnalyticsDto> getMyNotesAnalytics(
             @RequestParam(defaultValue = "0") int page,
             @RequestAttribute("x-user-id") Long userId
