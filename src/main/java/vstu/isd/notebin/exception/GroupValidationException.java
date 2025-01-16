@@ -1,6 +1,5 @@
 package vstu.isd.notebin.exception;
 
-
 import lombok.Getter;
 
 import java.util.List;

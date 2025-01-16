@@ -16,7 +16,6 @@ import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
 
-import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -309,6 +308,28 @@ class AnalyticsServiceTest {
             assertViewAnalyticsDtoEquals(expectedSecondAnalytics, viewAnalyticsOfNotes.get(noteDtoSecond.getUrl()).get());
             assertTrue(viewAnalyticsOfNotes.get("nonExist").isEmpty());
         }
+
+        @Test
+        void getViewAnalyticsByGetNoteMethodViews() {
+
+            NoteDto noteDto = addNextNoteToRepository();
+
+            noteService.getNote(new GetNoteRequestDto(noteDto.getUrl(), 1L));
+            noteService.getNote(new GetNoteRequestDto(noteDto.getUrl(), 3L));
+            noteService.getNote(new GetNoteRequestDto(noteDto.getUrl(), 1L));
+            noteService.getNote(new GetNoteRequestDto(noteDto.getUrl(), null));
+
+            List<String> urls = new LinkedList<>();
+            urls.add(noteDto.getUrl());
+            Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
+
+            ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
+                    .userViews(2L)
+                    .anonymousViews(1L)
+                    .build();
+
+            assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
+        }
     }
 
     @Nested
@@ -454,6 +475,65 @@ class AnalyticsServiceTest {
 
             Long noteIdSecond = 90L;
             Long userIdSecond = 56L;
+            NoteViewRequestDto noteViewRequestSecond = NoteViewRequestDto.builder()
+                    .noteId(noteIdSecond)
+                    .userId(userIdSecond)
+                    .build();
+
+
+            long countOfViewsInRepositoryBeforeAdd = viewNoteRepository.count();
+            NoteViewResponseDto actualFirst = analyticsService.createNoteView(noteViewRequest);
+            ViewNote actualFirstViewNoteInRepository = viewNoteRepository.findById(actualFirst.getId()).get();
+            NoteViewResponseDto actualSecond = analyticsService.createNoteView(noteViewRequestSecond);
+            ViewNote actualSecondViewNoteInRepository = viewNoteRepository.findById(actualSecond.getId()).get();
+            long countOfViewsInRepositoryAfterAdd = viewNoteRepository.count();
+
+
+            assertEquals(countOfViewsInRepositoryBeforeAdd + 2, countOfViewsInRepositoryAfterAdd);
+
+            NoteViewResponseDto expectedFirst = NoteViewResponseDto.builder()
+                    .id(actualFirst.getId())
+                    .noteId(noteIdFirst)
+                    .userId(userIdFirst)
+                    .build();
+            assertNoteViewResponseDtoEquals(expectedFirst, actualFirst);
+
+            ViewNote expectedFirstViewInRepository = ViewNote.builder()
+                    .id(actualFirst.getId())
+                    .noteId(noteIdFirst)
+                    .userId(userIdFirst)
+                    .viewedAt(LocalDateTime.now())
+                    .build();
+            assertViewNoteEquals(expectedFirstViewInRepository, actualFirstViewNoteInRepository);
+
+            NoteViewResponseDto expectedSecond = NoteViewResponseDto.builder()
+                    .id(actualSecond.getId())
+                    .noteId(noteIdSecond)
+                    .userId(userIdSecond)
+                    .build();
+            assertNoteViewResponseDtoEquals(expectedSecond, actualSecond);
+
+            ViewNote expectedSecondViewInRepository = ViewNote.builder()
+                    .id(actualSecond.getId())
+                    .noteId(noteIdSecond)
+                    .userId(userIdSecond)
+                    .viewedAt(LocalDateTime.now())
+                    .build();
+            assertViewNoteEquals(expectedSecondViewInRepository, actualSecondViewNoteInRepository);
+        }
+
+        @Test
+        void createTwoViewsForSameNoteFromNonAuthorizedUsers() {
+
+            Long noteIdFirst = 64L;
+            Long userIdFirst = null;
+            NoteViewRequestDto noteViewRequest = NoteViewRequestDto.builder()
+                    .noteId(noteIdFirst)
+                    .userId(userIdFirst)
+                    .build();
+
+            Long noteIdSecond = 64L;
+            Long userIdSecond = null;
             NoteViewRequestDto noteViewRequestSecond = NoteViewRequestDto.builder()
                     .noteId(noteIdSecond)
                     .userId(userIdSecond)
