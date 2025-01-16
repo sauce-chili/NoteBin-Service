@@ -4,9 +4,15 @@ services:
     build: .
     ports:
       - '8080:8080'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://master_postgres:5432/note_db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=pswd
+      - SPRING_REDIS_HOST=master_redis
+      - SPRING_REDIS_PORT=6379
     depends_on:
       - master_postgres
-#      - master_redis
+      - master_redis
 
   master_postgres:
     image: postgres:13.3
@@ -17,7 +23,7 @@ services:
     ports:
       - '5432:5432'
 
-#  master_redis:
-#    image: redis/redis-stack:latest
-#    ports:
-#      - '6379:6379'
+  master_redis:
+    image: redis/redis-stack:latest
+    ports:
+      - '6379:6379'

@@ -1,1 +1,1 @@
-docker-compose -p infra-notebin up master_postgres
+docker-compose -p infra-notebin up master_postgres master_redis

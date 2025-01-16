@@ -3,3 +3,19 @@ databaseChangeLog:
       file: db/changelog/changeset/V000_init.sql
   - include:
       file: db/changelog/changeset/V001_add_new_column_in_note_table.sql
+  - include:
+      file: db/changelog/changeset/V002_rename_column.sql
+  - include:
+      file: db/changelog/changeset/V003.sql
+  - include:
+      file: db/changelog/changeset/V004.sql
+  - include:
+      file: db/changelog/changeset/V005.sql
+  - include:
+      file: db/changelog/changeset/V006_hashes.sql
+  - include:
+      file: db/changelog/changeset/V007.sql
+  - include:
+      file: db/changelog/changeset/V008.sql
+  - include:
+      file: db/changelog/changeset/V009.sql
