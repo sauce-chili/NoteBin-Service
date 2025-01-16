@@ -19,6 +19,7 @@ import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
 import org.junit.jupiter.api.Test;
+import vstu.isd.notebin.repository.ViewNoteRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -44,6 +45,8 @@ public class NoteServiceTest {
 
     @SpyBean
     private NoteRepository noteRepository;
+    @SpyBean
+    private ViewNoteRepository viewNoteRepository;
     @SpyBean
     private NoteCache noteCache;
     @Autowired
@@ -364,7 +367,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void createTwoNotesOwnedByOneUser(){
+        void createTwoNotesOwnedByOneUser() {
 
             AtomicLong userId = new AtomicLong(2);
             LocalDateTime now = LocalDateTime.now();
@@ -1036,7 +1039,7 @@ public class NoteServiceTest {
 
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
-            ClientExceptionName actual   = exception.getExceptionName();
+            ClientExceptionName actual = exception.getExceptionName();
             assertEquals(expected, actual);
 
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
@@ -1079,7 +1082,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updatingNoteOwnedByOtherUser(){
+        void updatingNoteOwnedByOtherUser() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod(getNextUserId());
 
@@ -1105,7 +1108,7 @@ public class NoteServiceTest {
 
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
-            ClientExceptionName actual   = exception.getExceptionName();
+            ClientExceptionName actual = exception.getExceptionName();
             assertEquals(expected, actual);
 
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
@@ -1117,7 +1120,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void nonOwnedNoteUpdatingByUser(){
+        void nonOwnedNoteUpdatingByUser() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod(null);
 
@@ -1143,7 +1146,7 @@ public class NoteServiceTest {
 
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
-            ClientExceptionName actual   = exception.getExceptionName();
+            ClientExceptionName actual = exception.getExceptionName();
             assertEquals(expected, actual);
 
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
@@ -1155,7 +1158,7 @@ public class NoteServiceTest {
         }
 
         @Test
-        void updatingOwnedNoteByUnknownUser(){
+        void updatingOwnedNoteByUnknownUser() {
 
             NoteDto noteInReposBeforeUpdate = generateNoteToReposWithExpTypeBurnByPeriod(getNextUserId());
 
@@ -1181,7 +1184,7 @@ public class NoteServiceTest {
 
 
             ClientExceptionName expected = ClientExceptionName.NOT_ALLOWED;
-            ClientExceptionName actual   = exception.getExceptionName();
+            ClientExceptionName actual = exception.getExceptionName();
             assertEquals(expected, actual);
 
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(url).get());
@@ -2354,7 +2357,13 @@ public class NoteServiceTest {
             verify(noteCache, times(1)).save(expectedNoteCacheable);
             assertEquals(expectedNoteCacheable, actualNoteCacheable);
 
+            long noteViewsBefore = viewNoteRepository.count();
+
             noteService.getNote(new GetNoteRequestDto(REQUESTED_NOTE_URL, null));
+
+            long noteViewsAfter = viewNoteRepository.count();
+
+            assertEquals(noteViewsBefore + 1, noteViewsAfter);
 
             // only first time
             verify(noteRepository, times(1)).findByUrl(REQUESTED_NOTE_URL);
@@ -2392,6 +2401,7 @@ public class NoteServiceTest {
                     .build();
             noteCache.save(persistedCacheNote);
 
+            long noteViewsBefore = viewNoteRepository.count();
 
             NoteDto actualNote = noteService.getNote(new GetNoteRequestDto(REQUESTED_NOTE_URL, getNextUserId()));
             NoteDto expectedNote = NoteDto.builder()
@@ -2408,6 +2418,9 @@ public class NoteServiceTest {
 
             assertNoteDtoEquals(expectedNote, actualNote);
 
+            long noteViewsAfter = viewNoteRepository.count();
+
+            assertEquals(noteViewsBefore + 1, noteViewsAfter);
 
             Note actualRepoNote = noteRepository.findByUrl(REQUESTED_NOTE_URL).get();
             Note expectedRepoNote = persistedRepoNote.toBuilder()
@@ -2638,7 +2651,7 @@ public class NoteServiceTest {
 
         @Test
         @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-        void deleteNoteOfOtherUserPersistedOnlyInRepos(){
+        void deleteNoteOfOtherUserPersistedOnlyInRepos() {
 
             NoteDto note = generateNoteToRepos(getNextUserId());
             String REQUESTED_NOTE_URL = note.getUrl() + 1;

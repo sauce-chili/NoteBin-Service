@@ -79,6 +79,7 @@ public class NoteService {
 
         NoteDto dto = recalculatedResult.note();
 
+        // TODO in future usage of MQ or MB
         analyticsService.createNoteView(new NoteViewRequestDto(dto.getId(), getNoteRequestDto.getUserId()));
 
         return dto;
