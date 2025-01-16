@@ -118,7 +118,7 @@ public interface NoteMapper {
         return noteMap.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        entry -> entry.getValue().orElse(null)
+                        e -> e.getValue().orElse(null)
                 ));
     }
 }
