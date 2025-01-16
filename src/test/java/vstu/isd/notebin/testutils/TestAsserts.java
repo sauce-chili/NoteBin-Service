@@ -45,8 +45,8 @@ public class TestAsserts {
     }
 
     public static void assertViewAnalyticsDtoEquals(ViewAnalyticsDto expected, ViewAnalyticsDto actual) {
-        assertEquals(expected.getViewsFromAuthorized(), actual.getViewsFromAuthorized());
-        assertEquals(expected.getViewsFromNonAuthorized(), actual.getViewsFromNonAuthorized());
+        assertEquals(expected.getUserViews(), actual.getUserViews());
+        assertEquals(expected.getAnonymousViews(), actual.getAnonymousViews());
     }
 
     public static void assertNoteViewResponseDtoEquals(NoteViewResponseDto expected, NoteViewResponseDto actual) {

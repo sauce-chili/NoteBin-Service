@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class ViewAnalyticsDto {
-
-    private Long viewsFromAuthorized;
-    private Long viewsFromNonAuthorized;
+    private Long userViews;
+    private Long anonymousViews;
 }

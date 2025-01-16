@@ -84,8 +84,8 @@ class AnalyticsServiceTest {
             Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(2L)
-                    .viewsFromNonAuthorized(3L)
+                    .userViews(2L)
+                    .anonymousViews(3L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -107,8 +107,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(0L)
-                    .viewsFromNonAuthorized(3L)
+                    .userViews(0L)
+                    .anonymousViews(3L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -130,8 +130,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(3L)
-                    .viewsFromNonAuthorized(0L)
+                    .userViews(3L)
+                    .anonymousViews(0L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -153,8 +153,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(1L)
-                    .viewsFromNonAuthorized(0L)
+                    .userViews(1L)
+                    .anonymousViews(0L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -179,8 +179,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(2L)
-                    .viewsFromNonAuthorized(3L)
+                    .userViews(2L)
+                    .anonymousViews(3L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -208,12 +208,12 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalyticsFirst = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(2L)
-                    .viewsFromNonAuthorized(1L)
+                    .userViews(2L)
+                    .anonymousViews(1L)
                     .build();
             ViewAnalyticsDto expectedAnalyticsSecond = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(1L)
-                    .viewsFromNonAuthorized(2L)
+                    .userViews(1L)
+                    .anonymousViews(2L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalyticsFirst, viewAnalyticsOfNotes.get(noteDtoFirst.getUrl()).get());
@@ -231,8 +231,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(0L)
-                    .viewsFromNonAuthorized(0L)
+                    .userViews(0L)
+                    .anonymousViews(0L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -257,8 +257,8 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(2L)
-                    .viewsFromNonAuthorized(0L)
+                    .userViews(2L)
+                    .anonymousViews(0L)
                     .build();
 
             assertViewAnalyticsDtoEquals(expectedAnalytics, viewAnalyticsOfNotes.get(noteDto.getUrl()).get());
@@ -297,12 +297,12 @@ class AnalyticsServiceTest {
 
 
             ViewAnalyticsDto expectedFirstAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(1L)
-                    .viewsFromNonAuthorized(0L)
+                    .userViews(1L)
+                    .anonymousViews(0L)
                     .build();
             ViewAnalyticsDto expectedSecondAnalytics = ViewAnalyticsDto.builder()
-                    .viewsFromAuthorized(2L)
-                    .viewsFromNonAuthorized(1L)
+                    .userViews(2L)
+                    .anonymousViews(1L)
                     .build();
             assertViewAnalyticsDtoEquals(expectedFirstAnalytics, viewAnalyticsOfNotes.get(noteDtoFirst.getUrl()).get());
             assertViewAnalyticsDtoEquals(expectedSecondAnalytics, viewAnalyticsOfNotes.get(noteDtoSecond.getUrl()).get());
