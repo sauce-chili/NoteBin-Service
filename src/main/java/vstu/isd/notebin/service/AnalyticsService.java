@@ -55,8 +55,8 @@ public class AnalyticsService {
         return viewNoteResponse;
     }
 
-    public Map<String, Optional<ViewAnalyticsDto>> getNotesViewAnalytics(List<String> urls) {
-
+    // TODO in future replace to Set or some dto
+    public Map<String, Optional<ViewAnalyticsDto>> getNotesViewAnalytics(Collection<String> urls) {
         return urls.stream()
                 .collect(Collectors.toMap(
                         url -> url,
