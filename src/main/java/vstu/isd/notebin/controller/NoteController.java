@@ -24,8 +24,6 @@ public class NoteController {
     ) {
         NoteDto noteDto = noteService.getNote(new GetNoteRequestDto(url, userId));
 
-        analyticsService.createNoteView(new NoteViewRequestDto(noteDto.getId(), userId));
-
         return noteMapper.toNoteResponseDto(noteDto);
     }
 
