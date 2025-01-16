@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/analytics/view-notes").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v0/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
 
