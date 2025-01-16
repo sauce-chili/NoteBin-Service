@@ -37,19 +37,23 @@ public class AnalyticsService {
             throw new IllegalArgumentException("noteId in NoteViewRequest can't be null.");
         }
 
-        Optional<ViewNote> viewNoteWithSameParameters =
-                viewNoteRepository.findByNoteIdAndUserId(
-                        noteViewRequestDto.getNoteId(),
-                        noteViewRequestDto.getUserId()
-                );
+        boolean isAnonymousView = noteViewRequestDto.getUserId() == null;
+
+        Optional<ViewNote> userView = Optional.empty();
+        if (!isAnonymousView) {
+            userView = viewNoteRepository.findByNoteIdAndUserId(
+                    noteViewRequestDto.getNoteId(),
+                    noteViewRequestDto.getUserId()
+            );
+        }
 
         NoteViewResponseDto viewNoteResponse;
-        if (viewNoteWithSameParameters.isEmpty() || noteViewRequestDto.getUserId() == null) {
+        if (userView.isEmpty()) {
             ViewNote viewNoteWithoutId = noteMapper.toViewNote(noteViewRequestDto);
             ViewNote viewNote = viewNoteRepository.save(viewNoteWithoutId);
             viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNote);
         } else {
-            viewNoteResponse = noteMapper.toNoteViewResponseDto(viewNoteWithSameParameters.get());
+            viewNoteResponse = noteMapper.toNoteViewResponseDto(userView.get());
         }
 
         return viewNoteResponse;

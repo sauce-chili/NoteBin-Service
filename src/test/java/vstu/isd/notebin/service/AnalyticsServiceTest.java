@@ -49,6 +49,7 @@ class AnalyticsServiceTest {
     private NoteMapper noteMapper;
 
     private AtomicLong indexOfNote = new AtomicLong(0);
+
     private NoteDto addNextNoteToRepository() {
 
         NoteDto noteDto = noteService.createNote(
@@ -431,8 +432,8 @@ class AnalyticsServiceTest {
 
 
             long countOfViewsInRepositoryBeforeAdd = viewNoteRepository.count();
-            InvalidParameterException exception = assertThrows(
-                    InvalidParameterException.class,
+            assertThrows(
+                    IllegalArgumentException.class,
                     () -> analyticsService.createNoteView(noteViewRequest)
             );
             long countOfViewsInRepositoryAfterAdd = viewNoteRepository.count();
