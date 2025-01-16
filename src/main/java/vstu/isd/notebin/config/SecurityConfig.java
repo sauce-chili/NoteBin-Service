@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/analytics/view-notes").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/analytics/view-notes").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);

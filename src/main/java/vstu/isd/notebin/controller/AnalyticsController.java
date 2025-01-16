@@ -64,7 +64,7 @@ public class AnalyticsController {
                     )),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/view-notes")
+    @PostMapping("/view-notes")
     public Map<String, ViewAnalyticsDto> getViewNotesAnalytics(
             @RequestBody GetViewsNoteRequestDto requestViews
     ) {
