@@ -34,7 +34,7 @@ public class AnalyticsService {
     public NoteViewResponseDto createNoteView(NoteViewRequestDto noteViewRequestDto) {
 
         if (noteViewRequestDto.getNoteId() == null) {
-            throw new InvalidParameterException("noteId in NoteViewRequest can't be null.");
+            throw new IllegalArgumentException("noteId in NoteViewRequest can't be null.");
         }
 
         Optional<ViewNote> viewNoteWithSameParameters =
