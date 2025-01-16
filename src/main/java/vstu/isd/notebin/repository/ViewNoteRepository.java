@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vstu.isd.notebin.entity.ViewNote;
+import vstu.isd.notebin.repository.result.ViewNoteStatistics;
 
 import java.util.Optional;
 
@@ -21,4 +22,14 @@ public interface ViewNoteRepository extends JpaRepository<ViewNote, Long> {
 
     @Query("SELECT COUNT(*) FROM ViewNote v WHERE v.noteId = :noteId AND v.userId IS NOT NULL")
     Long countOfAuthorizedViews(@Param("noteId") Long noteId);
+
+    @Query("""
+            select new vstu.isd.notebin.repository.result.ViewNoteStatistics(
+                           COUNT(CASE WHEN v.userId IS NULL THEN 1 END),
+                           COUNT(CASE WHEN v.userId IS NOT NULL THEN 1 END)
+                       )
+            from ViewNote v
+            where v.noteId = :noteId
+            """)
+    ViewNoteStatistics countOfAuthorizedAndNonAuthorizedViews(@Param("noteId") Long noteId);
 }
