@@ -44,12 +44,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String requestUri = request.getRequestURI();
-
-        if (isSwaggerPath(requestUri)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        String requestUri = request.getRequestURI();
+//
+//        if (isSwaggerPath(requestUri)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         String token = extractToken(request);
 
