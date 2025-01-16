@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.POST, "/api/v1/note").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/note/my-notes").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/analytics/view-notes").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
 
