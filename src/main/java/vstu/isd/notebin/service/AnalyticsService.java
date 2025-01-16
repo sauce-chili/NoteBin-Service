@@ -14,7 +14,6 @@ import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
 
-import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Collectors;
 
