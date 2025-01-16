@@ -126,7 +126,7 @@ public class NoteService {
         try {
             noteCache.update(url, cached -> {
                 cached = noteMapper.fromUpdateRequest(cached, updateNoteRequest, expirationFrom);
-                if (!Objects.equals(cached.getUserId(), updateNoteRequest.getUserId())) {
+                if (cached.isNotNoteOwner(updateNoteRequest.getUserId())) {
                     throw new NotAllowedException("Can't update note with url : "
                             + cached.getUrl()
                             + ". This note belongs to other user.");
@@ -146,7 +146,7 @@ public class NoteService {
         try {
             Note updated = noteRepository.updateWithLock(url, persisted -> {
                 persisted = noteMapper.fromUpdateRequest(persisted, updateNoteRequest, expirationFrom);
-                if (!Objects.equals(persisted.getUserId(), updateNoteRequest.getUserId())) {
+                if (persisted.isNotNoteOwner(updateNoteRequest.getUserId())) {
                     throw new NotAllowedException("Can't update note with url : "
                             + persisted.getUrl()
                             + ". This note belongs to other user.");

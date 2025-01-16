@@ -2520,31 +2520,18 @@ public class NoteServiceTest {
         }
 
         @Test
-        void unknownUserDeleteNonOwnedNote() {
-
-            NoteDto noteBeforeDelete = generateNoteToRepos(null);
-            NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
-            expectedDeletedNote.setAvailable(false);
-
-            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl(), null);
-
-            assertTrue(wasDeleted);
-            NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
-            NoteDto actualNoteInCache = noteMapper.toDto(noteCache.get(noteBeforeDelete.getUrl()).get());
-            assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
-            assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
-        }
-
-        @Test
         void alreadySoftDeleted() {
 
-            NoteDto noteBeforeDelete = generateNoteToRepos(null);
-            UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder().isAvailable(false).build();
+            NoteDto noteBeforeDelete = generateNoteToRepos(getNextUserId());
+            UpdateNoteRequestDto setUnavailable = UpdateNoteRequestDto.builder()
+                    .isAvailable(false)
+                    .userId(noteBeforeDelete.getUserId())
+                    .build();
             noteService.updateNote(noteBeforeDelete.getUrl(), setUnavailable);
             NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
             expectedDeletedNote.setAvailable(false);
 
-            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl(), null);
+            boolean wasDeleted = noteService.deleteNote(noteBeforeDelete.getUrl(), noteBeforeDelete.getUserId());
 
             assertTrue(wasDeleted);
             NoteDto actualNoteInRepos = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
@@ -2569,7 +2556,7 @@ public class NoteServiceTest {
         @Test
         void deleteTwoNotes() {
 
-            List<NoteDto> notesBeforeDelete = generateNotesToRepos(2, Arrays.asList(null, null));
+            List<NoteDto> notesBeforeDelete = generateNotesToRepos(2, Arrays.asList(getNextUserId(), getNextUserId()));
             NoteDto firstNoteBeforeDelete = notesBeforeDelete.get(0);
             NoteDto secondNoteBeforeDelete = notesBeforeDelete.get(1);
             NoteDto expectedFirstDeletedNote = noteMapper.toDto(noteRepository.findByUrl(firstNoteBeforeDelete.getUrl()).get());
@@ -2578,8 +2565,8 @@ public class NoteServiceTest {
             expectedSecondDeletedNote.setAvailable(false);
 
 
-            boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl(), null);
-            boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl(), null);
+            boolean firstWasDeleted = noteService.deleteNote(firstNoteBeforeDelete.getUrl(), notesBeforeDelete.get(0).getUserId());
+            boolean secondWasDeleted = noteService.deleteNote(secondNoteBeforeDelete.getUrl(), notesBeforeDelete.get(1).getUserId());
 
 
             assertTrue(firstWasDeleted);
@@ -2598,16 +2585,16 @@ public class NoteServiceTest {
         @Test
         public void concurrentDeleteOfNote() {
 
-            NoteDto noteBeforeDelete = generateNoteToRepos(null);
+            NoteDto noteBeforeDelete = generateNoteToRepos(getNextUserId());
             NoteDto expectedDeletedNote = noteMapper.toDto(noteRepository.findByUrl(noteBeforeDelete.getUrl()).get());
             expectedDeletedNote.setAvailable(false);
 
 
             CompletableFuture<Boolean> futureNoteFirst = CompletableFuture.supplyAsync(
-                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), null), executors);
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), noteBeforeDelete.getUserId()), executors);
 
             CompletableFuture<Boolean> futureNoteSecond = CompletableFuture.supplyAsync(
-                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), null), executors);
+                    () -> noteService.deleteNote(noteBeforeDelete.getUrl(), noteBeforeDelete.getUserId()), executors);
 
             CompletableFuture.allOf(futureNoteFirst, futureNoteSecond).join();
 

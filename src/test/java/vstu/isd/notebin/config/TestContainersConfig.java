@@ -1,11 +1,8 @@
 package vstu.isd.notebin.config;
 
 import com.redis.testcontainers.RedisContainer;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -20,21 +17,19 @@ public class TestContainersConfig implements ApplicationContextInitializer<Confi
             .withUsername("user")
             .withPassword("password");
 
-    private final static int REDIS_POST = 6379;
+    private final static int REDIS_PORT = 6379;
     @Container
     public RedisContainer redisContainer = new RedisContainer(DockerImageName.parse("redis:latest"))
-            .withExposedPorts(REDIS_POST);
+            .withExposedPorts(REDIS_PORT);
 
     public void initialize(ConfigurableApplicationContext ctx) {
         postgresContainer.start();
         redisContainer.start();
-        TestPropertyValues.of(
-                        "spring.datasource.url=" + postgresContainer.getJdbcUrl(),
-                        "spring.datasource.username=" + postgresContainer.getUsername(),
-                        "spring.datasource.password=" + postgresContainer.getPassword(),
-                        "spring.redis.host=" + redisContainer.getHost(),
-                        "spring.redis.port=" + redisContainer.getMappedPort(REDIS_POST)
-                )
-                .applyTo(ctx.getEnvironment());
+
+        System.setProperty("SPRING_DATASOURCE_URL", postgresContainer.getJdbcUrl());
+        System.setProperty("SPRING_DATASOURCE_USERNAME", postgresContainer.getUsername());
+        System.setProperty("SPRING_DATASOURCE_PASSWORD", postgresContainer.getPassword());
+        System.setProperty("SPRING_REDIS_HOST", redisContainer.getHost());
+        System.setProperty("SPRING_REDIS_PORT", String.valueOf(redisContainer.getMappedPort(REDIS_PORT)));
     }
 }
