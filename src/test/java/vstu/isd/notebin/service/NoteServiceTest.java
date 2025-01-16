@@ -2519,6 +2519,7 @@ public class NoteServiceTest {
             assertNoteDtoEquals(noteBeforeDelete, actualNoteInCache);
         }
 
+        // TODO fix this
         @Test
         void unknownUserDeleteNonOwnedNote() {
 
@@ -2535,6 +2536,7 @@ public class NoteServiceTest {
             assertNoteDtoEquals(expectedDeletedNote, actualNoteInCache);
         }
 
+        // TODO fix this
         @Test
         void alreadySoftDeleted() {
 
@@ -2566,6 +2568,7 @@ public class NoteServiceTest {
             assertEquals(expected, actual);
         }
 
+        // TODO fixt this
         @Test
         void deleteTwoNotes() {
 
@@ -2595,6 +2598,7 @@ public class NoteServiceTest {
             assertNoteDtoEquals(expectedSecondDeletedNote, actualSecondNoteInCache);
         }
 
+        // TODO fix this
         @Test
         public void concurrentDeleteOfNote() {
 
