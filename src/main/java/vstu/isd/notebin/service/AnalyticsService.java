@@ -7,6 +7,8 @@ import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.dto.NoteViewRequestDto;
 import vstu.isd.notebin.dto.NoteViewResponseDto;
 import vstu.isd.notebin.dto.ViewAnalyticsDto;
+import vstu.isd.notebin.entity.Note;
+import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.entity.ViewNote;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
@@ -81,8 +83,11 @@ public class AnalyticsService {
             return null;
         }
 
+        var viewStatistic = viewNoteRepository.countOfAuthorizedAndNonAuthorizedViews(noteId);
+
         return new ViewAnalyticsDto(
-                viewNoteRepository.countOfAuthorizedViews(noteId),
-                viewNoteRepository.countOfNonAuthorizedViews(noteId));
+                viewStatistic.getUserViews(),
+                viewStatistic.getAnonymousViews()
+        );
     }
 }
