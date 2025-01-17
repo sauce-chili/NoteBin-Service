@@ -37,7 +37,7 @@ spring:
   feign-clients:
     auth:
       host: ${AUTH_CLIENT_HOST:localhost}
-      port: ${AUTH_CLIENT_HOST:8081}
+      port: ${AUTH_CLIENT_PORT:8081}
       url: http://${spring.feign-clients.auth.host}:${spring.feign-clients.auth.port}/api/v1/auth
 
   hashes:
