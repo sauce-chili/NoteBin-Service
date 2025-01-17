@@ -8,7 +8,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
@@ -34,6 +34,12 @@ spring:
     heater-page-size: 50
     note-page-size: 20
 
+  feign-clients:
+    auth:
+      host: ${AUTH_CLIENT_HOST:localhost}
+      port: ${AUTH_CLIENT_HOST:8081}
+      url: http://${spring.feign-clients.auth.host}:${spring.feign-clients.auth.port}/api/v1/auth
+
   hashes:
     hash-pool-size: 2000 # must be equals `batch_size`
     pool-exhaustion-percentage: 40 # in percent !!!
@@ -50,11 +56,6 @@ spring:
       max-length-in-regex: 127
     content:
       length: 16384
-
-
-
-#  routes:
-
 
 server:
   port: 8080
