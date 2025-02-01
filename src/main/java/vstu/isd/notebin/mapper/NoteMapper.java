@@ -115,4 +115,6 @@ public interface NoteMapper {
                         e -> e.getValue().orElse(null)
                 ));
     }
+
+    NotePreviewDto toNotePreviewDto(NoteCacheable noteCacheable);
 }
