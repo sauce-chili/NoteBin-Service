@@ -499,6 +499,73 @@ public class NoteController {
 
 
 
+    @Operation(
+            summary = "Receiving a note preview",
+            description = "Allows to get a note stored options at a specified url.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(name = "url", description = "Unique identifier of the note.", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Note preview found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = """
+                                            "url": "5an",
+                                                "expirationType": "NEVER",
+                                                "expirationPeriod": null,
+                                                "expirationFrom": null
+                                            """
+                            )
+                    )),
+            @ApiResponse(responseCode = "404",
+                    description = """
+                            Note preview wasn't get. It may be: \s
+                            Note is expired (unavailable) (api error code 100), \s
+                            Note with specified url is not found (api error code 101). \s
+                            """,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = """
+                                            "type": "error",
+                                                "title": "Not Found",
+                                                "status": 404,
+                                                "detail": "Note with url 5ab not found",
+                                                "instance": "/api/v1/note/preview/5ab",
+                                                "properties": {
+                                                    "date": [
+                                                        2025,
+                                                        2,
+                                                        1,
+                                                        20,
+                                                        9,
+                                                        25,
+                                                        534363200
+                                                    ],
+                                                    "api_error_code": 101,
+                                                    "api_error_name": "NOTE_NOT_FOUND",
+                                                    "args": {
+                                                        "url": "5ab"
+                                                    }
+                                                }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/preview/{url}")
+    public NotePreviewDto getNotePreview(@PathVariable String url) {
+        return noteService.getNotePreview(url);
+    }
+
+
+
+
 
     @Operation(
             summary = "Test for user authentication.",
