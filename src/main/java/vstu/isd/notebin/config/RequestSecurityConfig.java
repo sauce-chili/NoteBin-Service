@@ -30,6 +30,7 @@ public class RequestSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/analytics/view-notes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/note/{url}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/note/list/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/note/preview/{url}").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class);
