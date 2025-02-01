@@ -68,8 +68,8 @@ public class NoteController {
             @ApiResponse(responseCode = "404",
                     description = """
                             Note wasn't get. It may be: \s
-                            Note with specified url is not found (api error code 100), \s
-                            Note is expired (api error code 101).
+                            Note is expired (unavailable) (api error code 100), \s
+                            Note with specified url is not found (api error code 101). \s
                             """,
                     content = @Content(
                             mediaType = "application/json",
@@ -254,8 +254,8 @@ public class NoteController {
                     )),
             @ApiResponse(responseCode = "404", description = """
                     Note wasn't created. It may be: \s
-                    Note is expired (api error code 100), \s
-                    Note with specified url is not exists (api error code 101), \s
+                    Note is expired (unavailable) (api error code 100), \s
+                    Note with specified url is not found (api error code 101). \s
                     Note update not allowed: It's belongs to other user (api error code 300), \s
                     Group of validation exceptions (api error code 801), \s
                     Validation exception: Invalid title of note (api error code 802), \s
