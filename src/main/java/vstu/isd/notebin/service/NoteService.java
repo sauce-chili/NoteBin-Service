@@ -237,6 +237,24 @@ public class NoteService {
     private Page<Note> getNotePageByUserId(long userId, int page) {
         return noteRepository.findByUserId(userId, PageRequest.of(page, notePageSize));
     }
+
+    @Transactional
+    public NotePreviewDto getNotePreview(String url) {
+
+        Optional<NoteCacheable> noteInCache = getNoteAndCachingIfNecessary(url);
+
+        if (noteInCache.isEmpty()) {
+            throw new NoteNonExistsException(url);
+        }
+
+        NoteCacheable noteCacheable = noteInCache.get();
+
+        if (noteCacheable.isExpired()) {
+            throw new NoteUnavailableException(url);
+        }
+
+        return noteMapper.toNotePreviewDto(noteCacheable);
+    }
 }
 
 @Component
