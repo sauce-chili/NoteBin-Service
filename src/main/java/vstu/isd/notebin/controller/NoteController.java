@@ -514,10 +514,12 @@ public class NoteController {
                             mediaType = "application/json",
                             schema = @Schema(
                                     example = """
-                                            "url": "5an",
+                                            {
+                                                "url": "5an",
                                                 "expirationType": "NEVER",
                                                 "expirationPeriod": null,
                                                 "expirationFrom": null
+                                            }
                                             """
                             )
                     )),
@@ -531,7 +533,8 @@ public class NoteController {
                             mediaType = "application/json",
                             schema = @Schema(
                                     example = """
-                                            "type": "error",
+                                            {
+                                                "type": "error",
                                                 "title": "Not Found",
                                                 "status": 404,
                                                 "detail": "Note with url 5ab not found",
@@ -552,6 +555,7 @@ public class NoteController {
                                                         "url": "5ab"
                                                     }
                                                 }
+                                            }
                                             """
                             )
                     )
