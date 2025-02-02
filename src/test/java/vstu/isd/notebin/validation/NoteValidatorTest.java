@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import vstu.isd.notebin.config.TestContainersConfig;
 import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.exception.ClientExceptionName;
@@ -17,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
 class NoteValidatorTest {
 

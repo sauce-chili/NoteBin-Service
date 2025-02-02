@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.annotation.DirtiesContext;
 import vstu.isd.notebin.config.TestContainersConfig;
 import vstu.isd.notebin.entity.ExpirationType;
 import vstu.isd.notebin.entity.Note;
 import vstu.isd.notebin.entity.NoteCacheable;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
+import vstu.isd.notebin.testutils.ClearableTest;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,8 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
 @Slf4j
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class NoteCacheHeaterTest {
+public class NoteCacheHeaterTest extends ClearableTest {
 
     @SpyBean
     private NoteRepository noteRepository;

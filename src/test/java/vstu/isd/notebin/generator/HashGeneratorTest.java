@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import vstu.isd.notebin.config.TestContainersConfig;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,43 +23,17 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Testcontainers
-@ContextConfiguration(initializers = HashGeneratorTest.Initializer.class)
+@ContextConfiguration(initializers = TestContainersConfig.class)
 public class HashGeneratorTest {
-    // TODO in future use common test containers
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(
-            "postgres:15.2"
-    )
-            .withDatabaseName("testdb")
-            .withUsername("user")
-            .withPassword("password");
-
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-                    "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
-        }
-    }
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
 
     private final static ExecutorService executors = Executors.newFixedThreadPool(MAXIMUM_POOL_SIZE);
 
-
-    @BeforeAll
-    public static void beforeAll() {
-        postgreSQLContainer.start();
-    }
-
     @AfterAll
     public static void afterAll() {
-        executors.shutdown();
-        postgreSQLContainer.stop();
+        executors.shutdownNow();
     }
 
     @Autowired

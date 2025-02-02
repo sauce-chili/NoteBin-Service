@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import vstu.isd.notebin.config.TestContainersConfig;
 import vstu.isd.notebin.dto.*;
@@ -15,6 +14,7 @@ import vstu.isd.notebin.entity.ViewNote;
 import vstu.isd.notebin.mapper.NoteMapper;
 import vstu.isd.notebin.repository.NoteRepository;
 import vstu.isd.notebin.repository.ViewNoteRepository;
+import vstu.isd.notebin.testutils.ClearableTest;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -28,7 +28,6 @@ import static vstu.isd.notebin.testutils.TestAsserts.*;
 
 @SpringBootTest
 @ContextConfiguration(initializers = TestContainersConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @Slf4j
 class AnalyticsServiceTest {
 
@@ -65,8 +64,7 @@ class AnalyticsServiceTest {
     }
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class getNotesViewAnalyticsTest {
+    class GetNotesViewAnalyticsTest extends ClearableTest{
         @Test
         void getViewAnalytics() {
 
@@ -269,8 +267,7 @@ class AnalyticsServiceTest {
 
             NoteDto noteDto = addNextNoteToRepository();
 
-            List<String> urls = new LinkedList<>();
-            urls.add(noteDto.getUrl() + 1);
+            List<String> urls = List.of(noteDto.getUrl() + 1);
             Map<String, Optional<ViewAnalyticsDto>> viewAnalyticsOfNotes = analyticsService.getNotesViewAnalytics(urls);
 
             assertTrue(viewAnalyticsOfNotes.get(urls.get(0)).isEmpty());
@@ -333,8 +330,7 @@ class AnalyticsServiceTest {
     }
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class CreateNoteViewTest {
+    class CreateNoteViewTest extends ClearableTest{
 
         @Test
         void createNoteView() {
