@@ -241,13 +241,13 @@ public class NoteService {
     @Transactional
     public NotePreviewDto getNotePreview(String url) {
 
-        Optional<NoteCacheable> noteInCache = getNoteAndCachingIfNecessary(url);
+        Optional<NoteCacheable> cachedNote = getNoteAndCachingIfNecessary(url);
 
-        if (noteInCache.isEmpty()) {
+        if (cachedNote.isEmpty()) {
             throw new NoteNonExistsException(url);
         }
 
-        NoteCacheable noteCacheable = noteInCache.get();
+        NoteCacheable noteCacheable = cachedNote.get();
 
         if (noteCacheable.isExpired()) {
             throw new NoteUnavailableException(url);
