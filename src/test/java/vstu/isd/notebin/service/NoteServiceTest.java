@@ -5,7 +5,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import vstu.isd.notebin.cache.NoteCache;
 import vstu.isd.notebin.config.TestContainersConfig;
@@ -20,6 +19,7 @@ import vstu.isd.notebin.dto.CreateNoteRequestDto;
 import vstu.isd.notebin.dto.NoteDto;
 import org.junit.jupiter.api.Test;
 import vstu.isd.notebin.repository.ViewNoteRepository;
+import vstu.isd.notebin.testutils.ClearableTest;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -80,8 +80,7 @@ public class NoteServiceTest {
 
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class CreateNoteTest {
+    class CreateNoteTest extends ClearableTest{
 
         /*
          * Tests for NoteService.createNote(...)
@@ -912,8 +911,7 @@ public class NoteServiceTest {
     // -----------------------------------------------------------------------------------------------------------------
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class UpdateNoteTest {
+    class UpdateNoteTest extends ClearableTest{
 
         @Test
         void updateNote() {
@@ -1955,8 +1953,7 @@ public class NoteServiceTest {
     }
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class GetNoteTest {
+    class GetNoteTest extends ClearableTest{
 
         /*
          * Tests for NoteService.getNote(...)
@@ -2440,8 +2437,7 @@ public class NoteServiceTest {
     }
 
     @Nested
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-    class DeleteNoteTest {
+    class DeleteNoteTest extends ClearableTest {
 
         @Test
         void deleteNote() {
@@ -2610,7 +2606,6 @@ public class NoteServiceTest {
         }
 
         @Test
-        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
         void deleteNotePersistedOnlyInRepos() {
 
             NoteDto note = generateNoteToRepos(getNextUserId());
@@ -2637,7 +2632,6 @@ public class NoteServiceTest {
         }
 
         @Test
-        @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
         void deleteNoteOfOtherUserPersistedOnlyInRepos() {
 
             NoteDto note = generateNoteToRepos(getNextUserId());
