@@ -2668,4 +2668,219 @@ public class NoteServiceTest {
             assertNoteDtoEquals(expectedDeletedNote, actualNoteInRepos);
         }
     }
+
+    @Nested
+    class GetNotePreviewTest extends ClearableTest {
+
+        @Test
+        void getNotePreviewWithBurnAfterReadExpirationType() {
+
+            Note note = Note.builder()
+                    .url("0")
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .isAvailable(true)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            NotePreviewDto actualNotePreview = noteService.getNotePreview(note.getUrl());
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+            assertNotePreviewDtoEquals(expectedNotePreview, actualNotePreview);
+        }
+
+        @Test
+        void getNotePreviewWithBurnByPeriodExpirationType() {
+
+            Note note = Note.builder()
+                    .url("1")
+                    .title("title 1")
+                    .content("content")
+                    .expirationType(ExpirationType.BURN_BY_PERIOD)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(LocalDateTime.now())
+                    .expirationPeriod(Duration.ofMinutes(15))
+                    .isAvailable(true)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            NotePreviewDto actualNotePreview = noteService.getNotePreview(note.getUrl());
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+            assertNotePreviewDtoEquals(expectedNotePreview, actualNotePreview);
+        }
+
+        @Test
+        void getNotePreviewWithNeverExpirationType() {
+
+            Note note = Note.builder()
+                    .url("2")
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .isAvailable(true)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            NotePreviewDto actualNotePreview = noteService.getNotePreview(note.getUrl());
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+            assertNotePreviewDtoEquals(expectedNotePreview, actualNotePreview);
+        }
+
+        @Test
+        void getPreviewAlreadyUnavailableNote() {
+
+            Note note = Note.builder()
+                    .url("3")
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.BURN_AFTER_READ)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .isAvailable(false)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            final String url = note.getUrl();
+            NoteUnavailableException unavailableException = assertThrows(
+                    NoteUnavailableException.class,
+                    () -> noteService.getNotePreview(url)
+            );
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+
+            assertEquals(url, unavailableException.getUnavailableNoteUrl());
+        }
+
+        @Test
+        void getPreviewAlreadyExpiredNote() {
+
+            Note note = Note.builder()
+                    .url("4")
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.BURN_BY_PERIOD)
+                    .createdAt(LocalDateTime.now().minusDays(1))
+                    .expirationFrom(LocalDateTime.now().minusDays(1))
+                    .expirationPeriod(Duration.ofMinutes(15))
+                    .isAvailable(true)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            final String url = note.getUrl();
+            NoteUnavailableException unavailableException = assertThrows(
+                    NoteUnavailableException.class,
+                    () -> noteService.getNotePreview(url)
+            );
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+
+            assertEquals(url, unavailableException.getUnavailableNoteUrl());
+        }
+
+        @Test
+        void getPreviewAlreadyCachedNote() {
+
+            Note note = Note.builder()
+                    .url("5")
+                    .title("title")
+                    .content("content")
+                    .expirationType(ExpirationType.NEVER)
+                    .createdAt(LocalDateTime.now())
+                    .expirationFrom(null)
+                    .isAvailable(true)
+                    .build();
+            note = noteRepository.save(note);
+
+            NotePreviewDto expectedNotePreview = NotePreviewDto.builder()
+                    .url(note.getUrl())
+                    .expirationType(note.getExpirationType())
+                    .expirationFrom(note.getExpirationFrom())
+                    .expirationPeriod(note.getExpirationPeriod())
+                    .build();
+
+            NoteCacheable expectedCachedNote = noteMapper.toCacheable(note);
+            noteCache.save(expectedCachedNote);
+
+            NotePreviewDto actualNotePreview = noteService.getNotePreview(note.getUrl());
+
+            NoteCacheable actualCachedNote = noteCache.get(note.getUrl()).get();
+
+            verify(noteCache, times(1)).save(expectedCachedNote); // 1 - for save in test
+
+            assertNoteCacheableEquals(expectedCachedNote, actualCachedNote);
+            assertNotePreviewDtoEquals(expectedNotePreview, actualNotePreview);
+        }
+
+        @Test
+        void getNotePreviewOfNonExistentNote() {
+
+            NoteDto note = generateNoteToRepos(getNextUserId());
+            String urlOfNonexistent = note.getUrl() + 1;
+
+            NoteNonExistsException noteNonExistsException = assertThrows(
+                    NoteNonExistsException.class, () -> noteService.getNotePreview(urlOfNonexistent)
+            );
+
+            assertEquals(
+                    urlOfNonexistent,
+                    noteNonExistsException.getNonExistNoteUrl()
+            );
+        }
+    }
 }
